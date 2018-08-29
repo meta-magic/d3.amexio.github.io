@@ -7,6 +7,8 @@
 
 # dependencies
 /node_modules
+/projects/amexio-chart-d3/node_modules
+*.tgz
 
 # IDEs and editors
 /.idea
