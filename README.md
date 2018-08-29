@@ -1,27 +1,97 @@
-# AmexioChartD3App
+<h1 align="center">
+  <br>
+  <a href="http://www.amexio.tech/"><img src="https://image.ibb.co/kdy6Ev/logo.png" alt="Amexio" width="200"></a>
+  <br>
+    Amexio Angular EXtensions v5.1.4
+  <br>
+</h1>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+<div align="center">
+  <b>Amexio (Angular MetaMagic EXtensions for Inputs and Outputs)</b> is a rich set of  120+  Angular (4/5/6)
+UI Components powered by HTML5 & CSS3 for <b>Responsive Web Design & 50+ built-in Material Design Themes.</b> Components includes Form components, charts, maps, dashboards, Tabs, Grids, Trees, Layouts etc.
 
-## Development server
+</div>
+<br/>
+<div align="center">
+  <h3>
+    <a href="http://www.amexio.tech/">
+      Website
+    </a>
+    <span> | </span>
+    <a href="https://gitter.im/amexio-github-io/">
+      Forum
+    </a>
+    <span> | </span>
+    <a href="https://www.metamagicglobal.com/">
+      MetaMagic Global
+    </a>
+  </h3>
+</div>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+<br/>
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## Angular CLI - Installation
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+### Overview
 
-## Running unit tests
+The Angular CLI is a tool to initialize, develop, scaffold and maintain Angular applications
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Getting Started
 
-## Running end-to-end tests
+To install the Angular CLI:
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+```bash
+npm install -g @angular/cli
+```
+Generating and serving an Angular project via a development server Create and run a new project:
 
-## Further help
+```bash
+ng new my-project
+cd my-project
+ng serve
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+
+For More on Angular CLI [commands](https://github.com/angular/angular-cli/wiki) click on the link.
+
+## Amexio D3 Charts - Installation
+
+To install this library, follow the steps given below:
+
+To install the Amexio D3-Charts:
+
+```bash
+npm install amexio-d3-charts --save
+```
+
+and then from your Angular `AppModule`:
+
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import {FormsModule} from "@angular/forms";
+import { AppComponent } from './app.component';
+
+// Import your service library
+import { CommonDataService } from 'amexio-ng-extensions';
+
+// To import D3-Charts
+import { Amexiod3ChartsModule } from 'amexio-d3-charts';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    Amexiod3ChartsModule,
+  ],
+  providers: [CommonDataService],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
