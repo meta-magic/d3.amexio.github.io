@@ -65,8 +65,9 @@ export class AmexioD3BarChartComponent {
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
   }
 
+  componentId: any;
   ngOnInit() {
-
+    this.componentId = 'donut'+ this.generateRandomText();
     setTimeout(() => {
       this.plotChart();
     }, 0);
@@ -84,8 +85,9 @@ export class AmexioD3BarChartComponent {
       .attr('class', 'tooltip')
       .style('opacity', 0);
     //defining svg
-    let svg = d3.select("svg"),
-      margin = { top: 20, right: 20, bottom: 30, left: 40 },
+   // let svg = d3.select("svg"),
+   let svg = d3.select("svg");
+   let   margin = { top: 20, right: 20, bottom: 30, left: 40 },
       width = +svg.attr("width") - margin.left - margin.right,
       height = +svg.attr("height") - margin.top - margin.bottom;
     //xaxis yaxis letiable
@@ -158,5 +160,17 @@ export class AmexioD3BarChartComponent {
       element.color = this.getColors(element);
     });
   }
+
+  generateRandomText(){
+    debugger;
+    let text = "";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcddefghijklmonpqrstuvwxyz";
+    for(let i = 0; i<5; i++){
+      text = text + possible.charAt(Math.floor(Math.random()*possible.length));
+    }
+    console.log(" text ", text)
+    return text;
+  }
+  
 
 }

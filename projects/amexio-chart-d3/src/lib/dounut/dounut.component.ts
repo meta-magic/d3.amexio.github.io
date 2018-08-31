@@ -31,7 +31,7 @@ export class AmexioD3DounutChartComponent
       this.plotChart();
     }, 0);
    }
-
+                                                  
    plotChart(){
     var flag =3;
     var color;

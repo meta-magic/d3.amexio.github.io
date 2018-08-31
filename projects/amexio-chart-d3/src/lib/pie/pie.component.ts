@@ -211,6 +211,6 @@ generateRandomText(){
       element.color = this.getColors(element);
     });
   }
-
+                               
 
 }
