@@ -72,7 +72,7 @@ export class AmexioD3BarChartComponent {
     }, 0);
 
   }
-
+                      
   plotChart() {
     let color;
     let i;
