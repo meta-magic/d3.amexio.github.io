@@ -21,43 +21,52 @@ barchartdata = [
   {
       "label": "A",
       "value": 180,
-      "textcolor": "blue"
+      "color": "blue"
   },
   {
       "label": "B",
-      "value": 100
+      "value": 100,
+      "color": "yellow"
   },
   {
       "label": "C",
-      "value": 56
+      "value": 56,
+      "color": "green"
   },
   {
       "label": "D",
-      "value": 120
+      "value": 120,
+      "color": "blue"
   },
   {
       "label": "E",
-      "value": 90
+      "value": 90,
+      "color": "yellow"
   },
   {
       "label": "F",
-      "value": 140
+      "value": 140,
+      "color": "green"
   },
   {
       "label": "G",
-      "value": 130
+      "value": 130,
+      "color": "blue"
   },
   {
       "label": "H",
-      "value": 110
+      "value": 110,
+      "color": "yellow"
   },
   {
       "label": "I",
-      "value": 70
+      "value": 70,
+      "color": "green"
   },
   {
       "label": "J",
-      "value": 170
+      "value": 170,
+      "color": "blue"
   }
 ];
 

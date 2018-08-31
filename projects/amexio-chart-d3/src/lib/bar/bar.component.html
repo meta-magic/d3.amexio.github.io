@@ -1,11 +1,11 @@
-<h3>
-    <div>{{title}}</div>
-</h3>
-<div id="barchart">
-    <svg>
-    </svg>
-</div>
+<div>{{title}}</div>
 <div>
-    <svg id = "barchartlegend" style = "padding-left: 300px"></svg>
-     </div>
-
+    <div style="float: left">
+        <svg width="500" height="500">
+        </svg>
+    </div>
+    <div>
+        <ng-content selector="amexio-d3chartlegend">
+        </ng-content>
+    </div>
+</div>
