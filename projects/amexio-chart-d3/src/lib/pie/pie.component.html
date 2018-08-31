@@ -1,12 +1,22 @@
-<h3>
+<!-- <h3>
   <div>{{title}}</div>
 </h3>
 
 <span id="pie">
   <svg >
   </svg>
- </span>
-<span >
-      <svg id="piechartlegend"></svg>
-
-</span>
+ </span> -->
+ 
+ <div>{{title}}</div>
+ <div>
+     <div style="float: left">
+         <svg width="500" height="500" [attr.id] = "componentId">
+         </svg>
+     </div>
+     <div>
+         <ng-content selector="amexio-d3chartlegend">
+         </ng-content>
+     </div>
+ </div>             
+            
+        

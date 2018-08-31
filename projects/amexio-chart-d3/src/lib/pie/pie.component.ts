@@ -6,208 +6,210 @@ import * as d3 from 'd3';
   styleUrls: ['./pie.component.css']
 })
 export class PieComponent implements OnInit {
-
-  constructor() { }
-     
-    
-  @Input('data') dataset: any;
+  predefinedcolors: string[];
+  colorIndex: number = 0;
+    constructor() {
+      this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+    }
  
-  @Input() colors: any;
-  
-  @Input() svgwidth: any;
+    @Input('data') dataset: any;
+ 
+    @Input('color') colors: any;
+    
+    @Input('width') svgwidth: any;
+ 
+    @Input('height') svgheight: any;
+ 
+    @Input() title: any = "";
+ componentId: any
+   ngOnInit() {
+    this.generateRandomText();
+     this.componentId = 'donut'+ this.generateRandomText();
+//this.componentId = "20";
+    setTimeout(() => {
+      this.plotChart();
+    }, 0);
+   }
 
-  @Input() svgheight: any;
-
-  @Input() title: any = "";
-
- ngOnInit() {
-   
-   //secondarily defined
-   var predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
-
-   var flag =3;
-   var color;
-
-//1
-if(this.dataset[0].color)
+   plotChart(){
+    var flag =3;
+    var color;
+  this.initializeData();
+    const tooltip = d3.select('body').append('div')
+    .attr('class', 'tooltip')
+    .style('opacity', 0);
+ if(this.dataset[0].color)
 {
- flag = 1;
+  flag = 1;
 }
-   //2
-else if(this.colors){
- flag = 2;
+ else if(this.colors){
+  flag = 2;
 }
-
-   //3
-else{
- flag = 3;
+ else{
+  flag = 3;
 }
 
 var  colorarray1 = [];
 
 switch(flag){
- case 1:
- this.dataset.forEach((element, i) => {
-   if(element.color)
-   {
-    colorarray1.push(element.color);
-   }
-   else if(this.colors){
-     colorarray1.push(this.colors[i]);
-   }
-   else{
-     colorarray1.push(predefinedcolors[i]);
-   }
- });
- color = d3.scaleOrdinal(colorarray1);
- break;
-
- case 2:
- color = d3.scaleOrdinal(this.colors);
- break;
-
- case 3:
- color = d3.scaleOrdinal(predefinedcolors);
- break;
-}
-
-   let svgWidth;
-   //= 600;
-   let svgHeight;
-   // = 600;
-     
-  if(this.svgwidth){
-svgWidth = this.svgwidth;
-  }
-  else{
-svgWidth = 600;
-  }
-
-  if(this.svgheight){
-    svgHeight = this.svgheight;
-  }
-  else{
-    svgHeight = 600;
-  }
-
-
-
-//111
-let left = 0; 
-let top = 0;
-  let svg1 = d3.select('#piechartlegend').append('svg')
-  // .append('svg')
-  .attr('width', svgWidth)
-  .attr('height', svgHeight)
-  .attr("transform", "translate(" + left + "," + top + ")");
-
-  var VALUES = [];
-  var LABELS = this.dataset.label;
-  var legendcolors = color;
-
-  this.dataset.forEach(element => {
-    if (element.label) {
-      VALUES.push(element.label);
+  case 1:
+  this.dataset.forEach((element, i) => {
+    if(element.color)
+    {
+     colorarray1.push(element.color);
+    }
+    else if(this.colors){
+      colorarray1.push(this.colors[i]);
+    }
+    else{
+      colorarray1.push(this.predefinedcolors[i]);
     }
   });
-  console.log("VALUES", VALUES);
+  color = d3.scaleOrdinal(colorarray1);
+  break;
 
-  var legspacing = 25;
+  case 2:
+  color = d3.scaleOrdinal(this.colors);
+  break;
 
-//112
+  case 3:
+  color = d3.scaleOrdinal(this.predefinedcolors);
+  break;
+}
+ 
+    let svgWidth;
+ 
+    let svgHeight;
+       
+   if(this.svgwidth){
+svgWidth = this.svgwidth;
+   }
+   else{
+svgWidth = 300;
+   }
+ 
+   if(this.svgheight){
+     svgHeight = this.svgheight;
+   }
+   else{
+     svgHeight = 300;
+   }
 
+let left = 0; 
+let top = 0;
+ 
+   var VALUES = [];
+   var LABELS = this.dataset.label;
+   var legendcolors = color;
 
-var legend = svg1.selectAll(".legend")
-.data(VALUES)
-.enter()
-.append("g");
+   this.dataset.forEach(element => {
+     if (element.label) {
+       VALUES.push(element.label);
+     }
+   });
+  
+     var outerRadius=svgWidth/2;
 
-legend.append("text")
-.attr("class", "label")
-.attr("x",  90)
-.attr("y", function (d, i) {
-  return i * legspacing + 12;
-})
-.attr("text-anchor", "start")
-.text(function (d, i) {
-return VALUES[i];
-});
+    var innerRadius=0;
 
+    let svg = d3.select('#'+this.componentId).append('svg')
+    .attr('width', svgWidth)
+    .attr('height', svgHeight)
+  .append('g')
+     .attr(
+         'transform','translate('+ svgWidth/2 +','+  svgHeight/2 +')'
+     );
 
-legend.append("rect")
-.attr("fill",
-function(d, i){
-return color(i);
-})
-.attr("width", 20)
-.attr("height", 20)
-.attr("y", function (d, i) {
-  return i * legspacing ;
-})
-.attr("x", 60);
-//////
-
-
-   //var outerRadius=svgWidth/2;
-   var outerRadius=svgWidth/4;
-
-   var innerRadius=0;
-
-   let svg = d3.select('#pie').append('svg')
-   .attr('width', svgWidth)
-   .attr('height', svgHeight)
- .append('g')
-    .attr(
-       // 'transform','translate('+ 400 +','+ 400 +')'
-       'transform','translate('+ svgWidth/2 +','+  svgHeight/2 +')'
-    );
-
-    var pie=d3.pie()
-    .value(function(d){return d.value})
-    .sort(null);
-    //.padAngle(.03);
-
-    var arc=d3.arc()
-   .outerRadius(outerRadius)
-   .innerRadius(innerRadius);
+     var pie=d3.pie()
+     .value(function(d){return d.value})
+     .sort(null);
+ 
+     var arc=d3.arc()
+    .outerRadius(outerRadius)
+    .innerRadius(innerRadius);
 //set path(coordinates) for pie
-    var path=svg.selectAll('path')
-    .data(pie(this.dataset))
-    .enter()
-    .append('path')
-    .attr('d', arc)
-    .attr('fill', function(d,i){
-      return color(d.data.label);
-  })
-
+     var path=svg.selectAll('path')
+     .data(pie(this.dataset))
+     .enter()
+     .append('path')
+     .attr('d', arc)
+     .attr('fill', function(d,i){
+       return color(d.data.label);
+   }).on('mouseover', function (d) {
+    tooltip.transition().duration(100).style('opacity', 1);
+    tooltip.html(`Value: <span>${d.value}</span>`)
+      .style("left", d3.event.pageX + "px")
+      .style("top", d3.event.pageY + "px")
+})
+.on('mouseout', () => tooltip.transition().duration(500).style('opacity', 0));;
+ 
 //print text on donut
 var text=svg.selectAll('text')
-         .data(pie(this.dataset))
-         .enter()
-         .append("text")
-         .transition()
-         .duration(200)
-         .attr("transform", function (d) {
-             return "translate(" + arc.centroid(d) + ")";
+          .data(pie(this.dataset))
+          .enter()
+          .append("text")
+          .transition()
+          .duration(200)
+          .attr("transform", function (d) {
+              return "translate(" + arc.centroid(d) + ")";
+          })
+          .attr("dy", ".4em")
+          .attr("text-anchor", "middle")
+          .text(function(d){
+              return d.data.value+"%";
+          })
+          .style('fill', 
+          function(d){
+           if(d.data.textcolor){
+             return d.data.textcolor;
+           }
+           else{
+             return 'black'
+           }
          })
-         .attr("dy", ".4em")
-         .attr("text-anchor", "middle")
-         .text(function(d){
-             return d.data.value+"%";
-         })
-         .style('fill', 
-         function(d){
-          if(d.data.textcolor){
-            return d.data.textcolor;
-          }
-          else{
-            return 'black'
-          }
-           // return d.data.value+"%";
-       })
-       .style('font-weight', 'bold')
-       .style( 'font-size','12px');
+        .style('font-weight', 'bold')
+        .style( 'font-size','12px');
+   }
 
- }
+
+generateRandomText(){
+  debugger;
+  let text = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcddefghijklmonpqrstuvwxyz";
+  for(let i = 0; i<5; i++){
+    text = text + possible.charAt(Math.floor(Math.random()*possible.length));
+  }
+  console.log(" text ", text)
+  return text;
+}
+
+   getColors(object: any) {
+    if (object.color) {
+       return object.color;
+    }
+    else if (this.colors.length > this.colorIndex) {
+      const color = this.colors[this.colorIndex];
+      this.colorIndex++;
+       return color;
+    }
+    else if ((this.colors.length > 0) && (this.colors.length <= this.colorIndex)) {
+      this.colorIndex = 0;
+      const color = this.colors[this.colorIndex];
+      this.colorIndex++;
+       return color;
+    }
+    else {
+      const color = this.predefinedcolors[this.colorIndex];
+      this.colorIndex++;
+       return color;
+    }
+  }
+
+  initializeData() {
+    this.dataset.forEach(element => {
+      element.color = this.getColors(element);
+    });
+  }
+
 
 }

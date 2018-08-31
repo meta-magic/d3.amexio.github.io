@@ -40,16 +40,6 @@ export class AmexioD3BarChartComponent {
   @Input('width') svgwidth: any;
   /*
     Properties
-    name : width
-    datatype : any
-    version : 5.2 onwards
-    default : none
-    description : set width to chart
-    */
-  @Input() tooltip: boolean = true;
-
-  /*
-    Properties
     name : height
     datatype : any
     version : 5.2 onwards
