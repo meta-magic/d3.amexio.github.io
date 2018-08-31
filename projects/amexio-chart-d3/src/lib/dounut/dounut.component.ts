@@ -107,7 +107,7 @@ let top = 0;
      if (element.label) {
        VALUES.push(element.label);
      }
-   });
+   });                   
   
      var outerRadius=svgWidth/2;
 

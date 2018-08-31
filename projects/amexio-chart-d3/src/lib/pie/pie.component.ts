@@ -197,7 +197,8 @@ generateRandomText(){
       const color = this.colors[this.colorIndex];
       this.colorIndex++;
        return color;
-    }
+    }                                              
+                              
     else {
       const color = this.predefinedcolors[this.colorIndex];
       this.colorIndex++;
