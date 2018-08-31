@@ -32,9 +32,9 @@ export class PieComponent implements OnInit {
    }
 
    plotChart(){
-    var flag =3;
-    var color;
-  this.initializeData();
+    let flag =3;
+    let color;
+  // this.initializeData();
     const tooltip = d3.select('body').append('div')
     .attr('class', 'tooltip')
     .style('opacity', 0);
@@ -49,7 +49,7 @@ export class PieComponent implements OnInit {
   flag = 3;
 }
 
-var  colorarray1 = [];
+let  colorarray1 = [];
 
 switch(flag){
   case 1:
@@ -98,9 +98,9 @@ svgWidth = 300;
 let left = 0; 
 let top = 0;
  
-   var VALUES = [];
-   var LABELS = this.dataset.label;
-   var legendcolors = color;
+   let VALUES = [];
+   let LABELS = this.dataset.label;
+   let legendcolors = color;
 
    this.dataset.forEach(element => {
      if (element.label) {
@@ -108,9 +108,9 @@ let top = 0;
      }
    });
   
-     var outerRadius=svgWidth/2;
+     let outerRadius=svgWidth/2;
 
-    var innerRadius=0;
+    let innerRadius=0;
 
     let svg = d3.select('#'+this.componentId).append('svg')
     .attr('width', svgWidth)
@@ -120,15 +120,15 @@ let top = 0;
          'transform','translate('+ svgWidth/2 +','+  svgHeight/2 +')'
      );
 
-     var pie=d3.pie()
+     let pie=d3.pie()
      .value(function(d){return d.value})
      .sort(null);
  
-     var arc=d3.arc()
+     let arc=d3.arc()
     .outerRadius(outerRadius)
     .innerRadius(innerRadius);
 //set path(coordinates) for pie
-     var path=svg.selectAll('path')
+     let path=svg.selectAll('path')
      .data(pie(this.dataset))
      .enter()
      .append('path')
@@ -144,7 +144,7 @@ let top = 0;
 .on('mouseout', () => tooltip.transition().duration(500).style('opacity', 0));;
  
 //print text on donut
-var text=svg.selectAll('text')
+let text=svg.selectAll('text')
           .data(pie(this.dataset))
           .enter()
           .append("text")
@@ -183,34 +183,34 @@ generateRandomText(){
   return text;
 }
 
-   getColors(object: any) {
-    if (object.color) {
-       return object.color;
-    }
-    else if (this.colors.length > this.colorIndex) {
-      const color = this.colors[this.colorIndex];
-      this.colorIndex++;
-       return color;
-    }
-    else if ((this.colors.length > 0) && (this.colors.length <= this.colorIndex)) {
-      this.colorIndex = 0;
-      const color = this.colors[this.colorIndex];
-      this.colorIndex++;
-       return color;
-    }                                              
+  //  getColors(object: any) {
+  //   if (object.color) {
+  //      return object.color;
+  //   }
+  //   else if (this.colors.length > this.colorIndex) {
+  //     const color = this.colors[this.colorIndex];
+  //     this.colorIndex++;
+  //      return color;
+  //   }
+  //   else if ((this.colors.length > 0) && (this.colors.length <= this.colorIndex)) {
+  //     this.colorIndex = 0;
+  //     const color = this.colors[this.colorIndex];
+  //     this.colorIndex++;
+  //      return color;
+  //   }                                              
                               
-    else {
-      const color = this.predefinedcolors[this.colorIndex];
-      this.colorIndex++;
-       return color;
-    }
-  }
+  //   else {
+  //     const color = this.predefinedcolors[this.colorIndex];
+  //     this.colorIndex++;
+  //      return color;
+  //   }
+  // }
 
-  initializeData() {
-    this.dataset.forEach(element => {
-      element.color = this.getColors(element);
-    });
-  }
+  // initializeData() {
+  //   this.dataset.forEach(element => {
+  //     element.color = this.getColors(element);
+  //   });
+  // }
                                
 
 }
