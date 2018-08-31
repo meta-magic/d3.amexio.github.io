@@ -20,7 +20,6 @@
     "@angular/platform-browser": "^6.0.3",
     "@angular/platform-browser-dynamic": "^6.0.3",
     "@angular/router": "^6.0.3",
-    "amexio-chart-d3": "file:amexio-chart-d3-0.0.1.tgz",
     "core-js": "^2.5.4",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
