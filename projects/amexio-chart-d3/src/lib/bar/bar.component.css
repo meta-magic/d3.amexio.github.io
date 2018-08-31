@@ -1,12 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
 .bar:hover
 {
 fill: #17bf3c;
 }
 .tooltip
 {
+
+   
   background: #b0c4de;
-  border:  #ada397;
+  border: red;
   border-style: solid;
   border-radius: 8px;
   font-family: 'Lobster';
