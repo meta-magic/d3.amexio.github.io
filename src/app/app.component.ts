@@ -14,7 +14,7 @@ export class AppComponent {
     { label: "Firefox", value: 8.71 },
     { label: "Others", value: 6.01 }
 ];
-              
+                                                 
 barchartcolor = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"];
 
 barchartdata = [

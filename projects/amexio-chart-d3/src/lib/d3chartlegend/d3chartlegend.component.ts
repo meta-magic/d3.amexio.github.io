@@ -7,8 +7,22 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class D3chartlegendComponent implements OnInit {
 
-  @Input('data') legendData;
+ /*
+  Properties
+  name :  data
+  datatype : any
+  version : 5.2 onwards
+  default : none
+  description : set data to legend
+  */
+  @Input('data') legendData;                                                
 
+    /*
+  Events
+  name : onLegendClick
+  version : 5.2 onwards
+  description : fire when legend is click
+  */
   @Output() onLegendClick: any = new EventEmitter<any>();
 
   predefinedcolors = [];

@@ -8,25 +8,56 @@ import * as d3 from 'd3';
 export class AmexioD3BarChartComponent {
 
   colorIndex: number = 0;
-
   labelstack = [];
-
   legendArray = [];
 
+  /*
+  Properties
+  name : data
+  datatype : any
+  version : 5.2 onwards
+  default : none
+  description : provides data to chart
+  */
   @Input('data') dataset: any;
-
+ /*
+  Properties
+  name : color
+  datatype : string
+  version : 5.2 onwards
+  default : none
+  description : set color to chart
+  */
   @Input('color') colors: string[];
-
+/*
+  Properties
+  name : width
+  datatype : any
+  version : 5.2 onwards
+  default : none
+  description : set width to chart
+  */
   @Input('width') svgwidth: any;
-
+/*
+  Properties
+  name : height
+  datatype : any
+  version : 5.2 onwards
+  default : none
+  description : set height to chart
+  */
   @Input('height') svgheight: any;
-
+  /*
+  Properties
+  name : title
+  datatype : any
+  version : 5.2 onwards
+  default : none
+  description : set title to chart
+  */
   @Input() title: any = "";
-
-  @Output() onClick: any = new EventEmitter<any>();
-
+ 
   colorforhtml = [];
-
   predefinedcolors = [];
 
   constructor() {

@@ -12,7 +12,7 @@ describe('D3chartlegendComponent', () => {
     })
     .compileComponents();
   }));
-
+                                
   beforeEach(() => {
     fixture = TestBed.createComponent(D3chartlegendComponent);
     component = fixture.componentInstance;
