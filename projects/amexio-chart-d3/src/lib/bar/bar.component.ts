@@ -198,7 +198,6 @@ export class AmexioD3BarChartComponent {
   }
 
   generateRandomText(){
-    debugger;
     let text = "";
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcddefghijklmonpqrstuvwxyz";
     for(let i = 0; i<5; i++){
