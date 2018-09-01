@@ -5,8 +5,17 @@
         </svg>
     </div>
     <div>
-        <ng-content selector="amexio-d3chartlegend">
-        </ng-content>
+        <!-- <ng-content selector="amexio-d3chartlegend">
+        </ng-content> -->
+
+        <div *ngIf = "legend">
+        
+            <amexio-d3chartlegend [data] = "legendArray">
+    
+            </amexio-d3chartlegend>
+    
+        </div>
+
     </div>
 </div>             
                                               

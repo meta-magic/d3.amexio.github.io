@@ -13,10 +13,14 @@
          <svg width="500" height="500" [attr.id] = "componentId">
          </svg>
      </div>
-     <div>
-         <ng-content selector="amexio-d3chartlegend">
-         </ng-content>
-     </div>
+     
+     <div *ngIf = "legend">
+        
+        <amexio-d3chartlegend [data] = "legendArray">
+
+        </amexio-d3chartlegend>
+
+    </div>
  </div>             
                                                  
                                       
