@@ -15,7 +15,7 @@ export class D3chartlegendComponent implements OnInit {
   default : none
   description : set data to legend
   */
-  @Input('data') legendData;                                                
+  @Input('data') legendData;
 
     /*
   Events
@@ -37,6 +37,7 @@ export class D3chartlegendComponent implements OnInit {
   }
 
   legendClick(legend: any) {
+    debugger;
     this.onLegendClick.emit(legend);
   }
 

@@ -1,23 +1,23 @@
- 
 
-     <amexio-d3-chart-bar [tooltip] = "true" [title]="'Bar Chart'" [data] = "barchartdata" [color] = "barchartcolor">
-   
+
+     <amexio-d3-chart-bar (legendClick)="testLegend($event)" [title]="'Bar Chart'" [data] = "barchartdata" [color] = "barchartcolor">
+
         <amexio-d3chartlegend [data] = "barchartdata">
 
         </amexio-d3chartlegend>
 
-     </amexio-d3-chart-bar>                                              
-  
+     </amexio-d3-chart-bar>
+
      <!-- <amexio-d3-chart-donut [title]="'Donut Chart'" [data] = "donutData">
             <amexio-d3chartlegend [data] = "barchartdata">
 
                 </amexio-d3chartlegend>
      </amexio-d3-chart-donut> -->
- 
-     <!-- <amexio-d3-chart-pie [data] = "donutData" ></amexio-d3-chart-pie> 
+
+     <!-- <amexio-d3-chart-pie [data] = "donutData" ></amexio-d3-chart-pie>
 
 
-     <!-- other attributes 
+     <!-- other attributes
     [colors] = "barchartcolor"
     [svgwidth] = "800"
     [svgheight] = "800"
@@ -26,4 +26,3 @@
 
 
 
-    

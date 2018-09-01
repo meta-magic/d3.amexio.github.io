@@ -11,6 +11,8 @@ export class AmexioD3BarChartComponent {
   labelstack = [];
   legendArray = [];
 
+  @Output() legendClick: any = new EventEmitter<any>();
+
   /*
   Properties
   name : data
@@ -20,7 +22,7 @@ export class AmexioD3BarChartComponent {
   description : provides data to chart
   */
   @Input('data') dataset: any;
-  
+
   /*
   Properties
   name : data
@@ -150,7 +152,7 @@ export class AmexioD3BarChartComponent {
        this.labelstack.push(element);
      });
      this.legendArray = [];
-     
+
      for (i = 0; i < this.labelstack.length; i++) {
        let obj = {};
        obj['label'] = this.labelstack[i];
@@ -205,6 +207,13 @@ export class AmexioD3BarChartComponent {
     }
      return text;
   }
-  
+
+  getLegendClick(event: any) {
+    debugger;
+
+    this.legendClick.emit(event);
+
+  }
+
 
 }

@@ -1,5 +1,5 @@
 <table id = "componentId">
-    <tr *ngFor="let item of  legendData" (click)="legendClick(item)">
+    <tr *ngFor="let item of  legendData" style="cursor: pointer" (click)="legendClick(item)">
         <td [ngStyle]="{'background-color':item.color}" style="height: 10px;width: 23px; padding-left: 2px">
         </td>
         <td style = "padding-left: 4px">
@@ -7,4 +7,4 @@
         </td>
     </tr>
 
- </table>   
+ </table>

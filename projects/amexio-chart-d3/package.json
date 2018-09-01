@@ -1,9 +1,62 @@
 {
   "name": "amexio-chart-d3",
   "version": "0.0.1",
+  "description": "d3 Chart library",
+  "homepage": "https://www.amexio.tech/",
+  "author": {
+    "name": "MetaMagic Global",
+    "url": "https://www.metamagicglobal.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meta-magic/d3.amexio.github.io"
+  },
+  "license": "Apache 2.0",
+  "keywords": [
+    "amexio",
+    "metamagic",
+    "angular",
+    "ng",
+    "ng5",
+    "html",
+    "js",
+    "css",
+    "d3"
+  ],
+  "bugs": {
+    "url": "https://github.com/meta-magic/d3.amexio.github.io/issues"
+  },
+  "private": true,
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
     "d3": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+
+  "greenkeeper": {
+    "ignore": [
+      "@angular/core",
+      "@angular/common",
+      "@angular/forms",
+      "@angular/http",
+      "@angular/language-service",
+      "@angular/platform-browser",
+      "@angular/compiler",
+      "@angular/platform-server",
+      "@angular/platform-browser-dynamic",
+      "@angular/compiler-cli",
+      "zone.js",
+      "rxjs",
+      "tslint",
+      "gulp-tslint",
+      "typescript",
+      "awesome-typescript-loader",
+      "codelyzer",
+      "@angular/animations",
+      "@types/jasmine"
+    ]
   }
 }
