@@ -1,4 +1,4 @@
-import { Component, Input,OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -16,9 +16,9 @@ export class AmexioD3DounutChartComponent
     constructor() {
       this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
     }
- 
+
     @Input('data') dataset: any;
- 
+
 
     /*
   Properties
@@ -31,12 +31,15 @@ export class AmexioD3DounutChartComponent
  @Input() legend: boolean = true ;
 
     @Input('color') colors: any;
-    
+
     @Input('width') svgwidth: any;
- 
+
     @Input('height') svgheight: any;
- 
+
     @Input() title: any = "";
+
+  @Output() onLegendClick: any = new EventEmitter<any>();
+
  componentId: any
    ngOnInit() {
     this.generateRandomText();
@@ -46,7 +49,7 @@ export class AmexioD3DounutChartComponent
       this.plotChart();
     }, 0);
    }
-                                                  
+
    plotChart(){
     let flag =3;
     let color;
@@ -105,7 +108,7 @@ switch(flag){
   color = d3.scaleOrdinal(this.predefinedcolors);
   break;
 }
- 
+
 
 //logic for legend
 
@@ -120,7 +123,7 @@ var labelsforlegend = [];
    this.labelstack.push(element);
  });
  this.legendArray = [];
- 
+
  for (let i = 0; i < this.labelstack.length; i++) {
    let obj = {};
    obj['label'] = this.labelstack[i];
@@ -134,16 +137,16 @@ var labelsforlegend = [];
 
 
     let svgWidth;
- 
+
     let svgHeight;
-       
+
    if(this.svgwidth){
 svgWidth = this.svgwidth;
    }
    else{
 svgWidth = 300;
    }
- 
+
    if(this.svgheight){
      svgHeight = this.svgheight;
    }
@@ -151,9 +154,9 @@ svgWidth = 300;
      svgHeight = 300;
    }
 
-let left = 0; 
+let left = 0;
 let top = 0;
- 
+
    let VALUES = [];
    let LABELS = this.dataset.label;
    let legendcolors = color;
@@ -162,8 +165,7 @@ let top = 0;
      if (element.label) {
        VALUES.push(element.label);
      }
-   });                   
-  
+   });
 
 
 
@@ -171,7 +173,8 @@ let top = 0;
 
 
 
-   
+
+
      let outerRadius=svgWidth/2;
 
     let innerRadius=svgWidth/4;
@@ -187,7 +190,7 @@ let top = 0;
      let pie=d3.pie()
      .value(function(d){return d.value})
      .sort(null);
- 
+
      let arc=d3.arc()
     .outerRadius(outerRadius)
     .innerRadius(innerRadius);
@@ -206,7 +209,7 @@ let top = 0;
       .style("top", d3.event.pageY + "px")
 })
 .on('mouseout', () => tooltip.transition().duration(500).style('opacity', 0));;
- 
+
 //print text on donut
 let text=svg.selectAll('text')
           .data(pie(this.dataset))
@@ -222,7 +225,7 @@ let text=svg.selectAll('text')
           .text(function(d){
               return d.data.value+"%";
           })
-          .style('fill', 
+          .style('fill',
           function(d){
            if(d.data.textcolor){
              return d.data.textcolor;
@@ -277,6 +280,10 @@ generateRandomText(){
       element.color = this.getColors(element);
       console.log("element.color", element.color);
     });
+  }
+
+  getLegendClick(event: any) {
+    this.onLegendClick.emit(event);
   }
 
 

@@ -37,7 +37,6 @@ export class D3chartlegendComponent implements OnInit {
   }
 
   legendClick(legend: any) {
-    debugger;
     this.onLegendClick.emit(legend);
   }
 

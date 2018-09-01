@@ -11,7 +11,7 @@ export class AmexioD3BarChartComponent {
   labelstack = [];
   legendArray = [];
 
-  @Output() legendClick: any = new EventEmitter<any>();
+  @Output() onLegendClick: any = new EventEmitter<any>();
 
   /*
   Properties
@@ -209,10 +209,7 @@ export class AmexioD3BarChartComponent {
   }
 
   getLegendClick(event: any) {
-    debugger;
-
-    this.legendClick.emit(event);
-
+    this.onLegendClick.emit(event);
   }
 
 
