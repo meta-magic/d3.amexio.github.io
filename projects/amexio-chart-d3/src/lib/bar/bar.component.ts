@@ -20,6 +20,17 @@ export class AmexioD3BarChartComponent {
   description : provides data to chart
   */
   @Input('data') dataset: any;
+  
+  /*
+  Properties
+  name : data
+  datatype : any
+  version : 5.2 onwards
+  default : none
+  description : provides data to chart
+  */
+ @Input() legend: boolean = true ;
+
   /*
    Properties
    name : color
@@ -127,8 +138,33 @@ export class AmexioD3BarChartComponent {
         labels.push(element.label);
       }
     });
-  }
 
+    var labelsforlegend = [];
+    // var legendcolors = color;
+     this.dataset.forEach(element => {
+       if (element.label) {
+         labelsforlegend.push(element.label);
+       }
+     });
+     labelsforlegend.forEach(element => {
+       this.labelstack.push(element);
+     });
+     this.legendArray = [];
+     
+     for (i = 0; i < this.labelstack.length; i++) {
+       let obj = {};
+       obj['label'] = this.labelstack[i];
+       if (this.colorforhtml[i]) {
+         obj['color'] = this.colorforhtml[i];
+       }
+       else
+         obj['color'] = 'black';
+       this.legendArray.push(obj);
+     }
+
+
+  }
+//get color according to priority
   getColors(object: any) {
     if (object.color) {
       this.colorforhtml.push(object.color);
@@ -168,8 +204,7 @@ export class AmexioD3BarChartComponent {
     for(let i = 0; i<5; i++){
       text = text + possible.charAt(Math.floor(Math.random()*possible.length));
     }
-    console.log(" text ", text)
-    return text;
+     return text;
   }
   
 

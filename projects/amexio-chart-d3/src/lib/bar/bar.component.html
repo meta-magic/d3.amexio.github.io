@@ -4,9 +4,14 @@
         <svg width="500" height="500" id = "barchartId">
         </svg>
     </div>
-    <div>
-        <ng-content selector="amexio-d3chartlegend">
-        </ng-content>
+    <div *ngIf = "legend">
+        <!-- <ng-content selector="amexio-d3chartlegend">
+        </ng-content> -->
+        
+        <amexio-d3chartlegend [data] = "legendArray">
+
+        </amexio-d3chartlegend>
+
     </div>
 </div>             
            
