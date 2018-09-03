@@ -12,11 +12,11 @@ export class PieComponent implements OnInit {
   
   @Input() legend: boolean = true ;
 
-  @Input('color') colors: any;
+  @Input('color') colors: any = [];
 
-  @Input('width') width: any;
+  @Input('width') width: any = "300";
 
-  @Input('height') height: any;
+  @Input('height') height: any = "300";
 
   @Input() title: any = "";
 
