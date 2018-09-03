@@ -16,9 +16,11 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
     tooltipx : string;
     tooltipy : string;
 
+    @Input('pie') pie : boolean = false;
+
     constructor() 
     {
-      super('donout');
+      super('d-p');
     }
 
     ngOnInit(){
@@ -30,7 +32,11 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
 
     plotD3Chart(){
       const outerRadius = this.width/2;
-      const innerRadius = this.width/4;
+      let innerRadius = this.width/4;
+      
+      if(this.pie){
+        innerRadius = 0;
+      }
 
       const tooltip = d3.select('body').append('div')
                         .attr('class', 'tooltip')
@@ -95,9 +101,11 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
       }
      
     }
+    
     hideToolTip(){
       this.showtooltip = false;
     }
+
     onClick(node:any){
       this.onLegendClick.emit(node);
     }

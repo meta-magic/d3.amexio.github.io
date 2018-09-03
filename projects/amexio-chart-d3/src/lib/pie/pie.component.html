@@ -1,25 +1,8 @@
-<!-- <h3>
-  <div>{{title}}</div>
-</h3>
-
-<span id="pie">
-  <svg >
-  </svg>
- </span> -->
-
- <div>{{title}}</div>
- <div>
-     <div style="float: left">
-         <svg width="500" height="500" [attr.id] = "componentId">
-         </svg>
-     </div>
-
-     <div *ngIf = "legend">
-
-        <amexio-d3chartlegend (onLegendClick)="getLegendClick($event)" [data] = "dataset">
-
-        </amexio-d3chartlegend>
-
-    </div>
- </div>
-
+<amexio-d3-chart-donut (onLegendClick)="onClick($event)"
+                        [height]="height"
+                        [width]="width"
+                        [title]="title"
+                        [data] = "data"
+                        [pie]  = "true"
+                        [color]="colors">
+</amexio-d3-chart-donut>
