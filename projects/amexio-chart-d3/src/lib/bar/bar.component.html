@@ -1,15 +1,11 @@
 <div>{{title}}</div>
 <div>
-    <div style="float: left">
-        <svg width="500" height="500" id = "barchartId">
+    <div style="float:left">
+        <svg [attr.height]="svgheight" [attr.width]="svgwidth" [attr.id]="componentId">
         </svg>
     </div>
     <div *ngIf = "legend">
-        <!-- <ng-content selector="amexio-d3chartlegend">
-        </ng-content> -->
-
         <amexio-d3chartlegend (onLegendClick)="getLegendClick($event)" [data] = "dataset">
-
         </amexio-d3chartlegend>
 
     </div>

@@ -50,7 +50,7 @@ export class AmexioD3BarChartComponent {
     default : none
     description : set width to chart
     */
-  @Input('width') svgwidth: any;
+  @Input('width') svgwidth: any = "300";
   /*
     Properties
     name : height
@@ -59,7 +59,7 @@ export class AmexioD3BarChartComponent {
     default : none
     description : set height to chart
     */
-  @Input('height') svgheight: any;
+  @Input('height') svgheight: any = "300";
   /*
   Properties
   name : title
@@ -83,7 +83,7 @@ export class AmexioD3BarChartComponent {
     this.componentId = 'donut'+ this.generateRandomText();
     setTimeout(() => {
       this.plotChart();
-    }, 0);
+    }, 2000);
 
   }
 
