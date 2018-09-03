@@ -14,7 +14,7 @@
         </td>
     </tr>
 </table>
-<div  *ngIf="showtooltip"  style="position: fixed" [ngStyle]="{'left': tooltipx,'top':tooltipy}">
+<div  *ngIf="showtooltip"  style="position: fixed; opacity: 1;" [ngStyle]="{'left': tooltipx,'top':tooltipy}">
     <amexio-d3-tooltip [data]="tooltipdata"></amexio-d3-tooltip>
 </div>
     

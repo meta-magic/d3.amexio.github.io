@@ -38,10 +38,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
         innerRadius = 0;
       }
 
-      const tooltip = d3.select('body').append('div')
-                        .attr('class', 'tooltip')
-                        .style('opacity', 0);
-
       const arc = d3.arc()
                 .outerRadius(outerRadius)
                 .innerRadius(innerRadius);
@@ -63,7 +59,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
                         return (d && d.data && d.data.color) ? d.data.color : "black"
                       })
                       .on('mouseover',(data) =>{
-                        console.log("mouseover "+JSON.stringify(data));
                         this.showToolTip(data, d3.event.pageX, d3.event.pageY);
                       })
                       .on('mouseout',(data) =>{
