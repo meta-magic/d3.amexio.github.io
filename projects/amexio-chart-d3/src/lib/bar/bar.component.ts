@@ -99,7 +99,7 @@ export class AmexioD3BarChartComponent {
       .style('opacity', 0);
     //defining svg
    // let svg = d3.select("svg"),
-   let svg = d3.select("svg");
+   let svg = d3.select("#"+this.componentId);
    let   margin = { top: 20, right: 20, bottom: 30, left: 40 },
       width = +svg.attr("width") - margin.left - margin.right,
       height = +svg.attr("height") - margin.top - margin.bottom;

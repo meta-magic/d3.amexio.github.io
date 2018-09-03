@@ -1,14 +1,14 @@
-<div>{{title}}</div>
-<div>
-    <div style="float:left">
-        <svg [attr.height]="svgheight" [attr.width]="svgwidth" [attr.id]="componentId">
-        </svg>
-    </div>
-    <div *ngIf = "legend">
-        <amexio-d3chartlegend (onLegendClick)="getLegendClick($event)" [data] = "dataset">
-        </amexio-d3chartlegend>
-
-    </div>
-</div>
-
-<!-- id = "barchartId" -->
+<table>
+    <tr><td colspan="2"> {{title}} </td></tr>
+    <tr>
+        <td>
+            <svg [attr.height]="svgheight" [attr.width]="svgwidth" [attr.id]="componentId">
+            </svg>            
+        </td>
+        <td  *ngIf = "legend">
+            <amexio-d3chartlegend (onLegendClick)="getLegendClick($event)" [data] = "dataset">
+            </amexio-d3chartlegend>
+        </td>
+    </tr>
+</table>
+    
