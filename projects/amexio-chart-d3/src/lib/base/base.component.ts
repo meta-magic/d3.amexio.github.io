@@ -12,9 +12,9 @@ export class AmexioD3BaseChartComponent{
 
     @Input('color') colors: any;
 
-    @Input('width') width: any;
+    @Input('width') width: any = "300";
 
-    @Input('height') height: any;
+    @Input('height') height: any = "300";
 
     @Input() title: any = "";
 
