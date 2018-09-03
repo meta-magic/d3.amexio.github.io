@@ -81,10 +81,17 @@ export class AmexioD3BarChartComponent {
   componentId: any;
   ngOnInit() {
     this.componentId = 'donut'+ this.generateRandomText();
+    this.initializeData();
     setTimeout(() => {
       this.plotChart();
-    }, 2000);
+    }, 0);
 
+  }
+
+  initializeData() {
+    this.dataset.forEach(element => {
+      element.color = this.getColors(element);
+    });
   }
 
   plotChart() {
@@ -115,7 +122,7 @@ export class AmexioD3BarChartComponent {
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x));
     //add y axis to svg
     g.append("g").call(d3.axisLeft(y).ticks(10))
-    this.initializeData();
+   
     //add bar chart
     g.selectAll(".bar")
       .data(this.dataset)
@@ -193,12 +200,7 @@ export class AmexioD3BarChartComponent {
     }
   }
 
-  initializeData() {
-    this.dataset.forEach(element => {
-      element.color = this.getColors(element);
-    });
-  }
-
+  
   generateRandomText(){
     let text = "";
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcddefghijklmonpqrstuvwxyz";
