@@ -1,0 +1,7 @@
+<table style="height: 100%;">
+    <tr *ngFor = "let node of data" style="cursor: pointer;" (click)="onLegendClick(node)">
+        <td style="height: 10px; width: 23px; padding-left: 2px;"
+            [ngStyle]="{'background-color': node.color}"></td>
+        <td>{{node.label}}</td>
+    </tr>
+</table>
