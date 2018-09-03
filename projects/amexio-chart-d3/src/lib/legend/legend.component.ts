@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 @Component({
-    selector : 'amexio-d3-legeng',
+    selector : 'amexio-d3-legend',
     templateUrl : './legend.component.html'
 })
 export class AmexioD3Legend
