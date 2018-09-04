@@ -7,6 +7,8 @@ export class AmexioD3BaseChartComponent{
     @Input('data') data: any;
 
     @Output() onLegendClick: any = new EventEmitter<any>();
+
+    @Output() onChartClick: any = new EventEmitter<any>();
     
     @Input() legend: boolean = true ;
 
@@ -72,6 +74,15 @@ export class AmexioD3BaseChartComponent{
         }
     }
 
+
+    legendClick(node:any){
+        this.onLegendClick.emit(node);
+    }
+
+    chartClick(node:any){
+        this.onChartClick.emit(node);
+    }
+    
     protected toolTip (d3:any) :any{
        return  d3.select("body")
                       .append("div")

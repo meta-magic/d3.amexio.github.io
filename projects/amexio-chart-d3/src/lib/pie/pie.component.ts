@@ -9,7 +9,9 @@ export class AmexioD3PieChartComponent implements OnInit {
   @Input('data') data: any;
 
   @Output() onLegendClick: any = new EventEmitter<any>();
-  
+
+  @Output() onChartClick: any = new EventEmitter<any>();
+
   @Input() legend: boolean = true ;
 
   @Input('color') colors: any = [];
@@ -25,7 +27,11 @@ export class AmexioD3PieChartComponent implements OnInit {
 
   }
 
-  onClick(event:any){
-    this.onLegendClick.emit(event);
+  legendClick(node:any){
+    this.onLegendClick.emit(node);
+  }
+
+  chartClick(node:any){
+      this.onChartClick.emit(node);
   }
 }

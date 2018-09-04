@@ -64,21 +64,22 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             .attr("height", (d) =>  { return height - y(d.value); })
             .style("fill", (d) =>  { return d.color;})
             .on("mouseover", (d) => {
-                            return tooltip.style("visibility", "visible");
+                    return tooltip.style("visibility", "visible");
             })
             .on("mousemove", (d) => {
-                            return tooltip.html(this.toolTipContent(d))
+                    return tooltip.html(this.toolTipContent(d))
                                         .style("top", (d3.event.pageY-10)+"px")
                                         .style("left",(d3.event.pageX+10)+"px");
             })
             .on("mouseout", (d) => {
-                            return tooltip.style("visibility", "hidden");
+                    return tooltip.style("visibility", "hidden");
+            })
+            .on("click", (d) => {
+               this.chartClick(d);
             });
 
     }
 
-      onClick(node:any){
-        this.onLegendClick.emit(node);
-      }
+
   
 }

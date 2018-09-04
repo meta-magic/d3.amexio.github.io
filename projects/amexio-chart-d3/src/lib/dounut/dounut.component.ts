@@ -55,15 +55,18 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
                         return (d && d.data && d.data.color) ? d.data.color : "black"
                       })
                       .on("mouseover", (d) => {
-                                      return tooltip.style("visibility", "visible");
+                                return tooltip.style("visibility", "visible");
                       })
                       .on("mousemove", (d) => {
-                                      return tooltip.html(this.toolTipContent(d.data))
-                                                    .style("top", (d3.event.pageY-10)+"px")
-                                                    .style("left",(d3.event.pageX+10)+"px");
+                                return tooltip.html(this.toolTipContent(d.data))
+                                              .style("top", (d3.event.pageY-10)+"px")
+                                              .style("left",(d3.event.pageX+10)+"px");
                       })
                       .on("mouseout", (d) => {
-                                      return tooltip.style("visibility", "hidden");
+                                return tooltip.style("visibility", "hidden");
+                      })
+                      .on("click", (d) => {
+                          this.chartClick(d);
                       });
 
       const text = svg.append("text")
@@ -84,8 +87,5 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
     }
 
     
-    onClick(node:any){
-      this.onLegendClick.emit(node);
-    }
 
 }
