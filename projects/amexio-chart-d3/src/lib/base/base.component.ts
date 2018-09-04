@@ -76,10 +76,12 @@ export class AmexioD3BaseChartComponent{
 
 
     legendClick(node:any){
+        debugger;
         this.onLegendClick.emit(node);
     }
 
     chartClick(node:any){
+        debugger;
         this.onChartClick.emit(node);
     }
     

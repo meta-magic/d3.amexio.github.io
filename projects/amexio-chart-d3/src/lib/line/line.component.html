@@ -1,0 +1,12 @@
+<table>
+    <tr><td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td></tr>
+    <tr>
+        <td>
+            <svg [attr.height]="height" [attr.width]="width" [attr.id]="componentId">
+            </svg>            
+        </td>
+        <td style="display: block; padding: 5px;">
+            <amexio-d3-legend (onClick)="legendClick($event)" [data]="data" style="height:100%;"></amexio-d3-legend>
+        </td>
+    </tr>
+</table>
