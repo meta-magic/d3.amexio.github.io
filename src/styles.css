@@ -1,10 +1,8 @@
 .amexiod3tooltip {
-  background: #d5f4e6;
-  border:  #618685;
-  border-radius: 2px;
-  border-style: solid;
+  background: white;
+  border:  1px solid black;
+  border-radius: 10px;
   padding: 2px;
   position: absolute;
   text-align: center;
-   
 }
