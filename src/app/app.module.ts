@@ -6,12 +6,10 @@ import { AppComponent } from './app.component';
 
 import {AmexioChartD3Module} from 'amexio-chart-d3';
 import {AmexioWidgetModule} from 'amexio-ng-extensions';
-import { AmexioD3BarChartComponent1 } from './bar/bar.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    AmexioD3BarChartComponent1
+    AppComponent
   ],
   imports: [
     BrowserModule,
