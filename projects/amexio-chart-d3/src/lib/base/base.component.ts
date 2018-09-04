@@ -3,14 +3,13 @@ import { Input, Output, EventEmitter } from "@angular/core";
 
 export class AmexioD3BaseChartComponent{
 
-
-    @Input('data') data: any;
-
     @Output() onLegendClick: any = new EventEmitter<any>();
 
     @Output() onChartClick: any = new EventEmitter<any>();
     
-    @Input() legend: boolean = true ;
+    @Input('data') data: any;
+
+    @Input('legend') legend: boolean = true ;
 
     @Input('color') colors: any;
 
@@ -18,7 +17,7 @@ export class AmexioD3BaseChartComponent{
 
     @Input('height') height: any = "300";
 
-    @Input() title: any = "";
+    @Input('title') title: any = "";
 
     predefinedcolors: string[];
     

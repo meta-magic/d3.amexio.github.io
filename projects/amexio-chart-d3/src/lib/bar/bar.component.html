@@ -6,7 +6,8 @@
                 </svg>            
             </td>
             <td style="display: block; padding: 5px;">
-                <amexio-d3-legend (onClick)="legendClick($event)" [data]="data" style="height:100%;"></amexio-d3-legend>
+                <amexio-d3-legend  *ngIf="legend" (onClick)="legendClick($event)" 
+                                    [data]="data" style="height:100%;"></amexio-d3-legend>
             </td>
         </tr>
     </table>

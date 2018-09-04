@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
@@ -9,6 +9,10 @@ import { PlotCart } from "../base/chart.component";
 })
 export class AmexioD3LineComponent extends AmexioD3BaseChartComponent implements PlotCart{
 
+    @Input('horizontal-scale') hScale : boolean = true;
+
+    @Input('vertical-scale')   vScale : boolean = false;
+    
     constructor(){
         super('line');
     }
@@ -35,7 +39,6 @@ export class AmexioD3LineComponent extends AmexioD3BaseChartComponent implements
         const height    = +svg.attr("height") - margin.top - margin.bottom;
         const g         = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
         const x = d3.scaleBand()
                     .rangeRound([0, width])
                     .padding(0.1);                    
@@ -50,15 +53,29 @@ export class AmexioD3LineComponent extends AmexioD3BaseChartComponent implements
         x.domain(this.data.map( (d) => { return d.label }));
         y.domain([0, d3.max(this.data,  (d) => { return d.value; })]);
         
+
         g.append("g")
             .attr("transform", "translate(0," + height + ")")
             .attr("color", "grey")
             .call(d3.axisBottom(x));
     
+
         g.append("g")
             .attr("color", "grey")
             .call(d3.axisLeft(y));
     
+        if(this.vScale){
+            g.append('g')
+                .attr("color", "lightgrey")
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(d3.axisBottom(x).tickSize(-this.width).tickFormat(''));
+        }
+        if(this.hScale){
+            g.append('g')
+                .attr("color", "lightgrey")
+                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));     
+        }
+
         g.append("path")
             .datum(this.data)
             .attr("fill", "none")
