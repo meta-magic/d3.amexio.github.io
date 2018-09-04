@@ -1,25 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
-.bar:hover
-{
-fill: #17bf3c;
-}
-.tooltip
-{
+.amexiod3tooltip {
   background: #d5f4e6;
   border:  #618685;
+  border-radius: 2px;
   border-style: solid;
-  border-radius: 8px;
-  font-family: 'Lobster';
-  font-size: 12px;
-  font-weight: bold;
-  height: 20px;
   padding: 2px;
-  pointer-events: none;
   position: absolute;
   text-align: center;
-  width: 120px;
+   
 }
-  span
-  {
-    color: #d11515;
-  }

@@ -1,8 +1,10 @@
 .amexiod3tooltip {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: 1px solid;
-    background: white;
+  background: #d5f4e6;
+  border:  #618685;
+  border-radius: 2px;
+  border-style: solid;
+  padding: 2px;
+  position: absolute;
+  text-align: center;
    
 }

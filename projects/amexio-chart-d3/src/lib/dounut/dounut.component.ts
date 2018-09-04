@@ -5,16 +5,12 @@ import { PlotCart } from '../base/chart.component';
 
 @Component({
     selector : 'amexio-d3-chart-donut',
-    templateUrl:'./dounut.component.html'
+    templateUrl:'./dounut.component.html',
+    styleUrls : ['../tooltip/tooltip.component.css']    
 })
 export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent 
                                            implements PlotCart
 {
-
-    tooltipdata : any;
-    showtooltip : boolean = false;
-    tooltipx : string;
-    tooltipy : string;
 
     @Input('pie') pie : boolean = false;
 
@@ -38,12 +34,14 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
         innerRadius = 0;
       }
 
+      const tooltip = this.toolTip(d3);
+                  
       const arc = d3.arc()
                 .outerRadius(outerRadius)
                 .innerRadius(innerRadius);
 
       const pie = d3.pie()
-                      .value(function(d){return d.value})
+                      .value( (d)=>{return d.value});
 
       const svg = d3.select("#"+this.componentId)
                   .append('g')
@@ -52,19 +50,23 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
                   .data(pie(this.data))
                   .enter();
 
-
       const path = svg.append('path')
                       .attr('d', arc)
-                      .attr('fill', (d,i) => {
+                      .attr('fill', function(d,i) {
                         return (d && d.data && d.data.color) ? d.data.color : "black"
                       })
-                      .on('mouseover',(data) =>{
-                        this.showToolTip(data, d3.event.pageX, d3.event.pageY);
+                      .on("mouseover", (d) => {
+                                      return tooltip.style("visibility", "visible");
                       })
-                      .on('mouseout',(data) =>{
-                        this.hideToolTip();
-                      });                   
-                      
+                      .on("mousemove", (d) => {
+                                      return tooltip.html(this.toolTipContent(d.data))
+                                                    .style("top", (d3.event.pageY-10)+"px")
+                                                    .style("left",(d3.event.pageX+10)+"px");
+                      })
+                      .on("mouseout", (d) => {
+                                      return tooltip.style("visibility", "hidden");
+                      });
+
       const text = svg.append("text")
                       .transition()
                       .duration(200)
@@ -82,25 +84,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
 
     }
 
-    showToolTip(node:any, x:any, y:any){
-      this.showtooltip = true;
-      this.tooltipx = x+"px";
-      this.tooltipy = y+"px";
-      const ttdata = node.data;
-      this.tooltipdata = [];
-      for (const key in ttdata) {
-        if (ttdata.hasOwnProperty(key)) {
-          const value = ttdata[key];
-          this.tooltipdata.push({'text':key,'value':value});
-        }
-      }
-     
-    }
     
-    hideToolTip(){
-      this.showtooltip = false;
-    }
-
     onClick(node:any){
       this.onLegendClick.emit(node);
     }

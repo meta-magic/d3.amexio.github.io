@@ -12,9 +12,9 @@ export class AmexioD3BaseChartComponent{
 
     @Input('color') colors: any;
 
-    @Input('width') width: any = "300px";
+    @Input('width') width: any = "300";
 
-    @Input('height') height: any = "300px";
+    @Input('height') height: any = "300";
 
     @Input() title: any = "";
 
@@ -70,5 +70,35 @@ export class AmexioD3BaseChartComponent{
             this.colorIndex++;
             return color;
         }
+    }
+
+    protected toolTip (d3:any) :any{
+       return  d3.select("body")
+                      .append("div")
+                      .attr('id','tooltipid')
+                      .attr('class','tooltip')
+                      .style("position", "absolute")
+                      .style("z-index", "10")
+                      .style("visibility", "hidden");
+    }
+
+    protected toolTipContent(tooltipdata:any) :any{
+      let tooltiphtml = "<table>";
+      for (const key in tooltipdata) {
+        if (tooltipdata.hasOwnProperty(key)) {
+          const value = tooltipdata[key];
+          tooltiphtml = tooltiphtml + "<tr>";
+          tooltiphtml = tooltiphtml + "<td>";
+          tooltiphtml = tooltiphtml + key;
+          tooltiphtml = tooltiphtml + "</td>";
+          tooltiphtml = tooltiphtml + "<td>";
+          tooltiphtml = tooltiphtml + value;
+          tooltiphtml = tooltiphtml + "</td>";
+          tooltiphtml = tooltiphtml + "</tr>";
+        }
+      }
+      tooltiphtml = tooltiphtml + "</table>";
+
+      return tooltiphtml;
     }
 }

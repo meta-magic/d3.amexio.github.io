@@ -4,12 +4,16 @@ import { PlotCart } from "../base/chart.component";
 import * as d3 from 'd3';
 
 @Component({
-    selector : 'amexio-d3-chart-bar',
-    templateUrl :'./bar.component.html',
-    styleUrls : ['../tooltip/tooltip.component.css']
+    selector : 'amexio-d3-chart-bar1',
+    templateUrl :'./bar.component.html'
 })
-export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart
+export class AmexioD3BarChartComponent1 extends AmexioD3BaseChartComponent implements PlotCart
 {
+    tooltipdata : any;
+    showtooltip : boolean = false;
+    tooltipx : string;
+    tooltipy : string;
+
     constructor(){
         super('bar');
     }

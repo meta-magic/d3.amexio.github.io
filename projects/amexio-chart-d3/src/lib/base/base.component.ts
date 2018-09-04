@@ -71,4 +71,34 @@ export class AmexioD3BaseChartComponent{
             return color;
         }
     }
+
+    protected toolTip (d3:any) :any{
+       return  d3.select("body")
+                      .append("div")
+                      .attr('id','tooltipid')
+                      .attr('class','amexiod3tooltip')
+                      .style("position", "absolute")
+                      .style("z-index", "10")
+                      .style("visibility", "hidden");
+    }
+
+    protected toolTipContent(tooltipdata:any) :any{
+      let tooltiphtml = "<table>";
+      for (const key in tooltipdata) {
+        if (tooltipdata.hasOwnProperty(key)) {
+          const value = tooltipdata[key];
+          tooltiphtml = tooltiphtml + "<tr>";
+          tooltiphtml = tooltiphtml + "<td>";
+          tooltiphtml = tooltiphtml + key;
+          tooltiphtml = tooltiphtml + "</td>";
+          tooltiphtml = tooltiphtml + "<td>";
+          tooltiphtml = tooltiphtml + value;
+          tooltiphtml = tooltiphtml + "</td>";
+          tooltiphtml = tooltiphtml + "</tr>";
+        }
+      }
+      tooltiphtml = tooltiphtml + "</table>";
+
+      return tooltiphtml;
+    }
 }

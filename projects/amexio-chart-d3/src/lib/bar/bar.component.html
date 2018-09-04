@@ -1,17 +1,14 @@
 <table>
-    <tr><td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td></tr>
-    <tr>
-        <td>
-            <svg [attr.height]="height" [attr.width]="width" [attr.id]="componentId">
-            </svg>            
-        </td>
-        <td style="display: block; padding: 5px;">
-            <amexio-d3-legend (onClick)="onClick($event)" [data]="data" style="height:100%;"></amexio-d3-legend>
-        </td>
-    </tr>
-</table>
-<div  *ngIf="showtooltip"  style="position: fixed; opacity: 1;" 
-                           [ngStyle]="{'left': tooltipx,'top':tooltipy}">
-    <amexio-d3-tooltip [data]="tooltipdata"></amexio-d3-tooltip>
-</div>
-
+        <tr><td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td></tr>
+        <tr>
+            <td>
+                <svg [attr.height]="height" [attr.width]="width" [attr.id]="componentId">
+                </svg>            
+            </td>
+            <td style="display: block; padding: 5px;">
+                <amexio-d3-legend (onClick)="onClick($event)" [data]="data" style="height:100%;"></amexio-d3-legend>
+            </td>
+        </tr>
+    </table>
+    
+    
