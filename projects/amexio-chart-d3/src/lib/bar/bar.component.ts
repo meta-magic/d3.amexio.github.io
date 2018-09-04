@@ -5,8 +5,7 @@ import * as d3 from 'd3';
 
 @Component({
     selector : 'amexio-d3-chart-bar',
-    templateUrl :'./bar.component.html',
-    styleUrls : ['../tooltip/tooltip.component.css']
+    templateUrl :'./bar.component.html'
 })
 export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart
 {

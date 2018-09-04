@@ -5,8 +5,7 @@ import { PlotCart } from '../base/chart.component';
 
 @Component({
     selector : 'amexio-d3-chart-donut',
-    templateUrl:'./dounut.component.html',
-    styleUrls : ['../tooltip/tooltip.component.css']    
+    templateUrl:'./dounut.component.html'
 })
 export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent 
                                            implements PlotCart
