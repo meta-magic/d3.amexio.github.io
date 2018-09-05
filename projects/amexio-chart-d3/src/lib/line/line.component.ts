@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ViewChild, ElementRef } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseLineComponent } from "./baseline.component";
 import { PlotCart } from "../base/chart.component";
@@ -9,18 +9,31 @@ import { PlotCart } from "../base/chart.component";
 })
 export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart{
 
+    @ViewChild('chartId') chartId: ElementRef;
+    
+   
+
+    
     constructor(){
         super('line');
+        debugger;
     }
 
     ngOnInit(){
+        debugger;
         setTimeout(()=>{
           this.plotD3Chart();
         },0);
     }
 
+    resize(){
+        
+    }
+
     plotD3Chart() : void {
-       
+        
+        this.svgwidth  = this.chartId.nativeElement.offsetWidth;
+
         const tooltip = this.toolTip(d3);
 
         const linechart = this.initChart();

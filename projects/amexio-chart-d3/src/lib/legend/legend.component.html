@@ -1,7 +1,23 @@
-<table style="height: 100%;">
+<table *ngIf="!horizontal" style="height: 100%;">
     <tr *ngFor = "let node of data" style="cursor: pointer;" (click)="onLegendClick(node)">
         <td style="height: 10px; width: 23px; padding-left: 2px;"
             [ngStyle]="{'background-color': node.color}"></td>
         <td>{{node.label}}</td>
+    </tr>
+</table>
+
+<table *ngIf="horizontal" style="height: 100%;">
+    <tr>
+        <td *ngFor = "let node of data" 
+                    (click)="onLegendClick(node)" 
+                    style="cursor: pointer;">
+            
+            <div style=" display: inline-block; display: inline-block; padding: 2px;">
+                    <div style=" width: 10px; display: inline-block; padding: 2px; " 
+                    [ngStyle]="{'background-color': node.color}"></div>
+                {{node.label}}
+            </div>
+        </td>
+        
     </tr>
 </table>

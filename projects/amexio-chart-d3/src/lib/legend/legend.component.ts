@@ -9,6 +9,8 @@ export class AmexioD3Legend
 
     @Input('data') data : any;
 
+    @Input('horizontal') horizontal : boolean = false;
+
     @Output() onClick : any = new EventEmitter<any>();
 
     onLegendClick(node:any){

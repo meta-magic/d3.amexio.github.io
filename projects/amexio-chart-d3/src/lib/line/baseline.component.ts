@@ -4,6 +4,7 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
 
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 {
+    svgwidth : any;
     private _data      : any;
     private xaxisdata  : any[];
     private yaxisdata  : any[];
@@ -81,7 +82,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
         const svg       = d3.select("#"+this.componentId);
         const margin    = { top: 20, right: 20, bottom: 30, left: 40 };
-        const width     = +svg.attr("width") - margin.left - margin.right;
+        const width     = +this.svgwidth - margin.left - margin.right;
         const height    = +svg.attr("height") - margin.top - margin.bottom;
         const g         = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
