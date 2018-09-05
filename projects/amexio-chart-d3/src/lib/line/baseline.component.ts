@@ -1,13 +1,81 @@
-import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { Input } from "@angular/core";
 import * as d3 from 'd3';
+import { AmexioD3BaseChartComponent } from "../base/base.component";
 
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 {
+    private _data      : any;
+    private xaxisdata  : any[];
+    private yaxisdata  : any[];
+    private legenddata : any[];
+    legends    : any[];
+
+    protected multiseriesdata : any[];
+
     @Input('horizontal-scale') hScale : boolean = true;
 
     @Input('vertical-scale')   vScale : boolean = false;
 
+    @Input('data') 
+    set data(v:any){
+        this._data = v;
+        this.createXYAxisData();
+    }
+
+    get data(){
+        return this._data;
+    }
+
+
+    protected createXYAxisData() : void {
+
+        this.xaxisdata = [];
+        this.yaxisdata = [];
+        this.multiseriesdata = [];
+        this.legenddata = [];
+        this.legends = [];
+        
+
+        const msdarray : any [] =[];
+
+        for (let index = 0; index < this._data[0].length; index++) {
+            const legend = this._data[0][index];
+            msdarray[index]=[];
+            this.legenddata.push({'label':legend.label,'color':this.predefinedcolors[index+1]});
+            if(index > 0)
+                this.legends.push({'label':legend.label,'color':this.predefinedcolors[index]});
+        }
+
+        let i = 0;
+        this._data.forEach(object => {
+            if(i>0){
+                let j = 0;
+                object.forEach(a =>{
+                    if(j===0){
+                        this.xaxisdata.push({'label':a, 'value':a});
+                    }else{
+                        this.yaxisdata.push({'label':a, 'value':a});
+                    }
+                    msdarray[j].push(a);
+                    j++;
+                });
+            }
+            i++;
+        });
+
+        for (let index = 0; index < msdarray.length; index++) {
+            const element = msdarray[index];
+            if(index >0){
+                let md : any [] = [];
+                for (let j = 0; j < element.length; j++) {
+                    const v = element[j];
+                    md.push({'legend':this.legenddata[index].label,'label':this.xaxisdata[j].value, 'value':v});
+                }
+                this.multiseriesdata.push(md);
+                this.legends[index-1].data = md;
+            }
+        }
+    }
 
     protected initChart() : any {
 
@@ -24,8 +92,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         const y = d3.scaleLinear()
                      .rangeRound([height, 0]);
 
-        x.domain(this.data.map( (d) => { return d.label }));
-        y.domain([0, d3.max(this.data,  (d) => { return d.value; })]);
+        x.domain(this.xaxisdata.map( (d) => { return d.label;}));
+        y.domain([0, d3.max(this.yaxisdata,  (d) => { return d.value; })]);
              
         g.append("g")
             .attr("transform", "translate(0," + height + ")")
@@ -41,7 +109,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
             g, x, y, height, width
         }
 
-    }
+    }    
+
 
     protected plotScale(g:any,x:any, y:any,height:any,width:any) : void 
     {
@@ -58,39 +127,13 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         }
     }
 
-    protected plotLine(g:any,x:any, y:any,height:any,width:any, data:any, tooltip :any, i:number) : void
-    {
-        const line = d3.line()
-                        .x(function(d) { return x(d.label); })
-                        .y(function(d) { return y(d.value); });        
-    
-        g.append("path")
-            .datum(data)
-            .attr("fill", "none")
-            .attr("stroke", this.predefinedcolors[i])
-            .attr("stroke-width", 1.5)
-            .attr("d", line);
-
-        g.selectAll('dot')
-                .data(data)
-                .enter()
-                .append('circle')
-                .attr("cx",  (d) => { return x(d.label); })
-                .attr("cy", (d) =>  { return y(d.value); })
-                .attr('r', 2)
-                .on("mouseover", (d) => {
-                    return tooltip.style("visibility", "visible");
-                })
-                .on("mousemove", (d) => {
-                        return tooltip.html(this.toolTipContent(d))
-                                            .style("top", (d3.event.pageY-10)+"px")
-                                            .style("left",(d3.event.pageX+10)+"px");
-                })
-                .on("mouseout", (d) => {
-                        return tooltip.style("visibility", "hidden");
-                })
-                .on("click", (d) => {
-                     this.chartClick(d);
-                });
-    }    
+ 
+    legendClick(node:any){
+        const legendNode = JSON.parse(JSON.stringify(node));
+        delete legendNode.color;
+        legendNode.data.forEach(element => {
+            delete element.legend;
+        });
+        this.onLegendClick.emit(legendNode);
+    }
 }

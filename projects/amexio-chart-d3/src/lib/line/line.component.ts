@@ -1,7 +1,7 @@
-import { PlotCart } from "../base/chart.component";
-import { Component, Input } from "@angular/core";
+import { Component } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseLineComponent } from "./baseline.component";
+import { PlotCart } from "../base/chart.component";
 
 @Component({
     selector : 'amexio-d3-chart-line',
@@ -9,19 +9,11 @@ import { AmexioD3BaseLineComponent } from "./baseline.component";
 })
 export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart{
 
-   
     constructor(){
         super('line');
     }
 
     ngOnInit(){
-        this.initializeData();
-        
-        this.data.forEach(element => {
-            element.label = element.label;
-            element.value = +element.value;
-        });
-
         setTimeout(()=>{
           this.plotD3Chart();
         },0);
@@ -34,9 +26,53 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         const linechart = this.initChart();
 
         this.plotScale(linechart.g, linechart.x, linechart.y, linechart.height, linechart.width);
-        this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height, linechart.width, this.data, tooltip,1);
+        
+        this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height, 
+                      linechart.width, [], tooltip,(1));    
+        
+        for (let index = 0; index < this.multiseriesdata.length; index++) {
+                 this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height, 
+                     linechart.width, this.multiseriesdata[index], tooltip,(index+1));    
+        }
+        
 
     }
 
+    private plotLine(g:any,x:any, y:any,height:any,width:any, data:any, tooltip :any, i:number) : void
+    {
+        const line = d3.line()
+                        .x(function(d) { return x(d.label); })
+                        .y(function(d) { return y(d.value); });        
+    
+        g.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", this.predefinedcolors[i])
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
 
+        g.selectAll('dot')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr("cx",  (d) => { return x(d.label); })
+                .attr("cy", (d) =>  { return y(d.value); })
+                .attr('r', 2)
+                .on("mouseover", (d) => {
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", (d) => {
+                        debugger;
+                        return tooltip.html(this.toolTipWithLegendandAxis(d.legend,d.label,d.value))
+                                            .style("top", (d3.event.pageY-10)+"px")
+                                            .style("left",(d3.event.pageX+10)+"px");
+                })
+                .on("mouseout", (d) => {
+                        return tooltip.style("visibility", "hidden");
+                })
+                .on("click", (d) => {
+                     this.chartClick(d);
+                });
+    }       
+   
 }

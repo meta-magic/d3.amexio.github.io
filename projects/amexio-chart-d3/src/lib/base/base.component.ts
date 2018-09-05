@@ -113,4 +113,13 @@ export class AmexioD3BaseChartComponent{
 
       return tooltiphtml;
     }
+
+    protected toolTipWithLegendandAxis(legend: string, xaxis:string, yaxis: string) :any{
+        let tooltiphtml = "<div>";
+        tooltiphtml = tooltiphtml + "<b>"+xaxis+"</b>, ";
+        tooltiphtml = tooltiphtml + legend+"</b> ";
+        tooltiphtml = tooltiphtml + "<b>"+yaxis+"</b> ";
+        tooltiphtml = tooltiphtml + "</div>";
+        return tooltiphtml;
+    }
 }
