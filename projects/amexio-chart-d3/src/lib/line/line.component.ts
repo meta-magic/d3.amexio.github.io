@@ -62,7 +62,6 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
                     return tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", (d) => {
-                        debugger;
                         return tooltip.html(this.toolTipWithLegendandAxis(d.legend,d.label,d.value))
                                             .style("top", (d3.event.pageY-10)+"px")
                                             .style("left",(d3.event.pageX+10)+"px");

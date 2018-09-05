@@ -5,8 +5,14 @@
                         Bar Chart
                     </amexio-header>
                     <amexio-body>
-                        <amexio-d3-chart-bar  [title]="'Bar Chart'" [data] = "barchartdata" [color] = "barchartcolor">
-                        </amexio-d3-chart-bar>            
+                            <amexio-d3-chart-line (onLegendClick)="onClick($event)" 
+                                (onChartClick)="onClick($event)"  
+                                [title]="'Line Chart'" 
+                                [data] = "multilinedata">
+                             </amexio-d3-chart-line>            
+        
+        {{node|json}}
+                                    
                     </amexio-body>
                     <amexio-action>
                         footer
