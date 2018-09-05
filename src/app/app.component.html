@@ -10,16 +10,32 @@
                                 [title]="'Line Chart'" 
                                 [data] = "multilinedata">
                              </amexio-d3-chart-line>            
-        
-        {{node|json}}
-                                    
                     </amexio-body>
                     <amexio-action>
                         footer
                     </amexio-action>
             </amexio-card>        
         </amexio-column>
-    </amexio-row>
+
+        <amexio-column [size] =6 >
+                <amexio-card [header]="true">
+                        <amexio-header>
+                            Bar Chart
+                        </amexio-header>
+                        <amexio-body>
+                                <amexio-d3-chart-line (onLegendClick)="onClick($event)" 
+                                    (onChartClick)="onClick($event)"  
+                                    [title]="'Line Chart'" 
+                                    [data] = "singleline">
+                                 </amexio-d3-chart-line>            
+                        </amexio-body>
+                        <amexio-action>
+                            footer
+                        </amexio-action>
+                </amexio-card>        
+        </amexio-column>
+    
+</amexio-row>
     
 <amexio-row>
     <amexio-column [size] =6 >
