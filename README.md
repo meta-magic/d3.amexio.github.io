@@ -2,7 +2,7 @@
   <br>
   <a href="http://www.amexio.tech/"><img src="https://image.ibb.co/kdy6Ev/logo.png" alt="Amexio" width="200"></a>
   <br>
-    Amexio D3-Charts
+    Amexio D3-Chart
   <br>
 </h1>
 
@@ -57,14 +57,14 @@ Navigate to http://localhost:4200/. The app will automatically reload if you cha
 
 For More on Angular CLI [commands](https://github.com/angular/angular-cli/wiki) click on the link.
 
-## Amexio D3 Charts - Installation
+## Amexio D3 Chart - Installation
 
 To install this library, follow the steps given below:
 
-To install the Amexio D3-Charts:
+To install the Amexio D3-Chart:
 
 ```bash
-npm install amexio-d3-charts --save
+npm install amexio-d3-chart --save
 ```
 
 and then from your Angular `AppModule`:
@@ -78,8 +78,8 @@ import { AppComponent } from './app.component';
 // Import your service library
 import { CommonDataService } from 'amexio-ng-extensions';
 
-// To import D3-Charts
-import { Amexiod3ChartsModule } from 'amexio-d3-charts';
+// To import D3-Chart
+import { AmexioChartD3Module } from 'amexio-d3-chart';
 
 @NgModule({
   declarations: [
@@ -88,7 +88,7 @@ import { Amexiod3ChartsModule } from 'amexio-d3-charts';
   imports: [
     BrowserModule,
     FormsModule,
-    Amexiod3ChartsModule,
+    AmexioChartD3Module,
   ],
   providers: [CommonDataService],
   bootstrap: [AppComponent]
