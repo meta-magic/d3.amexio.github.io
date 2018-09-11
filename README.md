@@ -75,10 +75,7 @@ import { NgModule } from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import { AppComponent } from './app.component';
 
-// Import your service library
-import { CommonDataService } from 'amexio-ng-extensions';
-
-// To import D3-Chart
+// To import D3-Chart :-
 import { AmexioChartD3Module } from 'amexio-d3-chart';
 
 @NgModule({
@@ -90,7 +87,7 @@ import { AmexioChartD3Module } from 'amexio-d3-chart';
     FormsModule,
     AmexioChartD3Module,
   ],
-  providers: [CommonDataService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
