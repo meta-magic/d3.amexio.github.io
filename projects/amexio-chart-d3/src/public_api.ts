@@ -6,4 +6,5 @@ export * from './lib/dounut/dounut.component';
 export * from './lib/pie/pie.component';
 export * from './lib/bar/bar.component';
 export * from './lib/line/line.component';
+export * from './lib/barstack/barstack.component';
  
