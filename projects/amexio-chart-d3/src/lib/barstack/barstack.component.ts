@@ -8,13 +8,6 @@ import { AmexioD3BaseChartComponent } from '../base/base.component';
   styleUrls: ['./barstack.component.css']
 })
 export class BarstackComponent extends AmexioD3BaseChartComponent implements OnInit {
-
- 
-
-  @ViewChild('chartId') chartId: ElementRef;
-
-
-  ///data1: any[];
   legendArray: any[];
   keyArray: any[];
   predefinedcolors: any[]
@@ -27,7 +20,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() legend: boolean = true;
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
-
+  @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
 
   constructor() {
@@ -137,7 +130,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .attr("x", (d) => {
         return x(+d.data[Object.keys(d.data)[0]]);
-
       })
       .attr("y", (d) => { return y(d[1]); })
       .attr("height", (d) => { return y(d[0]) - y(d[1]); })
@@ -163,7 +155,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     svg.append("g")
       .attr("transform", "translate(" + margin.left + ",0)")
       .call(d3.axisLeft(y));
-
   }
 
   stackMin(serie) {
@@ -175,7 +166,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   resize() {
-
   }
 
   legendClick(event: any) {
@@ -186,7 +176,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
 
   setKey(d: any) {
      let diff = d[0] - d[1];
-
     if (diff < 0) {
       diff = (diff * (-1));
     }
@@ -196,8 +185,5 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return (this.toolTipContent(object));
       }
     }
-
   }
-
-
 }
