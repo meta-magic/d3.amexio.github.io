@@ -132,6 +132,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return x(+d.data[Object.keys(d.data)[0]]);
       })
       .attr("y", (d) => { return y(d[1]); })
+      .attr("cursor","pointer")
       .attr("height", (d) => { return y(d[0]) - y(d[1]); })
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
