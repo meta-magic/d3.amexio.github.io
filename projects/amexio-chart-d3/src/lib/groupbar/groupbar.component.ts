@@ -91,7 +91,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent {
       .call(d3.axisLeft(y)
         .ticks(10))
 
-    svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
+   // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
 
     //adding bars
     let slice = svg.selectAll(".slice")
@@ -108,6 +108,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent {
       .style("fill", function (d, index) { return colors[index] })
       .attr("y", function (d) { return y(0); })
       .attr("height", function (d) { return height - y(0); })
+      .attr("cursor", "pointer")
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
       })
@@ -124,9 +125,9 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent {
       });
 
     slice.selectAll("rect")
-      .transition()
-      .delay(function (d) { return Math.random() * 1000; })
-      .duration(1000)
+      // .transition()
+      // .delay(function (d) { return Math.random() * 1000; })
+      // .duration(1000)
       .attr("y", function (d) { return y(d.value); })
       .attr("height", function (d) { return height - y(d.value); });
 
