@@ -11,17 +11,12 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
 
     @ViewChild('chartId') chartId: ElementRef;
     
-   
-
-    
     constructor(){
         super('line');
-        debugger;
-    }
+     }
 
     ngOnInit(){
-        debugger;
-        setTimeout(()=>{
+         setTimeout(()=>{
           this.plotD3Chart();
         },0);
     }
@@ -71,6 +66,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
                 .attr("cx",  (d) => { return x(d.label); })
                 .attr("cy", (d) =>  { return y(d.value); })
                 .attr('r', 2)
+                .attr("cursor", "pointer")
                 .on("mouseover", (d) => {
                     return tooltip.style("visibility", "visible");
                 })
