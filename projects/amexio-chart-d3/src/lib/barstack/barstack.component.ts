@@ -18,6 +18,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() barwidth: number = 0;
   @Input() title: String = "";
   @Input() legend: boolean = true;
+  @Input() color: string[] = [];
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
@@ -120,7 +121,17 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       .data(series)
       .enter().append("g")
       .attr("fill", (d, index) => {
-        return colors[index];
+        // if (this.color.length > 0) {
+        //   if (this.color[index]) {
+        //     return this.color[index];
+        //   }
+        //   else {
+        //     return colors[index];
+        //   }
+        // }
+        // else{
+        return colors[index];           
+        // }
       })
       .selectAll("rect")
       .data((d) => { return d; })
@@ -132,13 +143,13 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return x(+d.data[Object.keys(d.data)[0]]);
       })
       .attr("y", (d) => { return y(d[1]); })
-      .attr("cursor","pointer")
+      .attr("cursor", "pointer")
       .attr("height", (d) => { return y(d[0]) - y(d[1]); })
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
       })
       .on("mousemove", (d: any) => {
-         return tooltip.html(this.setKey(d))
+        return tooltip.html(this.setKey(d))
           .style("top", (d3.event.pageY - 10) + "px")
           .style("left", (d3.event.pageX + 10) + "px");
       })
@@ -146,7 +157,8 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-        this.chartClick(d);
+       this.setBarClickText(d);
+       // this.chartClick(d);
       });
 
     svg.append("g")
@@ -176,7 +188,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   setKey(d: any) {
-     let diff = d[0] - d[1];
+    let diff = d[0] - d[1];
     if (diff < 0) {
       diff = (diff * (-1));
     }
@@ -187,4 +199,23 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       }
     }
   }
+
+  setBarClickText(d: any){
+    let diff = d[0] - d[1];
+    if (diff < 0) {
+      diff = (diff * (-1));
+    }
+    for (let [key, value] of Object.entries(d.data)) {
+      if (value == diff) {
+        let object = { 'label': key, 'value': value };
+        this.chartClick(object);
+         //return (this.toolTipContent(object));
+      }
+    }
+  }
+  // barStackChartClick(d: any){
+  //   let obj = {'label': }
+  //   this.chartClick(d);
+
+  // }
 }

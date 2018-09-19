@@ -69,7 +69,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
                                 return tooltip.style("visibility", "hidden");
                       })
                       .on("click", (d) => {
-                          this.chartClick(d);
+                          this.chartClick(d.data);
                       });
 
       const text = svg.append("text")

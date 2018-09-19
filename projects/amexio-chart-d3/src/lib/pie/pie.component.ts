@@ -32,6 +32,6 @@ export class AmexioD3PieChartComponent implements OnInit {
   }
 
   chartClick(node:any){
-      this.onChartClick.emit(node);
+       this.onChartClick.emit(node.data);
   }
 }
