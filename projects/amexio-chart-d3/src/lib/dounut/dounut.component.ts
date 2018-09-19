@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef} from '@angular/core';
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { PlotCart } from '../base/chart.component';
@@ -7,15 +7,17 @@ import { PlotCart } from '../base/chart.component';
     selector : 'amexio-d3-chart-donut',
     templateUrl:'./dounut.component.html'
 })
-export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent 
-                                           implements PlotCart
+export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent implements PlotCart
 {
 
     @Input('pie') pie : boolean = false;
+    @Input('width') svgwidth: number = 300;
+    @Input('height') svgheight: number = 300;
+    @ViewChild('chartId') chartId: ElementRef;
 
     constructor() 
     {
-      super('d-p');
+      super('DONUTCHART');
     }
 
     ngOnInit(){
@@ -26,8 +28,8 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
     }
 
     plotD3Chart(){
-      const outerRadius = this.width/2;
-      let innerRadius = this.width/4;
+      const outerRadius = this.svgwidth/2;
+      let innerRadius = this.svgwidth/4;
       
       if(this.pie){
         innerRadius = 0;
@@ -44,7 +46,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
 
       const svg = d3.select("#"+this.componentId)
                   .append('g')
-                  .attr('transform','translate('+ this.width/2 +','+  this.height/2 +')')
+                  .attr('transform','translate('+ this.svgwidth/2 +','+  this.svgheight/2 +')')
                   .selectAll('path')
                   .data(pie(this.data))
                   .enter();
@@ -54,6 +56,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
                       .attr('fill', function(d,i) {
                         return (d && d.data && d.data.color) ? d.data.color : "black"
                       })
+                      .attr('cursor', 'pointer')
                       .on("mouseover", (d) => {
                                 return tooltip.style("visibility", "visible");
                       })
@@ -83,9 +86,11 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent
                         return (d && d.data && d.data.textcolor) ? d.data.textcolor : "black";
                       })
                       .style( 'font-size','12px');                      
-
     }
 
+    resize(){
+
+    }
     
 
 }
