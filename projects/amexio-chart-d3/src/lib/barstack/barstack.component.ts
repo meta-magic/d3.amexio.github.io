@@ -121,17 +121,17 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       .data(series)
       .enter().append("g")
       .attr("fill", (d, index) => {
-        // if (this.color.length > 0) {
-        //   if (this.color[index]) {
-        //     return this.color[index];
-        //   }
-        //   else {
-        //     return colors[index];
-        //   }
-        // }
-        // else{
+        if (this.color.length > 0) {
+          if (this.color[index]) {
+            return this.color[index];
+          }
+          else {
+            return colors[index];
+          }
+        }
+        else{
         return colors[index];
-        // }
+        }
       })
       .selectAll("rect")
       .data((d) => { return d; })
