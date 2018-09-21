@@ -10,7 +10,7 @@ import { AmexioD3BaseChartComponent } from '../base/base.component';
 export class BarstackComponent extends AmexioD3BaseChartComponent implements OnInit {
   legendArray: any[];
   keyArray: any[];
-  predefinedcolors: any[]
+  predefinedcolors: any[];
   legends: any[];
   charttype: string;
   data: any[];
@@ -92,7 +92,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       .offset(d3.stackOffsetDiverging)
       (this.data);
 
-    let svg = d3.select("svg"),
+    let svg = d3.select("#" + this.componentId),
       width = +this.svgwidth - margin.left - margin.right,
       height = +svg.attr("height");
 
@@ -130,7 +130,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         //   }
         // }
         // else{
-        return colors[index];           
+        return colors[index];
         // }
       })
       .selectAll("rect")
@@ -157,8 +157,8 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-       this.setBarClickText(d);
-       // this.chartClick(d);
+        this.setBarClickText(d);
+        // this.chartClick(d);
       });
 
     svg.append("g")
@@ -200,7 +200,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     }
   }
 
-  setBarClickText(d: any){
+  setBarClickText(d: any) {
     let diff = d[0] - d[1];
     if (diff < 0) {
       diff = (diff * (-1));
@@ -209,7 +209,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       if (value == diff) {
         let object = { 'label': key, 'value': value };
         this.chartClick(object);
-         //return (this.toolTipContent(object));
+        //return (this.toolTipContent(object));
       }
     }
   }
