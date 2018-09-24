@@ -73,8 +73,14 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     this.legends = []
     this.keyArray.forEach((element, index) => {
       const legenddata = this.legendArray[element];
-      let object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
-      this.legends.push(object);
+      if(this.color.length > 0) {
+        let object = { 'label': element, 'color': this.color[index], 'data': legenddata.data };
+        this.legends.push(object);
+      } else {
+        let object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
+        this.legends.push(object);
+
+      }
     });
   }
 
