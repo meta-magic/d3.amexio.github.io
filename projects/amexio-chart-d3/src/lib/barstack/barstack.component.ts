@@ -92,11 +92,11 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       .offset(d3.stackOffsetDiverging)
       (this.data);
 
-    let svg = d3.select("#" + this.componentId),
+      let svg = d3.select("#" + this.componentId),
       width = +this.svgwidth - margin.left - margin.right,
       height = +svg.attr("height");
 
-    let x = d3.scaleBand()
+     let x = d3.scaleBand()
       .domain(data.map((d) => {
         return d[Object.keys(d)[0]];
       }))

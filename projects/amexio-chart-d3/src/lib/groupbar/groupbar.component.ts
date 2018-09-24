@@ -1,5 +1,5 @@
 
-import { Component, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit,Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import * as d3 from 'd3';
 @Component({
@@ -7,7 +7,7 @@ import * as d3 from 'd3';
   templateUrl: './groupbar.component.html',
   styleUrls: ['./groupbar.component.css']
 })
-export class GroupbarComponent extends AmexioD3BaseChartComponent {
+export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnInit {
   @ViewChild('chartId') chartId: ElementRef;
   @Input() data: any;
   @Input() legend: boolean = true;
@@ -19,9 +19,11 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent {
   legendArray: any;
   keyArray: any;
   legends: any;
-
+  years:any;
   constructor() {
+  
     super('multibar');
+   
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
   }
   
@@ -42,15 +44,18 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent {
 
   private plotGroupBarChart(): void {
 
+   
     const tooltip = this.toolTip(d3);
     let colors = this.predefinedcolors;
     this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = this.svgwidth - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const width =  this.svgwidth- margin.left - margin.right;
+    const height = this.svgheight - margin.top - margin.bottom;
 
-    let svg = d3.select("svg")
+  
+
+    let svg = d3.select("#"+this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -66,10 +71,10 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent {
       .rangeRound([height, 0]);
 
     //setting x and y domains
-    let years = this.groupbarchartArray.map(function (d) { return d.labels; });
+     this.years = this.groupbarchartArray.map(function (d) { return d.labels; });
     let label = this.groupbarchartArray[0].values.map(function (d) { return d.label; });
 
-    x0.domain(years);
+    x0.domain(this.years);
     x1.domain(label).rangeRound([0, x0.bandwidth()]);
     y.domain([0, d3.max(this.groupbarchartArray, function (labels) { return d3.max(labels.values, function (d) { return d.value; }); })]);
 
