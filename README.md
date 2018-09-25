@@ -61,10 +61,10 @@ For More on Angular CLI [commands](https://github.com/angular/angular-cli/wiki) 
 
 To install this library, follow the steps given below:
 
-To install the Amexio D3-Chart:
+To install the Amexio Chart-d3:
 
 ```bash
-npm install amexio-d3-chart --save
+npm install amexio-chart-d3 --save
 ```
 
 and then from your Angular `AppModule`:
@@ -75,8 +75,8 @@ import { NgModule } from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import { AppComponent } from './app.component';
 
-// To import D3-Chart :-
-import { AmexioChartD3Module } from 'amexio-d3-chart';
+// To import Amexio Chart D3 :-
+import { AmexioChartD3Module } from 'amexio-chart-d3';
 
 @NgModule({
   declarations: [
