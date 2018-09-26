@@ -105,9 +105,9 @@ export class AmexioD3BaseChartComponent{
         if (tooltipdata.hasOwnProperty(key)) {
           const value = tooltipdata[key];
           tooltiphtml = tooltiphtml + "<tr>";
-          tooltiphtml = tooltiphtml + "<td>";
-          tooltiphtml = tooltiphtml + key;
-          tooltiphtml = tooltiphtml + "</td>";
+        //   tooltiphtml = tooltiphtml + "<td>";
+        //   tooltiphtml = tooltiphtml + key;
+        //   tooltiphtml = tooltiphtml + "</td>";
           tooltiphtml = tooltiphtml + "<td>";
           tooltiphtml = tooltiphtml + value;
           tooltiphtml = tooltiphtml + "</td>";
