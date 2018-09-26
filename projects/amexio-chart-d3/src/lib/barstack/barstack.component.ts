@@ -232,7 +232,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       }
     }
   }
-
+//sets text on click of bar
   setBarClickText(d: any) {
     let diff = d[0] - d[1];
     if (diff < 0) {
