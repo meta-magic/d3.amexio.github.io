@@ -16,34 +16,54 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     @Input('width') svgwidth: number = 300;
     @Input('height') svgheight: number = 300;
     @ViewChild('chartId') chartId: ElementRef;
-
+    @Input('data-reader') datareader: string;
     constructor(private myservice:CommanDataService) 
     {
-      super('DONUTCHART');
+            super('DONUTCHART');
     }
 
   ngOnInit() {
-
+       let resp:any;
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
-        this.data = response;
+        resp = response;
       }, (error) => {
       }, () => {
-        this.initializeData();
+        
         setTimeout(() => {
+         
+          this.data= this.getResponseData(resp);
+          this.initializeData();
           this.plotD3Chart();
         }, 0);
       });
+    
     } else
       if (this.data) {
 
-        this.initializeData();
-        setTimeout(() => {
+      
+      setTimeout(() => {
+          this.data= this.getResponseData(this.data);
+          this.initializeData();
           this.plotD3Chart();
         }, 0);
       }       
   }
 
+  getResponseData(httpResponse: any) {
+    let responsedata = httpResponse;
+  if (this.datareader != null) {
+    const dr = this.datareader.split('.');
+    for (const ir of dr) {
+      debugger;
+      responsedata = responsedata[ir];
+    }
+  } else {
+    responsedata = httpResponse;
+  }
+  return responsedata; 
+ 
+}
     plotD3Chart(){
       const outerRadius = this.svgwidth/2;
       let innerRadius = this.svgwidth/4;
