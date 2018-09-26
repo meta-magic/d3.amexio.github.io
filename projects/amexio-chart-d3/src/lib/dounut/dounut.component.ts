@@ -2,6 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef} f
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { PlotCart } from '../base/chart.component';
+import { HttpClient,HttpClientModule } from '@angular/common/http';
+import {CommanDataService} from '../services/comman.data.service';
 
 @Component({
     selector : 'amexio-d3-chart-donut',
@@ -15,17 +17,32 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     @Input('height') svgheight: number = 300;
     @ViewChild('chartId') chartId: ElementRef;
 
-    constructor() 
+    constructor(private myservice:CommanDataService) 
     {
       super('DONUTCHART');
     }
 
-    ngOnInit(){
-      this.initializeData();
-      setTimeout(()=>{
-        this.plotD3Chart();
-      },0);
-    }
+  ngOnInit() {
+
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+        this.data = response;
+      }, (error) => {
+      }, () => {
+        this.initializeData();
+        setTimeout(() => {
+          this.plotD3Chart();
+        }, 0);
+      });
+    } else
+      if (this.data) {
+
+        this.initializeData();
+        setTimeout(() => {
+          this.plotD3Chart();
+        }, 0);
+      }       
+  }
 
     plotD3Chart(){
       const outerRadius = this.svgwidth/2;
@@ -87,10 +104,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
                       })
                       .style( 'font-size','12px');                      
     }
-
     resize(){
-
-    }
-    
-
+    }   
 }
