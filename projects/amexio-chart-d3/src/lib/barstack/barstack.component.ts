@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
+import { CommanDataService } from '../services/comman.data.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
 
 @Component({
   selector: 'amexio-d3-chart-barstack',
@@ -24,15 +27,33 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
 
-  constructor() {
+  constructor(private myservice: CommanDataService) {
     super('barstack');
   }
 
   ngOnInit() {
-    this.transformData(this.data1);
-    setTimeout(() => {
-      this.plotChart();
-    }, 0);
+    // this.transformData(this.data1);
+    // setTimeout(() => {
+    //   this.plotChart();
+    // }, 0);
+
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+        this.data = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          // this.transformData(this.data1);
+          this.plotChart();
+        }, 0);
+      });
+    } else if (this.data1) {
+
+      setTimeout(() => {
+        this.transformData(this.data1);
+        this.plotChart();
+      }, 0);
+    }
   }
 
   transformData(data1: any) {
@@ -73,13 +94,12 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     this.legends = []
     this.keyArray.forEach((element, index) => {
       const legenddata = this.legendArray[element];
-      if(this.color.length > 0) {
+      if (this.color.length > 0) {
         let object = { 'label': element, 'color': this.color[index], 'data': legenddata.data };
         this.legends.push(object);
       } else {
         let object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
         this.legends.push(object);
-
       }
     });
   }
@@ -92,17 +112,26 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     let data;
 
     data = this.data;
-
+    let keysetarray: string[] = [];
+    if (this.httpmethod && this.httpurl) {
+      for (let [key, value] of Object.entries(this.data[0])) {
+        keysetarray.push(key);
+      }
+      this.keyArray = keysetarray;
+      this.keyArray.splice(0, 1);
+    }
     let series = d3.stack()
-      .keys(this.keyArray)
+      .keys(
+        this.keyArray
+      )
       .offset(d3.stackOffsetDiverging)
       (this.data);
 
-      let svg = d3.select("#" + this.componentId),
+    let svg = d3.select("#" + this.componentId),
       width = +this.svgwidth - margin.left - margin.right,
       height = +svg.attr("height");
 
-     let x = d3.scaleBand()
+    let x = d3.scaleBand()
       .domain(data.map((d) => {
         return d[Object.keys(d)[0]];
       }))
@@ -112,9 +141,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     let y = d3.scaleLinear()
       .domain([d3.min(this.stackMin(series)), d3.max(this.stackMax(series))])
       .rangeRound([height - margin.bottom, margin.top]);
-
     let z = d3.scaleOrdinal(d3.schemeCategory10);
-
     if (this.barwidth > 0) {
       this.barwidth = this.barwidth;
     }
@@ -135,8 +162,8 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
             return colors[index];
           }
         }
-        else{
-        return colors[index];
+        else {
+          return colors[index];
         }
       })
       .selectAll("rect")
