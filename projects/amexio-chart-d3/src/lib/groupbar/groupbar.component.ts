@@ -16,6 +16,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
+  @Input('data-reader') datareader: string;
   groupbarchartArray: any[] = [];
   legendArray: any;
   keyArray: any;
@@ -30,28 +31,46 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   }
   
   ngOnInit() {
+    let res:any;
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
-        this.data = response;
+          res=response;
+      
       }, (error) => {
       }, () => {
         setTimeout(() => {
+          
+          this.data= this.getResponseData(res);
           this.initializeData();
-          this.groupbarchartArray = this.data;
-          this.plotD3Chart1();
+          this.plotD3Chart();
         }, 0);
-
-
+    
       });
+   
     } else if (this.data) {
 
+      
       setTimeout(() => {
+        this.data=this.getResponseData(this.data);
         this.initializeData();
         this.plotD3Chart();
       }, 0);
-
+    
     }
   }
+
+  getResponseData(httpResponse: any) {
+      let responsedata = httpResponse;
+    if (this.datareader != null) {
+      const dr = this.datareader.split('.');
+      for (const ir of dr) {
+        responsedata = responsedata[ir];
+      }
+    } else {
+      responsedata = httpResponse;
+    }
+    return responsedata; 
+  }  
   plotD3Chart(): void {
 
     this.convertToJSON();
@@ -59,11 +78,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     this.transformData(this.data);
   }
 
-  plotD3Chart1() {
-               this.plotGroupBarChart();
-               this.transformto2dArray();
-               this.transformData(this.urllegendArray);
-  }
+
   private plotGroupBarChart(): void {
 
   
@@ -102,10 +117,10 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
     //dynamic barwidth
     if (this.barwidth > 0) {
-      this.barwidth = this.barwidth;
+            this.barwidth = this.barwidth;
     }
     else {
-      this.barwidth = x0.bandwidth;
+             this.barwidth = x0.bandwidth;
     }
 
     // add x axis to svg
@@ -126,6 +141,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .enter().append("g")
       .attr("class", "g")
       .attr("transform", function (d) { return "translate(" + x0(d.labels) + ",0)"; });
+    
 
     slice.selectAll("rect")
       .data(function (d) { return d.values; })
@@ -152,9 +168,6 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       });
 
     slice.selectAll("rect")
-      // .transition()
-      // .delay(function (d) { return Math.random() * 1000; })
-      // .duration(1000)
       .attr("y", function (d) { return y(d.value); })
       .attr("height", function (d) { return height - y(d.value); });
 

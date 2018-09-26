@@ -14,7 +14,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('width') svgwidth: number = 300;
     @Input('height') svgheight: number = 300;
     @ViewChild('chartId') chartId: ElementRef;
-
+    @Input('data-reader') datareader: string;
     constructor(private myservice:CommanDataService ) {
         super('bar');
        
@@ -23,22 +23,25 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
  
   
     ngOnInit() {
-
+        let resp: any
         if (this.httpmethod && this.httpurl) {
             this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
-                this.data = response;
+                resp = response;
             }, (error) => {
             }, () => {
                 setTimeout(() => {
+                    this.data = this.getResponseData(resp);
                     this.initializeData();
                     this.plotD3Chart();
                 }, 0);
 
 
             });
+
         } else if (this.data) {
 
             setTimeout(() => {
+                this.data = this.getResponseData(this.data);
                 this.initializeData();
                 this.plotD3Chart();
             }, 0);
@@ -46,7 +49,19 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         }
     }
        
-    
+    getResponseData(httpResponse: any) {
+        let responsedata = httpResponse;
+        if (this.datareader != null) {
+          const dr = this.datareader.split('.');
+          for (const ir of dr) {
+            responsedata = responsedata[ir];
+          }
+        } else {
+          responsedata = httpResponse;
+        }
+      console.log("data",responsedata)
+        return responsedata;
+      }  
 
  
     plotD3Chart() {
