@@ -18,6 +18,11 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     @Input('vertical-scale')   vScale : boolean = false;
 
     @Input('data') 
+
+    @Input('http-url') httpurl: any;
+    
+    @Input('http-method') httpmethod: any;
+
     set data(v:any){
         this._data = v;
         this.createXYAxisData();

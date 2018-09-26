@@ -1,8 +1,10 @@
-import { Component, ViewChild, ElementRef } from "@angular/core";
+import { Component, ViewChild, ElementRef, Input } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseLineComponent } from "./baseline.component";
+import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
-
+import { HttpClient,HttpClientModule } from '@angular/common/http';
+import {CommanDataService} from '../services/comman.data.service';
 @Component({
     selector : 'amexio-d3-chart-line',
     templateUrl : "./line.component.html"
@@ -11,14 +13,28 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
 
     @ViewChild('chartId') chartId: ElementRef;
     
-    constructor(){
-        super('line');
+    
+    constructor(private myservice:CommanDataService){
+          super('line');
      }
 
     ngOnInit(){
-         setTimeout(()=>{
-          this.plotD3Chart();
-        },0);
+
+        if (this.httpmethod && this.httpurl) {
+            this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+                this.data = response;
+            }, (error) => {
+            }, () => {
+                setTimeout(() => {
+                    this.plotD3Chart();
+                }, 0);
+            });
+        } else
+            if (this.data) {
+                setTimeout(() => {
+                    this.plotD3Chart();
+                }, 0);
+            }       
     }
 
     resize(){
@@ -37,17 +53,18 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         
         this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height, 
                       linechart.width, [], tooltip,(1));    
-        
+      
         for (let index = 0; index < this.multiseriesdata.length; index++) {
                  this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height, 
                      linechart.width, this.multiseriesdata[index], tooltip,(index+1));    
         }
-        
+      
 
     }
 
     private plotLine(g:any,x:any, y:any,height:any,width:any, data:any, tooltip :any, i:number) : void
     {
+        
         const line = d3.line()
                         .x(function(d) { return x(d.label); })
                         .y(function(d) { return y(d.value); });        
