@@ -1,6 +1,7 @@
 
 import { Component, OnInit,Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
+import {CommanDataService} from '../services/comman.data.service'
 import * as d3 from 'd3';
 @Component({
   selector: 'amexio-d3-chart-multiseries',
@@ -20,7 +21,8 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   keyArray: any;
   legends: any;
   years:any;
-  constructor() {
+  urllegendArray=[];
+  constructor(private myservice:CommanDataService) {
   
     super('multibar');
    
@@ -28,30 +30,50 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   }
   
   ngOnInit() {
-    setTimeout(() => {
-      this.initializeData();
-      this.plotD3Chart();
-    }, 0);
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+        this.data = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          this.initializeData();
+          this.groupbarchartArray = this.data;
+          this.plotD3Chart1();
+        }, 0);
 
+
+      });
+    } else if (this.data) {
+
+      setTimeout(() => {
+        this.initializeData();
+        this.plotD3Chart();
+      }, 0);
+
+    }
   }
   plotD3Chart(): void {
 
     this.convertToJSON();
     this.plotGroupBarChart();
-    this.transformData();
-
+    this.transformData(this.data);
   }
 
+  plotD3Chart1() {
+               this.plotGroupBarChart();
+               this.transformto2dArray();
+               this.transformData(this.urllegendArray);
+  }
   private plotGroupBarChart(): void {
 
-   
+  
     const tooltip = this.toolTip(d3);
     let colors = this.predefinedcolors;
     this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const width =  this.svgwidth- margin.left - margin.right;
-    const height = this.svgheight - margin.top - margin.bottom;
+    const height = 500 - margin.top - margin.bottom;
 
   
 
@@ -126,7 +148,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .on("click", (d) => {
         this.chartClick(d);
-        console.log("d", d);
+       
       });
 
     slice.selectAll("rect")
@@ -147,7 +169,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     const legendNode = JSON.parse(JSON.stringify(event));
     delete legendNode.color;
     this.onLegendClick.emit(legendNode);
-    console.log(legendNode);
+  
 
   }
 
@@ -180,11 +202,48 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
   }
 
-  transformData() {
+
+  transformto2dArray() {
+    let i = 0
+    let result = [];
+    result.push("years");
+    this.data.forEach((element, i) => {
+      if (i == 0) {
+        element.values.forEach(element2 => {
+          result.push(element2.label);
+
+        });
+      }
+
+    });
+    this.urllegendArray.push(result);
+
+    let temparray = [];
+    this.data.forEach(element => {
+      temparray = [];
+      let values: any;
+      let year = element.labels;
+      temparray.push(year);
+      element.values.forEach(element2 => {
+        values = element2.value;
+        temparray.push(values);
+      });
+      this.urllegendArray.push(temparray);
+
+    });
+
+
+  }
+
+ 
+  
+
+  transformData(data: any) {
+
     this.keyArray = [];
     this.legendArray = [];
 
-    this.data.forEach((element, i) => {
+    data.forEach((element, i) => {
       if (i == 0) {
         element.forEach((innerelement, index) => {
           if (index > 0) {
@@ -194,7 +253,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         });
       }
     });
-    this.data.forEach((element, index) => {
+    data.forEach((element, index) => {
       if (index > 0) {
         let obj: any = {};
         element.forEach((innerelement, innerindex) => {
@@ -216,6 +275,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       const legenddata = this.legendArray[element];
       let object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
       this.legends.push(object);
+
 
     });
   }

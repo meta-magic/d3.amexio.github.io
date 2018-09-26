@@ -1,6 +1,5 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 
-
 export class AmexioD3BaseChartComponent{
 
    
@@ -10,6 +9,10 @@ export class AmexioD3BaseChartComponent{
     @Output() onChartClick: any = new EventEmitter<any>();
     
     @Input('data') data: any;
+
+    @Input('http-url') httpurl: any;
+    
+    @Input('http-method') httpmethod: any;
 
     @Input('legend') legend: boolean = true ;
 
@@ -44,7 +47,9 @@ export class AmexioD3BaseChartComponent{
         });
       }
 
-    private generateId(){
+
+     
+        private generateId(){
        let id = "";
        for(let i = 0; i<5; i++){
         id = id + this.possible

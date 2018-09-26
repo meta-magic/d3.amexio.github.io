@@ -1,6 +1,9 @@
 import { Component, Input, ViewChild, ElementRef, } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
+import { HttpClient,HttpClientModule } from '@angular/common/http';
+import {CommanDataService} from '../services/comman.data.service';
+
 import * as d3 from 'd3';
 
 @Component({
@@ -12,25 +15,46 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('height') svgheight: number = 300;
     @ViewChild('chartId') chartId: ElementRef;
 
-    constructor() {
+    constructor(private myservice:CommanDataService ) {
         super('bar');
-    }
-
+       
+      }
+  data:any;
+ 
+  
     ngOnInit() {
-        this.initializeData();
-        setTimeout(() => {
-            this.plotD3Chart();
-        }, 0);
+
+        if (this.httpmethod && this.httpurl) {
+            this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+                this.data = response;
+            }, (error) => {
+            }, () => {
+                setTimeout(() => {
+                    this.initializeData();
+                    this.plotD3Chart();
+                }, 0);
+
+
+            });
+        } else if (this.data) {
+
+            setTimeout(() => {
+                this.initializeData();
+                this.plotD3Chart();
+            }, 0);
+
+        }
     }
+       
+    
 
+ 
     plotD3Chart() {
-
+       
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
-
-
         const tooltip = this.toolTip(d3);
-
         const svg = d3.select("#" + this.componentId);
+
 
         const margin = { top: 20, right: 20, bottom: 30, left: 40 };
         const width = this.svgwidth - margin.left - margin.right;
