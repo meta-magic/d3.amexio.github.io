@@ -12,6 +12,7 @@ import {CommanDataService} from '../services/comman.data.service';
 export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart{
 
     @ViewChild('chartId') chartId: ElementRef;
+    @Input('data-reader') datareader: string;
     
     
     constructor(private myservice:CommanDataService){
@@ -19,19 +20,21 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
      }
 
     ngOnInit(){
-
+        let resp: any
         if (this.httpmethod && this.httpurl) {
             this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
-                this.data = response;
+               resp = response;
             }, (error) => {
             }, () => {
                 setTimeout(() => {
+                    this.data = this.getResponseData(resp);
                     this.plotD3Chart();
                 }, 0);
             });
         } else
             if (this.data) {
                 setTimeout(() => {
+                    this.data = this.getResponseData(this.data);
                     this.plotD3Chart();
                 }, 0);
             }       
@@ -40,6 +43,21 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     resize(){
         
     }
+
+    getResponseData(httpResponse: any) {
+        let responsedata = httpResponse;
+        if (this.datareader != null) {
+          const dr = this.datareader.split('.');
+          for (const ir of dr) {
+            responsedata = responsedata[ir];
+          }
+        } else {
+          responsedata = httpResponse;
+        }
+        return responsedata;
+      }  
+
+
 
     plotD3Chart() : void {
         
