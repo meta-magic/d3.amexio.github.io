@@ -27,6 +27,8 @@ export class AmexioD3PieChartComponent  implements OnInit {
     
    @Input('http-method') httpmethod: any;
 
+   @Input('data-reader') datareader: string;
+
   
   ngOnInit(){
    
