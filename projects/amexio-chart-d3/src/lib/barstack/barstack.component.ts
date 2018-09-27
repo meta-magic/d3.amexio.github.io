@@ -89,6 +89,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         });
         tempinnerarray.push(obj);
       }
+      
     });
     this.data = [];
     tempinnerarray.forEach(element => {
