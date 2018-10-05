@@ -10,7 +10,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     private yaxisdata  : any[];
     private legenddata : any[];
     legends    : any[];
-
+    protected xaxisname : any;
     protected multiseriesdata : any[];
 
     @Input('horizontal-scale') hScale : boolean = true;
@@ -40,11 +40,9 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         this.multiseriesdata = [];
         this.legenddata = [];
         this.legends = [];
-        
-
-        const msdarray : any [] =[];
-
-        for (let index = 0; index < this._data[0].length; index++) {
+        this.xaxisname = this.data[0][0].label;
+         const msdarray : any [] =[];
+         for (let index = 0; index < this._data[0].length; index++) {
             const legend = this._data[0][index];
             msdarray[index]=[];
             this.legenddata.push({'label':legend.label,'color':this.predefinedcolors[index+1]});
@@ -57,7 +55,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
             if(i>0){
                 let j = 0;
                 object.forEach(a =>{
-                    if(j===0){
+                     if(j===0){
                         this.xaxisdata.push({'label':a, 'value':a});
                     }else{
                         this.yaxisdata.push({'label':a, 'value':a});
