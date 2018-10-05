@@ -100,14 +100,16 @@ export class AmexioD3BaseChartComponent{
     }
 
     protected toolTipContent(tooltipdata:any) :any{
-      let tooltiphtml = "<table>";
+       let tooltiphtml = "<table>";
       for (const key in tooltipdata) {
         if (tooltipdata.hasOwnProperty(key)) {
           const value = tooltipdata[key];
           tooltiphtml = tooltiphtml + "<tr>";
+//------------------
         //   tooltiphtml = tooltiphtml + "<td>";
-        //   tooltiphtml = tooltiphtml + key;
+        //   tooltiphtml = tooltiphtml + key+':';
         //   tooltiphtml = tooltiphtml + "</td>";
+//------------------
           tooltiphtml = tooltiphtml + "<td>";
           tooltiphtml = tooltiphtml + value;
           tooltiphtml = tooltiphtml + "</td>";
@@ -127,4 +129,15 @@ export class AmexioD3BaseChartComponent{
         tooltiphtml = tooltiphtml + "</div>";
         return tooltiphtml;
     }
+
+    protected toolTipForBar(tooltipData: any): any{
+         let tooltiphtml = "<div>";
+        for (let [key, value] of Object.entries(tooltipData)) {
+            let sideStyle="float:left";
+         tooltiphtml = tooltiphtml + "<span style ="+sideStyle+" ><b>" + key +" "+ "</b>" +value + "</br></span>";
+         tooltiphtml = tooltiphtml + "</div>";
+        }
+         return tooltiphtml;
+    }
+
 }

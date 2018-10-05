@@ -19,6 +19,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('data-reader') datareader: string;
   groupbarchartArray: any[] = [];
   legendArray: any;
+  xaxisData: any;
   keyArray: any;
   legends: any;
   years:any;
@@ -141,13 +142,12 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .enter().append("g")
       .attr("class", "g")
       .attr("transform", function (d) { return "translate(" + x0(d.labels) + ",0)"; });
-    
-
     slice.selectAll("rect")
       .data(function (d) { return d.values; })
       .enter().append("rect")
       .attr("width", x1.bandwidth)
-      .attr("x", function (d) { return x1(d.label) })
+      .attr("x", function (d) { 
+         return x1(d.label) })
       .style("fill", function (d, index) { return colors[index] })
       .attr("y", function (d) { return y(0); })
       .attr("height", function (d) { return height - y(0); })
@@ -156,7 +156,10 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         return tooltip.style("visibility", "visible");
       })
       .on("mousemove", (d) => {
-        return tooltip.html(this.toolTipContent(d))
+         return tooltip.html(
+          this.setKey(d)
+          //  this.toolTipContent(d)
+        )
           .style("top", (d3.event.pageY - 10) + "px")
           .style("left", (d3.event.pageX + 10) + "px");
       }).on("mouseout", (d) => {
@@ -178,18 +181,16 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   legendClick(event: any) {
-
     const legendNode = JSON.parse(JSON.stringify(event));
     delete legendNode.color;
     this.onLegendClick.emit(legendNode);
-  
-
   }
 
   //2d array to json conversion
   convertToJSON() {
     let groupChartObj = { "labels": "", values: [] };
     let firstRowOfData = this.data[0];
+    this.xaxisData = this.data[0][0];
 
     for (let i = 1; i < this.data.length; i++) {
       let multiSeriesArray = [];
@@ -198,11 +199,11 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       for (let j = 1; j < this.data[i].length; j++) {
 
         valueOfJ = this.data[i][0];
-        let singleBarObj = { "value": "", "label": "" };
+        let singleBarObj = {};
         singleBarObj["value"] = this.data[i][j];
         singleBarObj["label"] = firstRowOfData[j];
+        singleBarObj["xaxis"] =this.data[i][0];
         multiSeriesArray.push(singleBarObj);
-
       }
       if (multiSeriesArray.length) {
         groupChartObj["values"] = multiSeriesArray;
@@ -292,5 +293,14 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
     });
   }
+
+  setKey(d: any) {
+       let object = {};
+        object[d.label] = d.value;
+        object[this.xaxisData] = d.xaxis;
+        return (this.toolTipForBar(object));
+
+  }
+
 
 }

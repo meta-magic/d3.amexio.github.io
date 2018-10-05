@@ -1,7 +1,6 @@
 import { Component, Input, ViewChild, ElementRef, } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommanDataService } from '../services/comman.data.service';
 
 import * as d3 from 'd3';
@@ -17,6 +16,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @ViewChild('chartId') chartId: ElementRef;
     @Input('data-reader') datareader: string;
     data: any;
+    // keyArray: any[] = [];
+    // transformeddata: any[] = [];
     constructor(private myservice: CommanDataService) {
         super('bar');
     }
@@ -30,7 +31,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 setTimeout(() => {
                     this.data = this.getResponseData(resp);
                     this.initializeData();
-                    this.plotD3Chart();
+                     this.plotD3Chart();
                 }, 0);
             });
 
@@ -42,6 +43,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 this.plotD3Chart();
             }, 0);
         }
+
+        // this.transformData(this.data);
+
     }
 
     getResponseData(httpResponse: any) {
@@ -103,7 +107,10 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", (d) => {
-                    return tooltip.html(this.toolTipContent(d))
+                    return tooltip.html(
+                        this.formLegendData(d)
+                        // this.toolTipContent(d)
+                    )
                         .style("top", (d3.event.pageY - 10) + "px")
                         .style("left", (d3.event.pageX + 10) + "px");
                 })
@@ -159,7 +166,10 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "visible");
                 })
                 .on("mousemove", (d) => {
-                    return tooltip.html(this.toolTipContent(d))
+                    return tooltip.html(
+                        this.formLegendData(d)
+                        // this.toolTipContent(d)
+                    )
                         .style("top", (d3.event.pageY - 10) + "px")
                         .style("left", (d3.event.pageX + 10) + "px");
                 })
@@ -170,11 +180,20 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     this.chartClick(d);
                 });
         }
+    }
 
+    formLegendData(tooltipData: any) {
+        // let data = d;
+        //let object = {'label': d.label, 'value': d.value};
+        let obj = {};
+        obj[tooltipData.label] = tooltipData.value;
+        //return  this.toolTipContent(obj);
+        return this.toolTipForBar(obj);
     }
 
     resize() {
 
     }
+
 
 }

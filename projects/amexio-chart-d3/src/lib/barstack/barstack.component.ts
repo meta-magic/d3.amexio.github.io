@@ -18,6 +18,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   charttype: string;
   data: any[];
   datareaderdata: any[];
+  xaxis: any;
   @Input('data') data1: any
   @Input() barwidth: number = 0;
   @Input() title: String = "";
@@ -69,6 +70,9 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
             this.legendArray[innerelement] = { 'data': [] };
             this.keyArray.push(innerelement);
           }
+          else if (index == 0) {
+            this.xaxis = innerelement;
+          }
         });
       }
     });
@@ -89,7 +93,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         });
         tempinnerarray.push(obj);
       }
-      
+
     });
     this.data = [];
     tempinnerarray.forEach(element => {
@@ -138,7 +142,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return d[Object.keys(d)[0]];
       }))
       .rangeRound([margin.left, width - margin.right])
-       .padding(0.1);
+      .padding(0.1);
 
     let y = d3.scaleLinear()
       .domain([d3.min(this.stackMin(series)), d3.max(this.stackMax(series))])
@@ -233,11 +237,16 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     }
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
-        let object = { 'label': key, 'value': value };
-        return (this.toolTipContent(object));
+        //  let object = { 'label': key, 'value': value , 'legend': d.data[Object.keys(d.data)[0]]};
+        let object = {};
+        object[key] = value;
+        object[this.xaxis] = d.data[Object.keys(d.data)[0]];
+
+        return (this.toolTipForBar(object));
       }
     }
   }
+
   setBarClickText(d: any) {
     let diff = d[0] - d[1];
     if (diff < 0) {
@@ -262,7 +271,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     } else {
       responsedata = httpResponse;
     }
-
     return responsedata;
   }
 
