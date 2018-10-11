@@ -16,8 +16,9 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
   @Input('data-reader') datareader: string;
-  // keyArray: any[] = [];
-  // transformeddata: any[] =[];
+  keyArray: any[] = [];
+  transformeddata: any[] = [];
+  legendArray:any[] = [];
   constructor(private myservice: CommanDataService) {
     super('DONUTCHART');
   }
@@ -33,6 +34,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         setTimeout(() => {
 
           this.data = this.getResponseData(resp);
+          this.transformData(this.data);
           this.initializeData();
           this.plotD3Chart();
         }, 0);
@@ -44,6 +46,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
 
         setTimeout(() => {
           this.data = this.getResponseData(this.data);
+          this.transformData(this.data);
           this.initializeData();
           this.plotD3Chart();
         }, 0);
@@ -63,7 +66,8 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     return responsedata;
   }
   plotD3Chart() {
-    // this.transformData(this.data);
+    this.formLegendData();
+    //this.transformData(this.data);
     //  this.data = this.transformeddata;
     const outerRadius = this.svgwidth / 2;
     let innerRadius = this.svgwidth / 4;
@@ -79,7 +83,10 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       .innerRadius(innerRadius);
 
     const pie = d3.pie()
-      .value((d) => { return d.value });
+      .value((d) => { 
+       return d[Object.keys(d)[1]];
+     //  return d.value
+       });
 
     const svg = d3.select("#" + this.componentId)
       .append('g')
@@ -91,7 +98,13 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     const path = svg.append('path')
       .attr('d', arc)
       .attr('fill', function (d, i) {
-        return (d && d.data && d.data.color) ? d.data.color : "black"
+         if(d.data.color){
+          return d.data.color;
+        }
+        else {
+          return "black";
+        }
+      //  return (d && d.data && d.data.color) ? d.data.color : "black"
       })
       .attr('cursor', 'pointer')
       .on("mouseover", (d) => {
@@ -99,7 +112,9 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       })
       .on("mousemove", (d) => {
         return tooltip.html(
-          this.formLegendData(d.data)
+          this.formTooltipData(d.data)
+
+        //  this.formLegendData(d.data)
           // this.toolTipContent(d.data)
         )
           .style("top", (d3.event.pageY - 10) + "px")
@@ -109,7 +124,10 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-        this.chartClick(d.data);
+        this.chartClick(
+         // d
+          d.data
+        );
       });
 
     const text = svg.append("text")
@@ -120,7 +138,10 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       })
       .attr("text-anchor", "middle")
       .text(function (d) {
-        return d.data.value;
+
+        return d.data[Object.keys(d.data)[1]]
+
+        //return d.data.value;
       })
       .style('fill', function (d) {
         return (d && d.data && d.data.textcolor) ? d.data.textcolor : "black";
@@ -128,11 +149,57 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       .style('font-size', '12px');
   }
 
-  formLegendData(tooltipData: any) {
-    let obj = {};
-    obj[tooltipData.label] = tooltipData.value;
-    return this.toolTipForBar(obj);
+  // formLegendData(tooltipData: any) {
+  //   let obj = {};
+  //   obj[tooltipData.label] = tooltipData.value;
+  //   return this.toolTipForBar(obj);
+  // }
+
+  formLegendData(){
+    this.data.forEach(element => {
+        let legendobject = {};
+        legendobject['label'] = element[Object.keys(element)[0]];
+        legendobject['value'] = element[Object.keys(element)[1]];
+        legendobject['color'] = element.color;
+        this.legendArray.push(legendobject);
+    });
+     }
+
+    onDonutLegendClick(legendevent: any){
+      let obj = {};
+   obj['label'] = legendevent.label;
+   obj['value'] = legendevent.value 
+      //delete event.color;
+      this.legendClick(obj);
   }
+
+
+  transformData(data: any) {
+    this.keyArray = data[0];
+    data.forEach((element, index) => {
+        if (index > 0) {
+            let DummyObject = {};
+            element.forEach((individualvalue, keyindex) => {
+                DummyObject[this.keyArray[keyindex]] = individualvalue;
+            });//inner for loop ends
+            this.transformeddata.push(DummyObject);
+        }//if ends
+    });//outer for loop ends
+    this.data = this.transformeddata;
+}
+
+formTooltipData(tooltipData: any) {
+  let object = {};
+  for (let [key, value] of Object.entries(tooltipData)) {
+   if(key != 'color' && key != 'textcolor'){
+      object[key] = value;
+  }
+  }
+  return this.toolTipForBar(object);
+}
+
+
+
    resize() {
   }
 }

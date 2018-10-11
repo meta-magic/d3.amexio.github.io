@@ -10,8 +10,9 @@
     </tr>
     <tr>
         <td style="display: block; padding: 5px;">
-            <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="legendClick($event)" [data]="data" style="height:100%;">
+            <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="onBarLegendClick($event)" [data]="legendArray" style="height:100%;">
             </amexio-d3-legend>
         </td>
     </tr>
 </table>
+<!-- legendClick -->

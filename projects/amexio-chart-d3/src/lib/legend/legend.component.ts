@@ -13,6 +13,10 @@ export class AmexioD3Legend
 
     @Output() onClick : any = new EventEmitter<any>();
 
+    constructor(){
+   
+    }
+
     onLegendClick(node:any){
         this.onClick.emit(node);
     }

@@ -42,7 +42,7 @@ export class AmexioD3BaseChartComponent{
     }
   
     protected initializeData() {
-        this.data.forEach(element => {
+         this.data.forEach(element => {
           element.color = this.getColor(element);
         });
       }
