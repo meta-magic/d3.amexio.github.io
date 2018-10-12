@@ -179,7 +179,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return d.data[i];
       })
       .attr("x", (d) => {
-        return x(+d.data[Object.keys(d.data)[0]]);
+         return x(+d.data[Object.keys(d.data)[0]]);
       })
       .attr("y", (d, index) => {
         return y(d[1]);
@@ -252,13 +252,15 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     if (diff < 0) {
       diff = (diff * (-1));
     }
+    let object = {};
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
-        let object = { 'label': key, 'value': value };
-        this.chartClick(object);
-        //return (this.toolTipContent(object));
+       object[key] = value;
+       object[this.xaxis] = d.data[Object.keys(d.data)[0]];
       }
     }
+ 
+    this.chartClick(object);
   }
 
   getResponseData(httpResponse: any) {
