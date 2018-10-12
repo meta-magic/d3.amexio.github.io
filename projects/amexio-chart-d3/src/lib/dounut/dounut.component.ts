@@ -165,10 +165,16 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
 
     onDonutLegendClick(legendevent: any){
       let obj = {};
-   obj['label'] = legendevent.label;
-   obj['value'] = legendevent.value 
+
+  //  obj['label'] = legendevent.label;
+  //  obj['value'] = legendevent.value 
+  obj[this.keyArray[0]] = legendevent.label;
+  obj[this.keyArray[1]] = legendevent.value;
       //delete event.color;
       this.legendClick(obj);
+
+
+
   }
 
 
