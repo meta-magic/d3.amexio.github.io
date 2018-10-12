@@ -124,10 +124,8 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-        this.chartClick(
-         // d
-          d.data
-        );
+        this.DonutChartClick(d.data);
+        //this.chartClick(d.data);
       });
 
     const text = svg.append("text")
@@ -198,7 +196,15 @@ formTooltipData(tooltipData: any) {
   return this.toolTipForBar(object);
 }
 
-
+DonutChartClick(event: any){
+  let object = {};
+for (let [key, value] of Object.entries(event)) {
+ if(key != 'color'){
+    object[key] = value;
+}
+}
+  this.chartClick(object);
+}
 
    resize() {
   }

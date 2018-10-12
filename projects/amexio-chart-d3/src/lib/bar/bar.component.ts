@@ -144,7 +144,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                 })
                 .on("click", (d) => {
-                    this.chartClick(d);
+                    debugger;
+                    this.barChartClick(d);
+                    //this.chartClick(d);
                 });
         }
 
@@ -214,7 +216,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                 })
                 .on("click", (d) => {
-                    this.chartClick(d);
+                    this.barChartClick(d);
+                    //this.chartClick(d);
                 });
     }
 }
@@ -259,6 +262,17 @@ onBarLegendClick(legendevent: any){
  obj['value'] = legendevent.value 
     //delete event.color;
     this.legendClick(obj);
+}
+
+
+barChartClick(event: any){
+    let object = {};
+  for (let [key, value] of Object.entries(event)) {
+   if(key != 'color'){
+      object[key] = value;
+  }
+  }
+    this.chartClick(object);
 }
 
 resize() {
