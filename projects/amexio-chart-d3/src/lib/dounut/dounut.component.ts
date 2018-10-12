@@ -172,9 +172,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   obj[this.keyArray[1]] = legendevent.value;
       //delete event.color;
       this.legendClick(obj);
-
-
-
   }
 
 
