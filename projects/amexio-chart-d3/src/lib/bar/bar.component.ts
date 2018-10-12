@@ -35,7 +35,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             }, () => {
                 setTimeout(() => {
                     this.data = this.getResponseData(resp);
-                    this.transformData(this.data);
+                   // this.transformData(this.data);
                     this.initializeData();
                      this.plotD3Chart();
                 }, 0);
@@ -70,7 +70,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         this.formLegendData();
 
         // debugger;
-       // console.log("this.data = ",JSON.stringify(this.data));
+     console.log("this.data = ",JSON.stringify(this.data));
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);

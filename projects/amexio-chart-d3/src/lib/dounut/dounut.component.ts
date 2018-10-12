@@ -34,7 +34,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         setTimeout(() => {
 
           this.data = this.getResponseData(resp);
-          this.transformData(this.data);
+          //this.transformData(this.data);
           this.initializeData();
           this.plotD3Chart();
         }, 0);
