@@ -133,11 +133,27 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
  
     legendClick(node:any){
-        const legendNode = JSON.parse(JSON.stringify(node));
-        delete legendNode.color;
-        legendNode.data.forEach(element => {
-            delete element.legend;
-        });
-        this.onLegendClick.emit(legendNode);
+ 
+        // const legendNode = JSON.parse(JSON.stringify(node));
+        // delete legendNode.color;
+        // legendNode.data.forEach(element => {
+        //     delete element.legend;
+        // });
+
+        let obj = {};
+    obj["label"] = node.label;
+    let data = [];
+    node.data.forEach(element => {
+      let object = {};
+     
+      object[element.legend] = element.value;
+      object[this.xaxisname] = element.label;
+    //   object[element.label] = element.value;
+      data.push(object);
+    });
+    obj["data"] = data;
+    this.onLegendClick.emit(obj);
+    
+        // this.onLegendClick.emit(legendNode);
     }
 }

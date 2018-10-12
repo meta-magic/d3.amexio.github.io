@@ -190,9 +190,21 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   legendClick(event: any) {
-    const legendNode = JSON.parse(JSON.stringify(event));
-    delete legendNode.color;
-    this.onLegendClick.emit(legendNode);
+    // const legendNode = JSON.parse(JSON.stringify(event));
+    // delete legendNode.color;
+
+    let obj = {};
+    obj["label"] = event.label;
+    let data = [];
+    event.data.forEach(element => {
+      let object = {};
+      object[element.label] = element.value;
+      data.push(object);
+    });
+    obj["data"] = data;
+    this.onLegendClick.emit(obj);
+    
+    // this.onLegendClick.emit(legendNode);
   }
 
   //2d array to json conversion
