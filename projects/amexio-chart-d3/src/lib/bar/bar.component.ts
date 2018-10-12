@@ -144,7 +144,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                 })
                 .on("click", (d) => {
-                    debugger;
+                   // debugger;
                     this.barChartClick(d);
                     //this.chartClick(d);
                 });
