@@ -179,7 +179,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         return d.data[i];
       })
       .attr("x", (d) => {
-         return x(+d.data[Object.keys(d.data)[0]]);
+        return x(+d.data[Object.keys(d.data)[0]]);
       })
       .attr("y", (d, index) => {
         return y(d[1]);
@@ -225,9 +225,20 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   legendClick(event: any) {
-    const legendNode = JSON.parse(JSON.stringify(event));
-    delete legendNode.color;
-    this.onLegendClick.emit(legendNode);
+    // debugger;
+    // const legendNode = JSON.parse(JSON.stringify(event));
+    // delete legendNode.color;
+    let obj = {};
+    obj["label"] = event.label;
+    let data = [];
+    event.data.forEach(element => {
+      let object = {};
+      object[element.label] = element.value;
+      data.push(object);
+    });
+    obj["data"] = data;
+    this.onLegendClick.emit(obj);
+    //this.onLegendClick.emit(legendNode);
   }
 
   setKey(d: any) {
@@ -255,11 +266,11 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     let object = {};
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
-       object[key] = value;
-       object[this.xaxis] = d.data[Object.keys(d.data)[0]];
+        object[key] = value;
+        object[this.xaxis] = d.data[Object.keys(d.data)[0]];
       }
     }
- 
+
     this.chartClick(object);
   }
 
