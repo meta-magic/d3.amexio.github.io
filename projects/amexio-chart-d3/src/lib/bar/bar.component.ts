@@ -4,7 +4,7 @@ import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
 
 import * as d3 from 'd3';
-import { stringify } from "@angular/core/src/render3/util";
+
 
 @Component({
     selector: 'amexio-d3-chart-bar',
@@ -16,6 +16,10 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input() horizontal: boolean = false;
     @ViewChild('chartId') chartId: ElementRef;
     @Input('data-reader') datareader: string;
+    @Input('level') level:number=0;
+    @Input('target') target:number;
+    @Input('drillabledatakey') drillabledatakey:any[]=[]
+    drillableFlag:boolean = true;
     data: any;
     
     colorflag: boolean = false;
@@ -27,31 +31,75 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         super('bar');
       }
     ngOnInit() {
-        let resp: any
-        if (this.httpmethod && this.httpurl) {
-            this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+        if (this.level <= 1) {
+            let resp: any;
+            if (this.httpmethod && this.httpurl) {
+                this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+                    resp = response;
+                }, (error) => {
+                }, () => {
+                    setTimeout(() => {
+                        this.data = this.getResponseData(resp);
+                        this.drawChart();
+
+                    }, 0);
+            });
+
+            } else if (this.data) {
+
+                setTimeout(() => {
+                    this.data = this.getResponseData(this.data);
+                    this.transformData(this.data)
+                    this.initializeData();
+                    this.plotD3Chart();
+
+                }, 0);
+
+            }
+        }
+    }
+    fetchData(data: any) {
+   
+        let requestJson;
+        let key=this.drillabledatakey;
+        let resp: any;
+        if(this.drillabledatakey.length)
+        {
+             let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+             requestJson=drillabledata;
+    
+         }
+        else{
+                requestJson=data;
+            
+            }
+      
+        
+     if (this.httpmethod && this.httpurl) {
+     this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
                 resp = response;
             }, (error) => {
             }, () => {
                 setTimeout(() => {
                     this.data = this.getResponseData(resp);
-                    this.transformData(this.data);
-                    this.initializeData();
-                     this.plotD3Chart();
+                    this.drawChart();
+
                 }, 0);
+
+
             });
 
-        } else if (this.data) {
-
-            setTimeout(() => {
-                // this.data = this.getResponseData(this.data);
-                this.transformData(this.data);
-                this.initializeData();
-                this.plotD3Chart();
-            }, 0);
         }
     }
 
+    drawChart() {
+        setTimeout(() => {
+          
+            this.initializeData();
+            this.plotD3Chart();
+        }, 0);
+
+    } 
     getResponseData(httpResponse: any) {
         let responsedata = httpResponse;
         if (this.datareader != null) {
@@ -68,15 +116,18 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     plotD3Chart() {
 
         this.formLegendData();
-
-        // debugger;
-       // console.log("this.data = ",JSON.stringify(this.data));
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+       if(this.chartId){
+           this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else{
+         
+                this.svgwidth = this.svgwidth;
+           }
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);
         const margin = { top: 20, right: 20, bottom: 30, left: 60 };
         const width = this.svgwidth - margin.left - margin.right;
-        const height = +svg.attr("height") - margin.top - margin.bottom;
+        const height = this.svgheight - margin.top - margin.bottom;
+        //const height = +svg.attr("height") - margin.top - margin.bottom;
         let x, y;
         const g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -144,8 +195,10 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                 })
                 .on("click", (d) => {
-                    debugger;
+                
                     this.barChartClick(d);
+                    this.fordrillableClick(this,d);
+                    return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });
         }
@@ -217,6 +270,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 })
                 .on("click", (d) => {
                     this.barChartClick(d);
+                    this.fordrillableClick(this,d);
+                    return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });
     }
@@ -229,10 +284,11 @@ formTooltipData(tooltipData: any) {
         object[key] = value;
     }
     }
-    return this.toolTipForBar(object);
+      return this.toolTipForBar(object);
 }
 
 transformData(data: any) {
+  
     this.keyArray = data[0];
     data.forEach((element, index) => {
         if (index > 0) {
@@ -247,6 +303,7 @@ transformData(data: any) {
 }
 
 formLegendData(){
+    this.legendArray=[];
 this.data.forEach(element => {
     let legendobject = {};
     legendobject['label'] = element[Object.keys(element)[0]];

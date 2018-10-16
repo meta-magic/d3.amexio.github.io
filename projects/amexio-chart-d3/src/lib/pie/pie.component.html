@@ -1,5 +1,7 @@
-<amexio-d3-chart-donut (onLegendClick)="legendClick($event)" 
+<div   *ngIf="drillableFlag">
+<amexio-d3-chart-donut1 #id (onLegendClick)="legendClick($event)" 
                        (onChartClick)="chartClick($event)" 
+                       (drillableEvent)=" fordrillableClick($event)"
                         [height]="height"
                         [width]="width"
                         [title]="title"
@@ -8,6 +10,10 @@
                         [color]="colors"
                         [http-url]="httpurl"
                         [http-method]="httpmethod"
-                        [data-reader]="datareader">
-</amexio-d3-chart-donut>
-
+                        [data-reader]="datareader"
+                        [level]="level"
+                        [target]="target"
+                        [drillabledatakey]="drillabledatakey"
+                        [drillData]="drillData">
+</amexio-d3-chart-donut1>
+</div>

@@ -10,7 +10,7 @@ export class CommanDataService {
   constructor(private http:HttpClient) { }
   serviceUrl: string;
 
-  fetchData(serviceUrl: string, methodType: string): Observable<any> {
+  fetchUrlData(serviceUrl: string, methodType: string): Observable<any> {
     const requestJson = {};
     const headers = new HttpHeaders().append('Content-Type', 'application/json;charset=UTF-8');
     if (methodType === 'post') {
@@ -19,5 +19,21 @@ export class CommanDataService {
     return this.http.get(serviceUrl, {headers});
     }
 }
+
+
+postfetchData(serviceUrl: string, methodType: string,requestJson:any): Observable<any> {
+ 
+  const headers = new HttpHeaders().append('Content-Type', 'application/json;charset=UTF-8');
+  if (methodType === 'post') {
+  return this.http.post(serviceUrl, requestJson, {headers});
+  }else if (methodType === 'get') {
+  return this.http.get(serviceUrl, {headers});
+  }
+}
+
+
+
+
+
 
 }

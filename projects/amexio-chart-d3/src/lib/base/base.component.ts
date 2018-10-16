@@ -7,6 +7,8 @@ export class AmexioD3BaseChartComponent{
     @Output() onLegendClick: any = new EventEmitter<any>();
 
     @Output() onChartClick: any = new EventEmitter<any>();
+   
+    @Output() drillableEvent = new EventEmitter();
     
     @Input('data') data: any;
 
@@ -42,14 +44,35 @@ export class AmexioD3BaseChartComponent{
     }
   
     protected initializeData() {
-         this.data.forEach(element => {
-          element.color = this.getColor(element);
-        });
-      }
+        
+        
+            this.data.forEach(element => {
+             element.color = this.getColor(element);
+           });
+     }
 
-
+      protected getMultipleDrillbleKeyData(data:any,drillablekeys:any)
+      {
+       
+          let nodeObject={};
+          if(data)
+          {
+      for (let index = 0; index < drillablekeys.length; index++) {
+                
+           let element = drillablekeys[index];
+           for (let [key,value] of Object.entries(data)) {
+                   if (key == element) 
+                      {
+                            nodeObject[key] = value;
+                       }
+                   };
+              }
+              return nodeObject;
+            }
+       
+ }
      
-        private generateId(){
+ private generateId(){
        let id = "";
        for(let i = 0; i<5; i++){
         id = id + this.possible
@@ -87,6 +110,11 @@ export class AmexioD3BaseChartComponent{
 
     chartClick(node:any){
         this.onChartClick.emit(node);
+    }
+  
+    fordrillableClick(ref:any,node:any)
+     {
+        this.drillableEvent.emit({ref:ref,node:node});
     }
     
     protected toolTip (d3:any) :any{

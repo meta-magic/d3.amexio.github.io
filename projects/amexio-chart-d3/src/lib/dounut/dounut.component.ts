@@ -16,42 +16,99 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
   @Input('data-reader') datareader: string;
+  @Input('level') level:number=0 ;
+  @Input('target') target:number;
+  @Input() drillData: any;
+  @Input('drillabledatakey') drillabledatakey:any
+  drillableFlag:boolean = true;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   legendArray:any[] = [];
+  response:any;
   constructor(private myservice: CommanDataService) {
     super('DONUTCHART');
   }
 
   ngOnInit() {
-    let resp: any;
+  
+    if(this.level<=1)
+    {
+       let resp:any;
     if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
         resp = response;
       }, (error) => {
       }, () => {
-
+        
         setTimeout(() => {
-
-          this.data = this.getResponseData(resp);
-          this.transformData(this.data);
-          this.initializeData();
-          this.plotD3Chart();
+        
+          this.data= this.getResponseData(resp);
+          this.drawChart();
         }, 0);
       });
-
+    
     } else
       if (this.data) {
 
-
-        setTimeout(() => {
-          this.data = this.getResponseData(this.data);
-          this.transformData(this.data);
+      
+      setTimeout(() => {
+          this.data= this.getResponseData(this.data);
+          this.transformData(this.data); 
           this.initializeData();
           this.plotD3Chart();
         }, 0);
-      }
+      } 
+    }   else {
+               
+                this.fetchData(this.drillData);
+               
+    }  
   }
+
+
+  fetchData(data:any)
+  {   
+
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+     }
+    else{
+            requestJson=data;
+        }
+  
+          if (this.httpmethod && this.httpurl) {
+              this.myservice.postfetchData(this.httpurl, this.httpmethod,requestJson).subscribe((response) => {
+                  resp = response;
+                  this.response=resp;
+              }, (error) => {
+              }, () => {
+                  setTimeout(() => {
+                       this.data = this.getResponseData(resp);
+                       
+                       this.drawChart();
+                      
+                  }, 0);
+            });
+  
+          }
+  }
+  
+  drawChart()
+  {
+   setTimeout(() => {
+   this.drillableFlag=true;
+   this.initializeData();
+   this.plotD3Chart();
+   }, 0);
+
+  } 
+
 
   getResponseData(httpResponse: any) {
     let responsedata = httpResponse;
@@ -125,6 +182,8 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       })
       .on("click", (d) => {
         this.DonutChartClick(d.data);
+        this.fordrillableClick(this,d.data);
+        return tooltip.style("visibility", "hidden");
         //this.chartClick(d.data);
       });
 
@@ -154,6 +213,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   // }
 
   formLegendData(){
+    this.legendArray=[];
     this.data.forEach(element => {
         let legendobject = {};
         legendobject['label'] = element[Object.keys(element)[0]];
