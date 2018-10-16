@@ -1,13 +1,4 @@
-.drillable-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    border: 2px solid grey;
-    box-shadow: 0 2px 2px 0 grey;
-    padding: 16px;
-  
-  
-  }
+
 
 
   .button {
@@ -30,7 +21,7 @@
 
 .button:after {
     content: "";
-    background: red;
+    background: black;
     display: block;
     position: absolute;
     padding-top: 300%;
