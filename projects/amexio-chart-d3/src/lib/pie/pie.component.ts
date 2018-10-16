@@ -34,13 +34,13 @@ export class AmexioD3PieChartComponent  implements  OnInit {
 
    @Input('data-reader') datareader: string;
 
-   @Input('level') level:number ;
+   @Input('level') level = 0 ;
 
    @Input('target') target:number;
 
    @Input('drillabledatakey') drillabledatakey:any
 
-   drillableFlag:boolean = false;
+   drillableFlag:boolean = true;
 
    drillData: any;
   
@@ -70,7 +70,6 @@ export class AmexioD3PieChartComponent  implements  OnInit {
 
   drawChart()
   {
-   
     
           this.donutref.drillableFlag=true;
           this.donutref.drawChart();
