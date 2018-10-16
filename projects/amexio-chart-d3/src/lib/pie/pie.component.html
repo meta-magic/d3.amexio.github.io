@@ -1,5 +1,5 @@
 <div   *ngIf="drillableFlag">
-<amexio-d3-chart-donut1 #id (onLegendClick)="legendClick($event)" 
+<amexio-d3-chart-donut #id (onLegendClick)="legendClick($event)" 
                        (onChartClick)="chartClick($event)" 
                        (drillableEvent)=" fordrillableClick($event)"
                         [height]="height"
@@ -15,5 +15,5 @@
                         [target]="target"
                         [drillabledatakey]="drillabledatakey"
                         [drillData]="drillData">
-</amexio-d3-chart-donut1>
+</amexio-d3-chart-donut>
 </div>
