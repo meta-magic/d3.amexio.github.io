@@ -84,6 +84,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     this.data = this.getResponseData(resp);
                     this.drawChart();
 
+                   // this.transformData(this.data);
+                    this.initializeData();
+                     this.plotD3Chart();
                 }, 0);
 
 
@@ -122,6 +125,10 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
          
                 this.svgwidth = this.svgwidth;
            }
+
+        // debugger;
+     console.log("this.data = ",JSON.stringify(this.data));
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);
         const margin = { top: 20, right: 20, bottom: 30, left: 60 };
@@ -315,8 +322,11 @@ this.data.forEach(element => {
 
 onBarLegendClick(legendevent: any){
     let obj = {};
- obj['label'] = legendevent.label;
- obj['value'] = legendevent.value 
+//  obj['label'] = legendevent.label;
+//  obj['value'] = legendevent.value;
+obj[this.keyArray[0]] = legendevent.label;
+obj[this.keyArray[1]] = legendevent.value;
+ //obj[legendevent.label] = legendevent.value;
     //delete event.color;
     this.legendClick(obj);
 }

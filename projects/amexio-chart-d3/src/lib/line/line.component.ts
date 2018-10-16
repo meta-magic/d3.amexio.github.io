@@ -119,9 +119,17 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
                 return tooltip.style("visibility", "hidden");
             })
             .on("click", (d) => {
-                this.chartClick(d);
+                 this.lineChartClick(d);
+                //this.chartClick(d);
             });
     }
+
+lineChartClick(d: any){
+    let obj = {};
+    obj[d.legend] = d.value;
+    obj[this.xaxisname] = d.label;
+    this.chartClick(obj);
+}
 
     callTooltip(tooltipdata: any) {
         let obj = {};

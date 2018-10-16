@@ -225,9 +225,20 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   legendClick(event: any) {
-    const legendNode = JSON.parse(JSON.stringify(event));
-    delete legendNode.color;
-    this.onLegendClick.emit(legendNode);
+    // debugger;
+    // const legendNode = JSON.parse(JSON.stringify(event));
+    // delete legendNode.color;
+    let obj = {};
+    obj["label"] = event.label;
+    let data = [];
+    event.data.forEach(element => {
+      let object = {};
+      object[element.label] = element.value;
+      data.push(object);
+    });
+    obj["data"] = data;
+    this.onLegendClick.emit(obj);
+    //this.onLegendClick.emit(legendNode);
   }
 
   setKey(d: any) {
@@ -252,13 +263,15 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     if (diff < 0) {
       diff = (diff * (-1));
     }
+    let object = {};
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
-        let object = { 'label': key, 'value': value };
-        this.chartClick(object);
-        //return (this.toolTipContent(object));
+        object[key] = value;
+        object[this.xaxis] = d.data[Object.keys(d.data)[0]];
       }
     }
+
+    this.chartClick(object);
   }
 
   getResponseData(httpResponse: any) {

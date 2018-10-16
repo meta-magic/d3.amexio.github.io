@@ -166,7 +166,8 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-        this.chartClick(d);
+        this.groupbarClick(d);
+        // this.chartClick(d);
        
       });
 
@@ -176,14 +177,34 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
   }
 
+  groupbarClick(d: any){
+
+  let object = {};
+        object[d.label] = d.value;
+        object[this.xaxisData] = d.xaxis;
+          this.chartClick(object);
+  }
+
   resize() {
 
   }
 
   legendClick(event: any) {
-    const legendNode = JSON.parse(JSON.stringify(event));
-    delete legendNode.color;
-    this.onLegendClick.emit(legendNode);
+    // const legendNode = JSON.parse(JSON.stringify(event));
+    // delete legendNode.color;
+
+    let obj = {};
+    obj["label"] = event.label;
+    let data = [];
+    event.data.forEach(element => {
+      let object = {};
+      object[element.label] = element.value;
+      data.push(object);
+    });
+    obj["data"] = data;
+    this.onLegendClick.emit(obj);
+    
+    // this.onLegendClick.emit(legendNode);
   }
 
   //2d array to json conversion
@@ -243,20 +264,12 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         temparray.push(values);
       });
       this.urllegendArray.push(temparray);
-
-    });
-
-
+    })
   }
 
- 
-  
-
   transformData(data: any) {
-
     this.keyArray = [];
     this.legendArray = [];
-
     data.forEach((element, i) => {
       if (i == 0) {
         element.forEach((innerelement, index) => {
@@ -289,8 +302,6 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       const legenddata = this.legendArray[element];
       let object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
       this.legends.push(object);
-
-
     });
   }
 
@@ -299,8 +310,6 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         object[d.label] = d.value;
         object[this.xaxisData] = d.xaxis;
         return (this.toolTipForBar(object));
-
   }
-
 
 }
