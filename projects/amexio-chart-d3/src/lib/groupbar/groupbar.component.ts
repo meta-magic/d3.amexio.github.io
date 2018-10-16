@@ -34,7 +34,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   ngOnInit() {
     let res:any;
     if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           res=response;
       
       }, (error) => {

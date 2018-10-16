@@ -41,7 +41,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     // }, 0);
     let res;
     if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchData(this.httpurl, this.httpmethod).subscribe((response) => {
+      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
         //this.data = response;
         this.data = this.getResponseData(response);
       }, (error) => {
