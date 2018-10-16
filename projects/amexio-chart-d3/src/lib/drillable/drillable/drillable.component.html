@@ -1,12 +1,9 @@
 <div class="drillable-container"> 
     <ng-container *ngIf="disableFlag">
-    <amexio-button
-      [type]="'theme-color'" 
-      [label]="'previous-chart'"
-      [icon]="'fa fa-arrow-left'"
-      [size]="'medium'"
-      (onClick)="previouschartClick($event)">
-  </amexio-button>
+            <button type="button" class="button"
+             (click)="previouschartClick($event)">
+              previous-chart
+            </button>
 </ng-container>
 <ng-content></ng-content>
 </div>
