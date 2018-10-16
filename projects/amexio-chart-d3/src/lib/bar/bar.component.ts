@@ -127,8 +127,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
            }
 
         // debugger;
-     console.log("this.data = ",JSON.stringify(this.data));
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+         this.svgwidth = this.chartId.nativeElement.offsetWidth;
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);
         const margin = { top: 20, right: 20, bottom: 30, left: 60 };
