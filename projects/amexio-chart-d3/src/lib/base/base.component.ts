@@ -159,12 +159,14 @@ export class AmexioD3BaseChartComponent{
     }
 
     protected toolTipForBar(tooltipData: any): any{
-         let tooltiphtml = "<div>";
+         let tooltiphtml= "<div>";
         for (let [key, value] of Object.entries(tooltipData)) {
             let sideStyle="float:left";
+            tooltiphtml = tooltiphtml + "<div>";
          tooltiphtml = tooltiphtml + "<span style ="+sideStyle+" ><b>" + key +" "+ "</b>" +value + "</br></span>";
          tooltiphtml = tooltiphtml + "</div>";
         }
+
          return tooltiphtml;
     }
 
