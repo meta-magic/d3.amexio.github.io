@@ -254,7 +254,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                     return tooltip.style("visibility", "hidden");
                 })
                 .on("click", (d) => {
-                    this.onLineClick(d);
+                    this.onComboLineClick(d);
                     this.fordrillableClick(this, d);
                     return tooltip.style("visibility", "hidden");
                 });
@@ -317,14 +317,15 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
         this.chartClick(object);
     }
 
-    onLineClick(data: any) {
+    onComboLineClick(data: any) {
         let object = {};
         for (let [key, value] of Object.entries(data)) {
             if (key != "color") {
                 object[key] = value;
             }
         }
-        this.chartClick(object);
+        this.comboLineClick(object);
+        //this.chartClick(object);
     }
 
     formTooltipLineData(data: any) {
@@ -340,4 +341,6 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     resize() {
 
     }
+
+
 }

@@ -7,6 +7,8 @@ export class AmexioD3BaseChartComponent{
     @Output() onLegendClick: any = new EventEmitter<any>();
 
     @Output() onChartClick: any = new EventEmitter<any>();
+
+    @Output() onLineClick: any = new EventEmitter<any>();
    
     @Output() drillableEvent = new EventEmitter();
     
@@ -111,7 +113,10 @@ export class AmexioD3BaseChartComponent{
     chartClick(node:any){
         this.onChartClick.emit(node);
     }
-  
+    
+    comboLineClick(node: any){
+        this.onLineClick.emit(node);
+    }
     fordrillableClick(ref:any,node:any)
      {
         this.drillableEvent.emit({ref:ref,node:node});
