@@ -5,7 +5,8 @@ import { AmexioD3BarChartComponent } from './bar/bar.component';
 import { AmexioD3LineComponent } from './line/line.component';
 import { BarstackComponent} from './barstack/barstack.component';
 import{GroupbarComponent} from './groupbar/groupbar.component';
-import{DrillableComponent} from './drillable/drillable/drillable.component'
+import{DrillableComponent} from './drillable/drillable/drillable.component';
+import{ CombochartComponent } from './combochart/combochart.component';
 
 export const D3_COMPONENTS : any[] = [
   AmexioD3Legend,
@@ -15,5 +16,6 @@ export const D3_COMPONENTS : any[] = [
   AmexioD3LineComponent,
   BarstackComponent,
   GroupbarComponent,
+  CombochartComponent,
   DrillableComponent
 ]
