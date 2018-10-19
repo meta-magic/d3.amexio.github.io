@@ -117,11 +117,10 @@ export class AmexioD3BaseChartComponent{
     comboLineClick(node: any){
         this.onLineClick.emit(node);
     }
-    fordrillableClick(ref:any,node:any)
+    fordrillableClick(ref: any,node: any,event: any)
      {
-        this.drillableEvent.emit({ref:ref,node:node});
+        this.drillableEvent.emit({ref: ref,node: node,event: event});
     }
-    
     protected toolTip (d3:any) :any{
        return  d3.select("body")
                       .append("div")

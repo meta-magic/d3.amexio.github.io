@@ -1,9 +1,26 @@
+
 <div > 
     <ng-container *ngIf="disableFlag">
             <button type="button" class="button"
              (click)="previouschartClick($event)">
-              previous-chart
+             <i class="fa fa-arrow-left"></i> 
+              PreviousChart
             </button>
 </ng-container>
+
 <ng-content></ng-content>
+
 </div>
+
+<span [ngStyle]="contextStyle" >
+  <ul *ngIf="contextmenuFlag" class="close-thik" class="context-menu-list"  >
+    <span (click)="onCloseClick()" class="close"><i class="fa fa-close"></i></span>
+  <li (click)="onContextNodeClick(itemConfig)" class="context-menu-list-items" 
+  *ngFor="let itemConfig of arrayofsameLevel">
+  <em [ngStyle]="{'padding-left': itemConfig.icon ? '5px':'19px'}"></em>
+  <span style="white-space: nowrap;display: inline ; padding-left:5px">{{itemConfig.title}}
+  </span>
+  </li>
+  </ul>
+  </span>
+  

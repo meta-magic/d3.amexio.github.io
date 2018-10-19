@@ -38,7 +38,7 @@ export class AmexioD3PieChartComponent  implements  OnInit {
 
    @Input('target') target:number;
 
-   @Input('drillabledatakey') drillabledatakey:any
+   @Input('drillable-data') drillabledatakey:any
 
    drillableFlag:boolean = true;
 
@@ -60,7 +60,7 @@ export class AmexioD3PieChartComponent  implements  OnInit {
 
   fordrillableClick(ref:any)
   {
-     this.drillableEvent.emit(ref);
+     this.drillableEvent.emit(ref,);
   }
 
  fetchData(data:any)

@@ -15,10 +15,11 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('height') svgheight: number = 300;
     @Input() horizontal: boolean = false;
     @ViewChild('chartId') chartId: ElementRef;
+    @ViewChild('drillid') drillid: any;
     @Input('data-reader') datareader: string;
     @Input('level') level:number=0;
     @Input('target') target:number;
-    @Input('drillabledatakey') drillabledatakey:any[]=[]
+    @Input('drillable-data') drillabledatakey:any[]=[]
     drillableFlag:boolean = true;
     data: any;
     
@@ -83,10 +84,6 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 setTimeout(() => {
                     this.data = this.getResponseData(resp);
                     this.drawChart();
-
-                   // this.transformData(this.data);
-                    this.initializeData();
-                     this.plotD3Chart();
                 }, 0);
 
 
@@ -126,7 +123,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 this.svgwidth = this.svgwidth;
            }
 
-        // debugger;
+       
          this.svgwidth = this.chartId.nativeElement.offsetWidth;
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);
@@ -146,7 +143,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
 
             //setting content for x and y axis
             x.domain(this.data.map((d) => {
-                // debugger; 
+           
                 return d[Object.keys(d)[0]];
                 //    return d.label
             }));
@@ -201,9 +198,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                 })
                 .on("click", (d) => {
-                
                     this.barChartClick(d);
-                    this.fordrillableClick(this,d);
+                    this.fordrillableClick(this,d,event);
                     return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });
@@ -276,7 +272,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 })
                 .on("click", (d) => {
                     this.barChartClick(d);
-                    this.fordrillableClick(this,d);
+                    this.fordrillableClick(this,d,event);
                     return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });

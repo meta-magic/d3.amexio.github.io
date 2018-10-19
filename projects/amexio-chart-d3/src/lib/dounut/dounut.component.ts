@@ -15,11 +15,12 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('drillid') drillid: any;
   @Input('data-reader') datareader: string;
   @Input('level') level:number=0 ;
   @Input('target') target:number;
   @Input() drillData: any;
-  @Input('drillabledatakey') drillabledatakey:any
+  @Input('drillable-data') drillabledatakey:any
   drillableFlag:boolean = true;
   keyArray: any[] = [];
   transformeddata: any[] = [];
@@ -187,7 +188,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       })
       .on("click", (d) => {
         this.DonutChartClick(d.data);
-        this.fordrillableClick(this,d.data);
+        this.fordrillableClick(this,d.data,event);
         return tooltip.style("visibility", "hidden");
         //this.chartClick(d.data);
       });
