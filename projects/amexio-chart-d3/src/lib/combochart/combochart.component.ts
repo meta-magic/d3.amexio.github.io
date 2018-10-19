@@ -196,7 +196,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 .on("click", (d) => {
 
                     this.barChartClick(d);
-                    this.fordrillableClick(this, d);
+                    this.fordrillableClick(this, d,event);
                     return tooltip.style("visibility", "hidden");
                 });
             //line code start
@@ -255,7 +255,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 })
                 .on("click", (d) => {
                     this.onComboLineClick(d);
-                    this.fordrillableClick(this, d);
+                    this.fordrillableClick(this, d,event);
                     return tooltip.style("visibility", "hidden");
                 });
             //line code ends
