@@ -3,12 +3,11 @@
 
   .button {
     position: relative;
-
     border: 1px solid #555555;
     font-weight: 400;
     color: black;
     padding: .5rem 1rem;
-    width: 120px;
+    /* width: 120px; */
     text-align: center;
     -webkit-transition-duration: 0.4s; 
     transition-duration: 0.4s;
