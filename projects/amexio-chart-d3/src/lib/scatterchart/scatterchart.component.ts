@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 
 
 @Component({
-  selector: 'amexio-scatterchart',
+  selector: 'amexio-d3-chart-scatter',
   templateUrl: './scatterchart.component.html',
   styleUrls: ['./scatterchart.component.css']
 })
