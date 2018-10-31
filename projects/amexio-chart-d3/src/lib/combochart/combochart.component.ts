@@ -18,7 +18,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     @Input('data-reader') datareader: string;
     @Input('level') level: number = 0;
     @Input('target') target: number;
-    @Input('drillable-datakey') drillabledatakey: any[] = []
+    @Input('drillable-data') drillabledatakey: any[] = []
     @Input('line-data-index') lineInput: any;
     drillableFlag: boolean = true;
     data: any;
@@ -28,6 +28,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     transformeddata: any[] = [];
     object: any;
     legendArray: any[] = [];
+    httpresponse:any;
     constructor(private myservice: CommanDataService) {
         super('combochart');
     }
@@ -37,11 +38,15 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             if (this.httpmethod && this.httpurl) {
                 this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
                     resp = response;
+                  
                 }, (error) => {
                 }, () => {
                     setTimeout(() => {
                         this.data = this.getResponseData(resp);
-                        this.drawChart();
+                        this.transformData(this.data)
+                        this.initializeData();
+                        this.plotD3Chart();
+                       
 
                     }, 0);
                 });
@@ -75,20 +80,21 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
         if (this.httpmethod && this.httpurl) {
             this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
                 resp = response;
+                this.httpresponse=response;
             }, (error) => {
             }, () => {
                 setTimeout(() => {
-                    this.data = this.getResponseData(resp);
+                   // this.data = this.getResponseData(resp);
                     this.drawChart();
-                    this.initializeData();
-                    this.plotD3Chart();
                 }, 0);
             });
         }
     }
 
     drawChart() {
-        setTimeout(() => {
+        setTimeout(() => { 
+            this.data = this.getResponseData(this.httpresponse);
+            this.transformData(this.data)
             this.initializeData();
             this.plotD3Chart();
         }, 0);
@@ -117,8 +123,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             this.svgwidth = this.svgwidth;
         }
         let lineName: any = this.lineInput;
-        // debugger;
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);
         const margin = { top: 20, right: 20, bottom: 30, left: 60 };
@@ -275,7 +280,9 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     }
 
     transformData(data: any) {
+        this.transformeddata=[];
         this.keyArray = data[0];
+   
         data.forEach((element, index) => {
             if (index > 0) {
                 let DummyObject = {};

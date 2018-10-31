@@ -12,14 +12,20 @@ import { CommanDataService } from '../services/comman.data.service';
 export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart {
 
     @ViewChild('chartId') chartId: ElementRef;
+    @ViewChild('drillid') drillid:any;
     @Input('data-reader') datareader: string;
-
+    @Input('level') level:number=0;
+    @Input('target') target:number;
+    @Input('drillable-data') drillabledatakey:any[]=[]
+    drillableFlag:boolean = true;
 
     constructor(private myservice: CommanDataService) {
-        super('line');
+          super('line');
     }
 
     ngOnInit() {
+
+        if (this.level <= 1){
         let resp: any
         if (this.httpmethod && this.httpurl) {
             this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
@@ -38,7 +44,42 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
                     this.plotD3Chart();
                 }, 0);
             }
+        }      
     }
+
+
+    fetchData(data: any) {
+   
+        let requestJson;
+        let key=this.drillabledatakey;
+        let resp: any;
+        if(this.drillabledatakey.length)
+        {
+             let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+             requestJson=drillabledata;
+        }
+        else{
+                 requestJson=data;
+             }
+      
+   if (this.httpmethod && this.httpurl) {
+     this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+                resp = response;
+            }, (error) => {
+            }, () => {
+                setTimeout(() => {
+                    this.data = this.getResponseData(resp);
+                    this.drawChart();             
+                }, 0);
+           });    
+        }
+    }
+    
+    drawChart() {
+        setTimeout(() => {
+          this.plotD3Chart();
+      }, 0);
+    } 
 
     resize() {
 
@@ -57,11 +98,14 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         return responsedata;
     }
 
+  plotD3Chart(): void {
 
-
-    plotD3Chart(): void {
-
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+       // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+  if(this.chartId){
+            this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    } else{
+               this.svgwidth = this.svgwidth;
+        }
 
         const tooltip = this.toolTip(d3);
 
@@ -120,7 +164,8 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             })
             .on("click", (d) => {
                  this.lineChartClick(d);
-                //this.chartClick(d);
+                 this.fordrillableClick(this,d,event);
+                 return tooltip.style("visibility", "hidden");
             });
     }
 
@@ -137,5 +182,4 @@ lineChartClick(d: any){
         obj[this.xaxisname] = tooltipdata.label;
         return this.toolTipForBar(obj);
     }
-
 }
