@@ -4,7 +4,8 @@ import {AmexioD3BarChartComponent} from '../bar/bar.component';
 import {AmexioD3DounutChartComponent} from '../dounut/dounut.component';
 import{AmexioD3PieChartComponent } from '../pie/pie.component';
 import {AmexioD3LineComponent} from '../line/line.component';
-import{BarstackComponent}  from '../barstack/barstack.component'
+import{BarstackComponent}  from '../barstack/barstack.component';
+import{CombochartComponent} from '../combochart/combochart.component'
 import {
   AfterContentInit, AfterViewInit, ContentChildren,
   ElementRef, EventEmitter, Input, Output, QueryList, ViewChild,
@@ -31,6 +32,8 @@ export class ViewDrillableComponent implements OnInit {
   @ContentChildren(BarstackComponent, { descendants: true }) QueryBarStackchartinput: QueryList<BarstackComponent>;
   barstackchartinput:BarstackComponent[] ;
 
+  @ContentChildren(CombochartComponent, { descendants: true }) QueryCombochartinput: QueryList<CombochartComponent>;
+  combochartinput:CombochartComponent[] ;
 
    chartInputArray:any;
 
@@ -60,7 +63,8 @@ getComponentData(): any
   this.donutchartinput=this.QueryDonutchartinput.toArray();
   this.piechartinput=this.QueryPiechartinput.toArray();
   this.barstackchartinput=this.QueryBarStackchartinput.toArray();
-  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput);
+  this.combochartinput=this.QueryCombochartinput.toArray();
+  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput);
  
   return this.chartInputArray;
  

@@ -10,13 +10,19 @@ import * as d3 from 'd3';
 })
 export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnInit {
   @ViewChild('chartId') chartId: ElementRef;
-  @Input() data: any;
+  @ViewChild('drillid') drillid:any;
+  //@Input() data: any;
+  @Input('data') data: any
   @Input() legend: boolean = true;
   @Input() barwidth: number = 0;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @Input('data-reader') datareader: string;
+  @Input('level') level:number=0;
+  @Input('target') target:number;
+  @Input('drillable-data') drillabledatakey:any[]=[]
+  drillableFlag:boolean = true;
   groupbarchartArray: any[] = [];
   legendArray: any;
   xaxisData: any;
@@ -32,6 +38,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   }
   
   ngOnInit() {
+    if (this.level <= 1) {
     let res:any;
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
@@ -58,7 +65,49 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       }, 0);
     
     }
+  } 
   }
+
+  fetchData(data: any) {
+   
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+
+     }
+    else{
+             requestJson=data;
+        
+        }
+  
+    
+ if (this.httpmethod && this.httpurl) {
+ this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+            resp = response;
+        }, (error) => {
+        }, () => {
+            setTimeout(() => {
+                this.data = this.getResponseData(resp);
+                this.drawChart();             
+            }, 0);
+       });
+
+    }
+}
+
+drawChart() {
+  setTimeout(() => {
+        
+    this.initializeData();
+    this.plotD3Chart();
+     
+  }, 0);
+
+} 
 
   getResponseData(httpResponse: any) {
       let responsedata = httpResponse;
@@ -72,6 +121,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     }
     return responsedata; 
   }  
+
   plotD3Chart(): void {
 
     this.convertToJSON();
@@ -85,19 +135,23 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   
     const tooltip = this.toolTip(d3);
     let colors = this.predefinedcolors;
+   // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+   if(this.chartId){
     this.svgwidth = this.chartId.nativeElement.offsetWidth;
-
+} else{
+  
+         this.svgwidth = this.svgwidth;
+    }
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const width =  this.svgwidth- margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
-
-  
+    const height =this.svgheight - margin.top - margin.bottom;
 
     let svg = d3.select("#"+this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
     const x0 = d3.scaleBand()
       .rangeRound([0, width])
@@ -157,7 +211,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .on("mousemove", (d) => {
          return tooltip.html(
-          this.setKey(d)
+           this.setKey(d)
           //  this.toolTipContent(d)
         )
           .style("top", (d3.event.pageY - 10) + "px")
@@ -167,6 +221,8 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .on("click", (d) => {
         this.groupbarClick(d);
+        this.fordrillableClick(this,d,event);
+        return tooltip.style("visibility", "hidden");
         // this.chartClick(d);
        
       });

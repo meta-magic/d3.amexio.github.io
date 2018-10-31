@@ -1,4 +1,4 @@
-
+<div   *ngIf="drillableFlag"> 
 <table style="width: 100%;" #chartId (window:resize)="resize()">
     <tr>
         <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td>
@@ -15,5 +15,6 @@
         </td>
     </tr>
 </table>
+</div>
 
 

@@ -2,8 +2,6 @@ import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter }
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-
 
 @Component({
   selector: 'amexio-d3-chart-barstack',
@@ -26,19 +24,21 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() color: string[] = [];
   @Input('width') svgwidth: number = 300;
   @Input('data-reader') datareader: any;
+  @Input('level') level:number=0;
+  @Input('target') target:number;
+  @Input('drillable-data') drillabledatakey:any[]=[]
+  drillableFlag:boolean = true;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('drillid') drillid:any;
   @Output() onLegendClick: any = new EventEmitter<any>();
-
+  httpresponse:any;
   constructor(private myservice: CommanDataService) {
     super('barstack');
   }
 
   ngOnInit() {
-    // this.transformData(this.data1);
-    // setTimeout(() => {
-    //   this.plotChart();
-    // }, 0);
+    if (this.level <= 1) {
     let res;
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
@@ -59,16 +59,59 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       }, 0);
     }
   }
+  }
+
+
+  fetchData(data: any) {
+   
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+    }
+    else{
+            requestJson=data;  
+        }
+  
+    
+ if (this.httpmethod && this.httpurl) {
+ this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+            resp = response;
+            this.httpresponse=response;
+        }, (error) => {
+        }, () => {
+            setTimeout(() => {
+                //this.data = this.getResponseData(resp);
+                this.drawChart();
+                  }, 0);
+              });
+           }
+}
+
+drawChart() {
+  setTimeout(() => {
+          this.data = this.getResponseData(this.httpresponse);
+          this.transformData(this.data);
+          this.plotChart();
+  }, 0);
+
+} 
+
 
   transformData(data1: any) {
+    
     this.keyArray = [];
     this.legendArray = [];
+  
     data1.forEach((element, i) => {
       if (i == 0) {
         element.forEach((innerelement, index) => {
           if (index > 0) {
             this.legendArray[innerelement] = { 'data': [] };
-            this.keyArray.push(innerelement);
+            this.keyArray.push(innerelement);          
           }
           else if (index == 0) {
             this.xaxis = innerelement;
@@ -76,6 +119,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         });
       }
     });
+
     let tempinnerarray: any[];
     tempinnerarray = [];
     data1.forEach((element, index) => {
@@ -116,7 +160,13 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     const tooltip = this.toolTip(d3);
     let margin = { top: 20, right: 30, bottom: 30, left: 60 };
     let colors = this.predefinedcolors;
-    this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    if(this.chartId){
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+ } else{
+    
+           this.svgwidth = this.svgwidth;
+      }
+    //this.svgwidth = this.chartId.nativeElement.offsetWidth;
     let data;
 
     data = this.data;
@@ -128,6 +178,8 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       this.keyArray = keysetarray;
       this.keyArray.splice(0, 1);
     }
+
+   
     let series = d3.stack().keys(this.keyArray)
       .offset(d3.stackOffsetDiverging)
       (this.data);
@@ -135,7 +187,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     let svg = d3.select("#" + this.componentId),
       width = this.svgwidth - margin.left - margin.right;
 
-    let height = +svg.attr("height");
+    let height =this.svgheight - margin.top - margin.bottom;
 
     let x = d3.scaleBand()
       .domain(data.map((d) => {
@@ -147,6 +199,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     let y = d3.scaleLinear()
       .domain([d3.min(this.stackMin(series)), d3.max(this.stackMax(series))])
       .rangeRound([height - margin.bottom, margin.top]);
+      
     let z = d3.scaleOrdinal(d3.schemeCategory10);
     if (this.barwidth > 0) {
       this.barwidth = this.barwidth;
@@ -155,6 +208,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       this.barwidth = x.bandwidth;
     }
 
+ 
     svg.append("g")
       .selectAll("g")
       .data(series)
@@ -173,7 +227,9 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         }
       })
       .selectAll("rect")
-      .data((d) => { return d; })
+      .data((d) => { 
+    
+        return d; })
       .enter().append("rect")
       .attr("width", x.bandwidth).attr('id', (d, i) => {
         return d.data[i];
@@ -201,9 +257,10 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .on("click", (d) => {
         this.setBarClickText(d);
+        this.fordrillableClick(this,d,event);
+        return tooltip.style("visibility", "hidden");
         // this.chartClick(d);
       });
-
     svg.append("g")
       .attr("transform", "translate(0," + y(0) + ")")
       .call(d3.axisBottom(x));
@@ -225,9 +282,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   legendClick(event: any) {
-    // debugger;
-    // const legendNode = JSON.parse(JSON.stringify(event));
-    // delete legendNode.color;
     let obj = {};
     obj["label"] = event.label;
     let data = [];
@@ -238,7 +292,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     });
     obj["data"] = data;
     this.onLegendClick.emit(obj);
-    //this.onLegendClick.emit(legendNode);
   }
 
   setKey(d: any) {
