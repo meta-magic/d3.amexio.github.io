@@ -4,7 +4,6 @@ import { CommanDataService } from '../services/comman.data.service';
 
 import * as d3 from 'd3';
 
-
 @Component({
   selector: 'amexio-d3-chart-scatter',
   templateUrl: './scatterchart.component.html',
@@ -30,8 +29,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   }
 
   ngOnInit() {
-    // this.transformData(this.data);
-    // this.plotScatterChart();
+    
     if (this.level <= 1) {
       let resp: any;
       if (this.httpmethod && this.httpurl) {
@@ -62,6 +60,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
 
   }
 
+  // Method to transform data in key value pair 
   transformData(data: any) {
     this.keyArray = data[0];
     data.forEach((element, index) => {
@@ -69,13 +68,14 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         let DummyObject = {};
         element.forEach((individualvalue, keyindex) => {
           DummyObject[this.keyArray[keyindex]] = individualvalue;
-        });//inner for loop ends
+        });
         this.transformeddata.push(DummyObject);
-      }//if ends
-    });//outer for loop ends
+      }
+    });
     this.data = this.transformeddata;
   }
 
+  // Method get response data using data reader
   getResponseData(httpResponse: any) {
     let responsedata = httpResponse;
     if (this.datareader != null) {
@@ -89,6 +89,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     return responsedata;
   }
 
+  // Method to plot d3 chart
   plotScatterChart() {
     if (this.chartId) {
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
@@ -113,7 +114,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
 
     let yAxis = d3.axisLeft(y);
 
-    let svg = d3.select("#"+this.componentId)
+    let svg = d3.select("#" + this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -174,6 +175,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       });
   }
 
+  // Method to form tooltip data
   formTooltipData(tooltipData: any) {
     let object = {};
     for (let [key, value] of Object.entries(tooltipData)) {
@@ -182,6 +184,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     return this.toolTipForBar(object);
   }
 
+  // Method on chart click
   scatterChartClick(event: any) {
     let object = {};
     for (let [key, value] of Object.entries(event)) {
@@ -190,6 +193,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     this.chartClick(object);
   }
 
+  // method to create Legend
   legendCreation() {
     this.legends = [];
     let element = this.data[0];
@@ -197,6 +201,12 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     this.legends.push(object);
   }
 
+  // Method on Legend Click
+  onScatterLegendClick(legendevent: any) {
+    this.onLegendClick.emit(this.data);
+  }
+
+  // Method for responsiveness
   resize() {
 
   }
