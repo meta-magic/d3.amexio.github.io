@@ -81,7 +81,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
       .rangeRound([this.height, 0]);
 
     //set x y domain
-    this.areaArray = this.data.map(function (d) { return d.date; });
+    this.areaArray = this.data.map( (d)=> { return d.date; });
     this.x.domain(this.areaArray);
     this.y.domain([0, this.maximumValue]);
     //initialize svg
@@ -120,8 +120,8 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
 
   PlotLineDot(g: any, i: number, thisa: this) {
     const line = d3.line()
-      .x(function (d) { return thisa.x(d[Object.keys(d)[0]]); })
-      .y(function (d) { return thisa.y(d[Object.keys(d)[i]]); });
+      .x( (d)=> { return thisa.x(d[Object.keys(d)[0]]); })
+      .y( (d)=> { return thisa.y(d[Object.keys(d)[i]]); });
     g.append("path")
       .data([thisa.data])
       .attr("fill", "none")
@@ -174,11 +174,11 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     // calculate area and valueline
     // define the line
     const valueline = d3.line()
-      .x(function (d) {
+      .x( (d)=> {
         let key: any = [Object.keys(d)[0]];
         return thisa.x(d[key]);
       })
-      .y(function (d) {
+      .y((d)=> {
         let key: any = [Object.keys(d)[i]];
         return thisa.y(d[key]);
       });
@@ -196,13 +196,13 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
         "translate(" + this.margin.left + "," + 0 + ")");
 
     // define the area
-    var area = d3.area()
-      .x(function (d) {
+    let area = d3.area()
+      .x( (d)=> {
         let key: any = [Object.keys(d)[0]];
         return thisa.x(d[key]);
       })
       .y0(this.height)
-      .y1(function (d) {
+      .y1( (d)=> {
         let key: any = [Object.keys(d)[i]];
         return thisa.y(d[key]);
       });
