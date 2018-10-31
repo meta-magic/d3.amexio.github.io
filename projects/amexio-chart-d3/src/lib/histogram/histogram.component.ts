@@ -31,7 +31,6 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   finaldataarray: any[] = [];
   legendArray: any[];
   keyArray: any[];
-  predefinedcolors: any[];
   legends: any[];
   charttype: string;
   data: any[];

@@ -9,6 +9,7 @@ import{ DrillableComponent } from './drillable/drillable/drillable.component';
 import{ CombochartComponent } from './combochart/combochart.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { MultiareaComponent } from './multiarea/multiarea.component';
+import{ ScatterchartComponent } from './scatterchart/scatterchart.component';
 
 export const D3_COMPONENTS : any[] = [
   AmexioD3Legend,
@@ -21,6 +22,7 @@ export const D3_COMPONENTS : any[] = [
   CombochartComponent,
   DrillableComponent,
   HistogramComponent,
-  MultiareaComponent
+  MultiareaComponent,
+  ScatterchartComponent
 
 ]
