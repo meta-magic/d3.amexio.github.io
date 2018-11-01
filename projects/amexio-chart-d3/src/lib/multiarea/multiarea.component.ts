@@ -11,8 +11,8 @@ import { Key } from 'selenium-webdriver';
   styleUrls: ['./multiarea.component.css']
 })
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
-  @Input('width') svgwidth: number = 550;
-  @Input('height') svgheight: number = 350;
+  @Input('width') svgwidth: number = 350;
+  @Input('height') svgheight: number = 300;
   @Input('data-reader') datareader: any;
   @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -66,7 +66,13 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
 
   initAreaChart() {
     this.tooltip = this.toolTip(d3);
-    this.margin = { top: 20, right: 20, bottom: 30, left: 30 },
+    this.margin = { top: 20, right: 20, bottom: 30, left: 60 }
+    if(this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    } else {
+
+      this.svgwidth = this.svgwidth;
+    }
       this.width = this.svgwidth - this.margin.left - this.margin.right,
       this.height = this.svgheight - this.margin.top - this.margin.bottom;
     //find max and initialize max
@@ -84,6 +90,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     this.areaArray = this.data.map( (d)=> { return d.date; });
     this.x.domain(this.areaArray);
     this.y.domain([0, this.maximumValue]);
+    
     //initialize svg
     this.svg =
       d3.select("#" + this.componentId)
