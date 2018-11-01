@@ -38,7 +38,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             if (this.httpmethod && this.httpurl) {
                 this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
                     resp = response;
-                  
+                    this.httpresponse=response;
                 }, (error) => {
                 }, () => {
                     setTimeout(() => {

@@ -18,12 +18,12 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   @Input('level') level: number = 0;
   @Input('target') target: number;
   @Input('drillable-data') drillabledatakey: any[] = [];
-
+  drillableFlag: boolean = true;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   data: any;
   legends: any[];
-
+  httpresponse:any;
   constructor(private myservice: CommanDataService) {
     super('scatter');
   }
@@ -35,6 +35,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       if (this.httpmethod && this.httpurl) {
         this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           resp = response;
+          this.httpresponse=resp;
         }, (error) => {
         }, () => {
           setTimeout(() => {
@@ -59,6 +60,44 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     }
 
   }
+
+  fetchData(data: any) {
+   
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+    }
+    else{
+            requestJson=data;  
+        }
+  
+    
+ if (this.httpmethod && this.httpurl) {
+ this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+            resp = response;
+            this.httpresponse=response;
+        }, (error) => {
+        }, () => {
+            setTimeout(() => {
+                //this.data = this.getResponseData(resp);
+                this.drawChart();
+                  }, 0);
+              });
+           }
+}
+
+drawChart() {
+  setTimeout(() => { 
+    this.data = this.getResponseData(this.httpresponse);
+    this.legendCreation();
+    this.transformData(this.data);
+    this.plotScatterChart();          
+  }, 0);
+} 
 
   // Method to transform data in key value pair 
   transformData(data: any) {

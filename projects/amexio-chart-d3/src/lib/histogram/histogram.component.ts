@@ -56,7 +56,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           res=response;
-      
+           this.httpresponse=response;
       }, (error) => {
       }, () => {
         setTimeout(() => {
