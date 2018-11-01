@@ -8,8 +8,8 @@ import * as d3 from 'd3';@Component({
   styleUrls: ['./candlestick.component.css']
 })
 export class CandlestickComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
-  @Input('width') svgwidth: number = 500;
-  @Input('height') svgheight: number = 500;
+  @Input('width') svgwidth: number = 300;
+  @Input('height') svgheight: number = 300;
   @Input('data-reader') datareader: any;
   @Input() data: any[];
   @ViewChild('chartId') chartId: ElementRef;
