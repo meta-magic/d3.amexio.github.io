@@ -6,7 +6,7 @@ import { CommanDataService } from '../services/comman.data.service';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'amexio-histogram',
+  selector: 'amexio-d3-chart-histogram',
   templateUrl: './histogram.component.html',
   styleUrls: ['./histogram.component.css']
 })
