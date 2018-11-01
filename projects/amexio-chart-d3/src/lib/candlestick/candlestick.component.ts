@@ -3,7 +3,7 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
 import * as d3 from 'd3';@Component({
-  selector: 'amexio-d3-chart-candlestick',
+  selector: 'amexio-d3-chart-waterfall',
   templateUrl: './candlestick.component.html',
   styleUrls: ['./candlestick.component.css']
 })
