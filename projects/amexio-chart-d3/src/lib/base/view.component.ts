@@ -6,6 +6,7 @@ import{AmexioD3PieChartComponent } from '../pie/pie.component';
 import {AmexioD3LineComponent} from '../line/line.component';
 import{BarstackComponent}  from '../barstack/barstack.component';
 import{CombochartComponent} from '../combochart/combochart.component'
+import{HistogramComponent} from '../histogram/histogram.component'
 import {
   AfterContentInit, AfterViewInit, ContentChildren,
   ElementRef, EventEmitter, Input, Output, QueryList, ViewChild,
@@ -34,6 +35,9 @@ export class ViewDrillableComponent implements OnInit {
 
   @ContentChildren(CombochartComponent, { descendants: true }) QueryCombochartinput: QueryList<CombochartComponent>;
   combochartinput:CombochartComponent[] ;
+
+  @ContentChildren(HistogramComponent, { descendants: true }) QueryHistogramchartinput: QueryList<HistogramComponent>;
+  histogramchartinput:HistogramComponent[] ;
 
    chartInputArray:any;
 
@@ -64,7 +68,8 @@ getComponentData(): any
   this.piechartinput=this.QueryPiechartinput.toArray();
   this.barstackchartinput=this.QueryBarStackchartinput.toArray();
   this.combochartinput=this.QueryCombochartinput.toArray();
-  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput);
+  this.histogramchartinput=this.QueryHistogramchartinput.toArray();
+  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput,this.histogramchartinput);
  
   return this.chartInputArray;
  

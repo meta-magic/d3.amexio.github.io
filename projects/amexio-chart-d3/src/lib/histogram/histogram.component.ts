@@ -1,3 +1,4 @@
+
 import { Component, Input, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
@@ -17,6 +18,11 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('data')  datahisto:any;
   @ViewChild('chartId') chartId: ElementRef;
   @Input('data-reader') datareader: string;
+  @Input('level') level: number = 0;
+  @Input('target') target: number;
+  @Input('drillable-data') drillabledatakey: any[] = []
+  httpresponse:any;
+  drillableFlag: boolean = true;
   data1: any;
   values: any[] = [];
   array: any[] = [];
@@ -31,6 +37,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   finaldataarray: any[] = [];
   legendArray: any[];
   keyArray: any[];
+  predefinedcolors: any[];
   legends: any[];
   charttype: string;
   data: any[];
@@ -44,9 +51,8 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   }
 
   ngOnInit() {
-
-
     let res:any
+    if(this.level<=1){
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           res=response;
@@ -54,6 +60,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       }, (error) => {
       }, () => {
         setTimeout(() => {
+          this.datahisto=[];
           this.datahisto= this.getResponseData(res);
           this.transformData()
           this.plotXaxis();
@@ -82,8 +89,50 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       
       }, 0);
     
-    } 
+    } }
   }
+
+  fetchData(data: any) {
+   
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+    }
+    else{
+            requestJson=data;  
+        }
+  
+    
+ if (this.httpmethod && this.httpurl) {
+ this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+            resp = response;
+            this.httpresponse=response;
+        }, (error) => {
+        }, () => {
+            setTimeout(() => {
+                //this.data = this.getResponseData(resp);
+                this.drawChart();
+                  }, 0);
+              });
+           }
+}
+
+drawChart() {
+  setTimeout(() => { 
+          this.datahisto = this.getResponseData(this.httpresponse);
+          this.transformData()
+          this.plotXaxis();
+          this.plotYaxis();
+          this.tooltipData();
+          this.dataforChart();
+          this.transformData1(this.finaldataarray);
+          this.plotChart();
+  }, 0);
+} 
 
   getResponseData(httpResponse: any) {
     let responsedata = httpResponse;
@@ -148,13 +197,15 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     let data;
     data = this.data;
     let keysetarray: string[] = [];
-  
-
-    let series = d3.stack().keys(this.keyArray)
+    let series;
+     series=[];
+      series = d3.stack().keys(this.keyArray)
       .offset(d3.stackOffsetDiverging)
       (this.data);
       let i=0;
-      let tempdata=series;
+      let tempdata;
+      tempdata=[];
+      tempdata=series;
       tempdata.forEach(element => {
             element.forEach(innerelement => {
                        let singletooltip=[];
@@ -163,9 +214,6 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
             });
             i++;
       });
-
-
-
 
     if (this.chartId) {
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
@@ -178,7 +226,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     const height = this.svgheight - margin.top - margin.bottom;
  
    //const height = +svg.attr("height") - margin.top - margin.bottom;
-
+   
     let x, y;
 
     let svg = d3.select("#"+this.componentId)
@@ -193,11 +241,12 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       .domain(this.xaxisArray, function (d) { return d; })
       .rangeRound([0, width]);
 
+    
      y = d3.scaleLinear().rangeRound([height, 0]);
      y .domain([0, d3.max(this.arrayofLength)]);
       
     let z = d3.scaleOrdinal(d3.schemeCategory10);
-
+    this.arrayofLength=[];
     // add x axis to svg
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
@@ -248,8 +297,6 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
          this.fordrillableClick(this,d,event);
         return tooltip.style("visibility", "hidden");
          });
-  
-
   }
 
 
@@ -275,6 +322,8 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     }
 
   transformData() {
+    this.array=[];
+    this.values=[];
     this.datahisto.forEach(element => {
       this.values.push(element[1]);
     });
@@ -302,11 +351,13 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   }
 
   plotYaxis() {
+
     let tempvalue = 0;
     let lengthofArray = 0;
     let lengthcount = 0;
     let templength = 0;
     let newvalue: number = 0;
+    this.yaxisArray = [];
     this.histogramarray = [];
     this.lengtharray = [];
     this.histogramdata = [];
@@ -329,7 +380,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       }
       templength = lengthcount;
       tempvalue = element1;
-      this.histogramarray.push(this.yaxisArray);
+      //this.histogramarray.push(this.yaxisArray);
       this.lengtharray.push(lengthofArray);
     });
 
@@ -352,6 +403,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       data["value"] = this.arrayofLength[i];
       this.chartData.push(data);
     }
+    this.array=[];
 
   }
 
@@ -360,6 +412,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   }
 
   dataforChart() {
+    this.finaldataarray=[]=[];
     let initialArray: any[] = [];
     let temparray: any[] = [];
     initialArray.push('level');
