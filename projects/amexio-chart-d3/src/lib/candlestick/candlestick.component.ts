@@ -7,6 +7,7 @@ import * as d3 from 'd3';@Component({
   templateUrl: './candlestick.component.html',
   styleUrls: ['./candlestick.component.css']
 })
+
 export class CandlestickComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
@@ -14,6 +15,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input() data: any[];
   @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
+
   predefinedColor = [];
   keyArray: any[] = [];
   transformeddata: any[] = [];
