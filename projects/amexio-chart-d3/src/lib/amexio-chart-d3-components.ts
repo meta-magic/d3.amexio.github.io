@@ -4,13 +4,13 @@ import { AmexioD3Legend } from './legend/legend.component';
 import { AmexioD3BarChartComponent } from './bar/bar.component';
 import { AmexioD3LineComponent } from './line/line.component';
 import { BarstackComponent } from './barstack/barstack.component';
-import{ GroupbarComponent } from './groupbar/groupbar.component';
-import{ DrillableComponent } from './drillable/drillable/drillable.component';
-import{ CombochartComponent } from './combochart/combochart.component';
+import { GroupbarComponent } from './groupbar/groupbar.component';
+import { DrillableComponent } from './drillable/drillable/drillable.component';
+import { CombochartComponent } from './combochart/combochart.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { MultiareaComponent } from './multiarea/multiarea.component';
-import{ ScatterchartComponent } from './scatterchart/scatterchart.component';
-
+import { ScatterchartComponent } from './scatterchart/scatterchart.component';
+import { CandlestickComponent } from './candlestick/candlestick.component'
 export const D3_COMPONENTS : any[] = [
   AmexioD3Legend,
   AmexioD3DounutChartComponent,
@@ -23,6 +23,6 @@ export const D3_COMPONENTS : any[] = [
   DrillableComponent,
   HistogramComponent,
   MultiareaComponent,
-  ScatterchartComponent
-
+  ScatterchartComponent,
+  CandlestickComponent
 ]
