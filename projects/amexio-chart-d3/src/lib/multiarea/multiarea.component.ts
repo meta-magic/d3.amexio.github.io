@@ -11,9 +11,14 @@ import { Key } from 'selenium-webdriver';
   styleUrls: ['./multiarea.component.css']
 })
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
-  @Input('width') svgwidth: number = 350;
-  @Input('height') svgheight: number = 300;
+  @Input('width') svgwidth: number = 550;
+  @Input('height') svgheight: number = 350;
   @Input('data-reader') datareader: any;
+  @Input('level') level: number = 0;
+  @Input('target') target: number;
+  @Input('drillable-data') drillabledatakey: any[] = []
+  httpresponse:any;
+  drillableFlag: boolean = true;
   @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Output() onTooltipClick: any = new EventEmitter<any>();
@@ -41,8 +46,10 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
 
   ngOnInit() {
     let res;
+     if(this.level<=1){
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+        this.httpresponse=response;
         this.data = this.getResponseData(response);
       }, (error) => {
       }, () => {
@@ -61,18 +68,61 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
       }, 0);
     }
 
-
   }
+  }
+
+
+  fetchData(data: any) {
+   
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+    }
+    else{
+            requestJson=data;  
+        }
+  
+    
+ if (this.httpmethod && this.httpurl) {
+ this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+            resp = response;
+            this.httpresponse=response;
+        }, (error) => {
+        }, () => {
+            setTimeout(() => {
+                //this.data = this.getResponseData(resp);
+                this.drawChart();
+                  }, 0);
+              });
+           }
+}
+
+drawChart() {
+  setTimeout(() => { 
+    this.data = this.getResponseData(this.httpresponse);
+          this.transformData(this.data);
+          this.initAreaChart();
+          this.plotD3Chart();      
+
+  }, 0);
+} 
 
   initAreaChart() {
     this.tooltip = this.toolTip(d3);
-    this.margin = { top: 20, right: 20, bottom: 30, left: 60 }
-    if(this.chartId) {
+    
+    if(this.chartId){
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
-    } else {
+ } else{
+    
+           this.svgwidth = this.svgwidth;
+      }
 
-      this.svgwidth = this.svgwidth;
-    }
+
+      this.margin = { top: 20, right: 20, bottom: 30, left: 30 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
       this.height = this.svgheight - this.margin.top - this.margin.bottom;
     //find max and initialize max
@@ -85,12 +135,11 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
 
     this.y = d3.scaleLinear()
       .rangeRound([this.height, 0]);
-
+    this.areaArray=[];
     //set x y domain
     this.areaArray = this.data.map( (d)=> { return d.date; });
     this.x.domain(this.areaArray);
     this.y.domain([0, this.maximumValue]);
-    
     //initialize svg
     this.svg =
       d3.select("#" + this.componentId)
@@ -266,6 +315,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
 
   //covert data
   transformData(data: any) {
+    this.transformeddata=[];
     this.keyArray = data[0];
     data.forEach((element, index) => {
       if (index > 0) {
