@@ -11,7 +11,7 @@ import { Key } from 'selenium-webdriver';
   styleUrls: ['./multiarea.component.css']
 })
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
-  @Input('width') svgwidth: number = 550;
+  @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 350;
   @Input('data-reader') datareader: any;
   @Input('level') level: number = 0;
@@ -129,7 +129,7 @@ drawChart() {
     this.maximumValue = this.findMaxData(this.data);
 
 
-    this.x = d3.scaleBand()
+    this.x = d3.scalePoint()
       .range([0, this.width])
       // .padding(0.1);
 
@@ -137,7 +137,7 @@ drawChart() {
       .rangeRound([this.height, 0]);
     this.areaArray=[];
     //set x y domain
-    this.areaArray = this.data.map( (d)=> { return d.date; });
+    this.areaArray = this.data.map( (d)=> { return d[Object.keys(d)[0]]; });
     this.x.domain(this.areaArray);
     this.y.domain([0, this.maximumValue]);
     //initialize svg
@@ -186,8 +186,8 @@ drawChart() {
       .attr("d", line)
       .attr("opacity", 0.2)
       .attr("transform",
-        "translate(" + this.margin.left + "," + 0 + ")");
-
+        // "translate(" + this.margin.left + "," + 0 + ")");
+        "translate(" +  0 + "," + 0 + ")");
     //----------
     g.selectAll('dot')
       .data(thisa.data)
@@ -223,7 +223,9 @@ drawChart() {
         //this.chartClick(d);
       })
       .attr("transform",
-        "translate(" + this.margin.left + "," + 0 + ")");
+        // "translate(" + this.margin.left + "," + 0 + ")");
+        "translate(" +  0 + "," + 0 + ")");
+
   }
 
   plotAreaChart(g: any, i: number, thisa: this) {
@@ -249,7 +251,8 @@ drawChart() {
       .style("stroke-width", "2px")
       .attr("d", valueline)
       .attr("transform",
-        "translate(" + this.margin.left + "," + 0 + ")");
+        // "translate(" + this.margin.left + "," + 0 + ")");
+        "translate(" + 0 + "," + 0 + ")");
 
     // define the area
     let area = d3.area()
@@ -267,7 +270,8 @@ drawChart() {
       .data([this.data])
       .attr("d", area)
       .attr("transform",
-        "translate(" + this.margin.left + "," + 0 + ")")
+        // "translate(" + this.margin.left + "," + 0 + ")")
+        "translate(" + 0 + "," + 0 + ")")
       .style("stroke", "none")
       .attr("fill", this.predefinedColors[i]
       )
