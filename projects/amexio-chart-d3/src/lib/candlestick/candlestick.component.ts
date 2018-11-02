@@ -169,9 +169,9 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
     let cumulative: any = 0;
     for (let i = 0; i < this.data.length; i++) {
       this.data[i]["start"] = cumulative;
-      cumulative += this.data[i]["value"];
+      cumulative += this.data[i][this.keyArray[1]];
       this.data[i]["end"] = cumulative;
-      this.data[i]["class"] = (this.data[i].value >= 0) ? 'positive' : 'negative'
+      this.data[i]["class"] = (this.data[i][this.keyArray[1]] >= 0) ? 'positive' : 'negative'
     }
   }
 
