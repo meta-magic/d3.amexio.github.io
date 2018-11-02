@@ -16,6 +16,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('height') svgheight: number = 400;
   @Input('color') color:string="blue";
   @Input('data')  datahisto:any;
+  @Input('horizontal-scale') hScale: boolean = true;
   @ViewChild('chartId') chartId: ElementRef;
   @Input('data-reader') datareader: string;
   @Input('level') level: number = 0;
@@ -256,6 +257,8 @@ drawChart() {
     //add y axis to svg
     svg.append("g")
       .call(d3.axisLeft(y));
+
+      this.plotLine(svg, x, y, height, width);
 
   svg.append("g")
       .selectAll("g")
@@ -510,5 +513,12 @@ drawChart() {
       return (this.toolTipForBar(object))
   }
 
-
+  plotLine(g, x, y, height, width) {
+    if (this.hScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
+    }
+  }
 }

@@ -22,6 +22,8 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('level') level:number=0;
   @Input('target') target:number;
   @Input('drillable-data') drillabledatakey:any[]=[]
+  @Input('horizontal-scale') hScale: boolean = true;
+
   drillableFlag:boolean = true;
   groupbarchartArray: any[] = [];
   legendArray: any;
@@ -187,6 +189,8 @@ drawChart() {
     svg.append("g")
       .call(d3.axisLeft(y)
         .ticks(10))
+
+        this.plotLine(svg, y, height, width);
 
    // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
 
@@ -368,4 +372,12 @@ drawChart() {
         return (this.toolTipForBar(object));
   }
 
+  plotLine(g, y, height, width) {
+    if (this.hScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
+    }
+  }
 }

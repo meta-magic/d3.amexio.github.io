@@ -22,6 +22,8 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Output() onTooltipClick: any = new EventEmitter<any>();
+  @Input('horizontal-scale') hScale: boolean = true;
+
   svg: any;
   x: any;
   y: any;
@@ -160,6 +162,8 @@ drawChart() {
     g.append("g")
       .call(d3.axisLeft(this.y));
 
+      this.plotLine(g, this.x, this.y, this.height, this.width);
+
     for (counter = 1; counter < this.keyArray.length; counter++) {
       let innerGroup = this.svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
@@ -189,6 +193,7 @@ drawChart() {
         // "translate(" + this.margin.left + "," + 0 + ")");
         "translate(" +  0 + "," + 0 + ")");
     //----------
+
     g.selectAll('dot')
       .data(thisa.data)
       .enter()
@@ -386,5 +391,14 @@ drawChart() {
     obj[this.keyArray[0]] = tooltipData[Object.keys(tooltipData)[0]];
     obj[this.keyArray[count]] = tooltipData[Object.keys(tooltipData)[count]];
     return this.toolTipForBar(obj);
+  }
+
+  plotLine(g, x, y, height, width) {
+    if (this.hScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
+    }
   }
 }
