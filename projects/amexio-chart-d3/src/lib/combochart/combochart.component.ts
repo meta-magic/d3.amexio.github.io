@@ -20,6 +20,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     @Input('target') target: number;
     @Input('drillable-data') drillabledatakey: any[] = []
     @Input('line-data-index') lineInput: any;
+    @Input('horizontal-scale') hScale : boolean = true;
     drillableFlag: boolean = true;
     data: any;
 
@@ -46,8 +47,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                         this.transformData(this.data)
                         this.initializeData();
                         this.plotD3Chart();
-                       
-
+                    
                     }, 0);
                 });
 
@@ -168,6 +168,8 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 .call(d3.axisLeft(y)
                     .ticks(10))
 
+           this.plotLine(g,x,y,height,width); 
+           
             //add bar chart
             g.selectAll(".bar")
                 .data(this.data)
@@ -269,6 +271,16 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
 
     }
 
+    plotLine(g,x,y,height,width)
+{
+
+    if(this.hScale){
+        g.append('g')
+            .attr("color", "lightgrey")
+            .call(d3.axisLeft(y)
+            . tickSize(-width).tickFormat(''));     
+    }
+}
     formTooltipData(tooltipData: any) {
         let object = {};
         for (let [key, value] of Object.entries(tooltipData)) {
