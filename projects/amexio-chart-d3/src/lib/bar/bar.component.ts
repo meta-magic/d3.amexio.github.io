@@ -20,8 +20,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('level') level:number=0;
     @Input('target') target:number;
     @Input('drillable-data') drillabledatakey:any[]=[];
-    @Input('horizontal-scale') hScale : boolean = false;
-    @Input('vertical-scale')   vScale : boolean = false;
+    @Input('horizontal-scale') hScale : boolean = true;
+    
 
   
     drillableFlag:boolean = true;
@@ -292,14 +292,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
 
 plotLine(g,x,y,height,width)
 {
-    if(this.vScale){
-        g.append('g')
-            .attr("color", "lightgrey")
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x).
-             tickSize(-this.width).tickFormat('')
-        );
-    }
+
     if(this.hScale){
         g.append('g')
             .attr("color", "lightgrey")

@@ -27,6 +27,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('level') level:number=0;
   @Input('target') target:number;
   @Input('drillable-data') drillabledatakey:any[]=[]
+  @Input('horizontal-scale') hScale : boolean = true;
   drillableFlag:boolean = true;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
@@ -209,6 +210,16 @@ drawChart() {
       this.barwidth = x.bandwidth;
     }
 
+    svg.append("g")
+    .attr("transform", "translate(0," + y(0) + ")")
+    .call(d3.axisBottom(x));
+
+    svg.append("g")
+    .attr("transform", "translate(" + margin.left + ",0)")
+    .call(d3.axisLeft(y));
+
+
+    this.plotLine(svg,x,y,height,width,margin.left)
  
     svg.append("g")
       .selectAll("g")
@@ -262,13 +273,7 @@ drawChart() {
         return tooltip.style("visibility", "hidden");
         // this.chartClick(d);
       });
-    svg.append("g")
-      .attr("transform", "translate(0," + y(0) + ")")
-      .call(d3.axisBottom(x));
-
-    svg.append("g")
-      .attr("transform", "translate(" + margin.left + ",0)")
-      .call(d3.axisLeft(y));
+   
   }
 
   stackMin(serie) {
@@ -281,6 +286,19 @@ drawChart() {
 
   resize() {
   }
+
+
+  plotLine(svg,x,y,height,width,m)
+  {
+      if(this.hScale){
+          svg.append('g')
+             .attr("transform", "translate(" + m+ ",0)")
+              .attr("color", "lightgrey")
+              .call(d3.axisLeft(y)
+              . tickSize(-width).tickFormat(''));     
+      }
+  }
+ 
 
   legendClick(event: any) {
     let obj = {};
