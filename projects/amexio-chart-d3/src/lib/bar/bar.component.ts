@@ -19,7 +19,11 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('data-reader') datareader: string;
     @Input('level') level:number=0;
     @Input('target') target:number;
-    @Input('drillable-data') drillabledatakey:any[]=[]
+    @Input('drillable-data') drillabledatakey:any[]=[];
+    @Input('horizontal-scale') hScale : boolean = false;
+    @Input('vertical-scale')   vScale : boolean = false;
+
+  
     drillableFlag:boolean = true;
     data: any;
     
@@ -74,8 +78,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 requestJson=data;
             
             }
-      
-        
+             
      if (this.httpmethod && this.httpurl) {
      this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
                 resp = response;
@@ -113,7 +116,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         return responsedata;
     }
 
-    plotD3Chart() {
+    plotD3Chart(): any {
 
         this.formLegendData();
        if(this.chartId){
@@ -124,7 +127,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
            }
 
        
-         this.svgwidth = this.chartId.nativeElement.offsetWidth;
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
         const tooltip = this.toolTip(d3);
         const svg = d3.select("#" + this.componentId);
         const margin = { top: 20, right: 20, bottom: 30, left: 60 };
@@ -155,12 +158,15 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             // add x axis to svg
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+                .call(d3.axisBottom(x))
+                
+
             //add y axis to svg
             g.append("g")
                 .call(d3.axisLeft(y)
                     .ticks(10))
-
+      
+         this.plotLine(g,x,y,height,width);          
             //add bar chart
             g.selectAll(".bar")
                 .data(this.data)
@@ -232,10 +238,12 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x).ticks(10));
+                
             //add y axis to svg
             g.append("g")
                 .call(d3.axisLeft(y))
-
+              
+           this.plotLine(g,x,y,height,width); 
             //add bar chart
             g.selectAll(".bar")
                 .data(this.data)
@@ -277,7 +285,29 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     //this.chartClick(d);
                 });
     }
+
+
+    
 }
+
+plotLine(g,x,y,height,width)
+{
+    if(this.vScale){
+        g.append('g')
+            .attr("color", "lightgrey")
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(x).
+             tickSize(-this.width).tickFormat('')
+        );
+    }
+    if(this.hScale){
+        g.append('g')
+            .attr("color", "lightgrey")
+            .call(d3.axisLeft(y)
+            . tickSize(-width).tickFormat(''));     
+    }
+}
+
 
 formTooltipData(tooltipData: any) {
     let object = {};
