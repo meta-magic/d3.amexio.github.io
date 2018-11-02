@@ -18,24 +18,26 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   @Input('level') level: number = 0;
   @Input('target') target: number;
   @Input('drillable-data') drillabledatakey: any[] = [];
+  @Input('horizontal-scale') hScale: boolean = true;
+  @Input('vertical-scale') vScale: boolean = true;
   drillableFlag: boolean = true;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   data: any;
   legends: any[];
-  httpresponse:any;
+  httpresponse: any;
   constructor(private myservice: CommanDataService) {
     super('scatter');
   }
 
   ngOnInit() {
-    
+
     if (this.level <= 1) {
       let resp: any;
       if (this.httpmethod && this.httpurl) {
         this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           resp = response;
-          this.httpresponse=resp;
+          this.httpresponse = resp;
         }, (error) => {
         }, () => {
           setTimeout(() => {
@@ -62,42 +64,41 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   }
 
   fetchData(data: any) {
-   
-    let requestJson;
-    let key=this.drillabledatakey;
-    let resp: any;
-    if(this.drillabledatakey.length)
-    {
-         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
-         requestJson=drillabledata;
-    }
-    else{
-            requestJson=data;  
-        }
-  
-    
- if (this.httpmethod && this.httpurl) {
- this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
-            resp = response;
-            this.httpresponse=response;
-        }, (error) => {
-        }, () => {
-            setTimeout(() => {
-                //this.data = this.getResponseData(resp);
-                this.drawChart();
-                  }, 0);
-              });
-           }
-}
 
-drawChart() {
-  setTimeout(() => { 
-    this.data = this.getResponseData(this.httpresponse);
-    this.legendCreation();
-    this.transformData(this.data);
-    this.plotScatterChart();          
-  }, 0);
-} 
+    let requestJson;
+    let key = this.drillabledatakey;
+    let resp: any;
+    if (this.drillabledatakey.length) {
+      let drillabledata = this.getMultipleDrillbleKeyData(data, key);
+      requestJson = drillabledata;
+    }
+    else {
+      requestJson = data;
+    }
+
+
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
+        resp = response;
+        this.httpresponse = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          //this.data = this.getResponseData(resp);
+          this.drawChart();
+        }, 0);
+      });
+    }
+  }
+
+  drawChart() {
+    setTimeout(() => {
+      this.data = this.getResponseData(this.httpresponse);
+      this.legendCreation();
+      this.transformData(this.data);
+      this.plotScatterChart();
+    }, 0);
+  }
 
   // Method to transform data in key value pair 
   transformData(data: any) {
@@ -182,6 +183,8 @@ drawChart() {
       .attr("dy", ".71em")
       .style("text-anchor", "end")
 
+    this.plotLine(svg, x, y, height, width);
+
     svg.selectAll(".dot")
       .data(this.data)
       .enter().append("circle")
@@ -248,5 +251,22 @@ drawChart() {
   // Method for responsiveness
   resize() {
 
+  }
+
+  plotLine(g, x, y, height, width) {
+    if (this.vScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x).
+          tickSize(-this.width).tickFormat('')
+        );
+    }
+    if (this.hScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
+    }
   }
 }
