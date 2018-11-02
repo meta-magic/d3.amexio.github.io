@@ -18,6 +18,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input('level') level:number=0;
   @Input('target') target:number;
   @Input('drillable-data') drillabledatakey:any[]=[];
+  @Input('horizontal-scale') hScale : boolean = true;
   drillableFlag:boolean = true;
   predefinedColor = [];
   keyArray: any[] = [];
@@ -150,7 +151,9 @@ drawChart() {
     // add the Y Axis
     this.svg.append("g")
       .call(d3.axisLeft(this.y));
+      this.plotLine(this.svg,this.x,this.y,this.height,this.width);
   }
+
 
   plotD3Chart() {
     //  this.data = [
@@ -201,6 +204,18 @@ drawChart() {
        })
       ;
   }
+
+
+  plotLine(svg,x,y,height,width)
+{
+
+    if(this.hScale){
+        svg.append('g')
+            .attr("color", "lightgrey")
+            .call(d3.axisLeft(y)
+            . tickSize(-width).tickFormat(''));     
+    }
+}
 
   transformData(data: any) {
     this.transformeddata=[];
