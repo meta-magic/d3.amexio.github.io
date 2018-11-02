@@ -9,6 +9,7 @@ import{CombochartComponent} from '../combochart/combochart.component'
 import{HistogramComponent} from '../histogram/histogram.component'
 import{ScatterchartComponent} from'../scatterchart/scatterchart.component'
 import{MultiareaComponent} from '../multiarea/multiarea.component'
+import{CandlestickComponent} from '../candlestick/candlestick.component'
 import {
   AfterContentInit, AfterViewInit, ContentChildren,
   ElementRef, EventEmitter, Input, Output, QueryList, ViewChild,
@@ -47,6 +48,10 @@ export class ViewDrillableComponent implements OnInit {
   @ContentChildren(MultiareaComponent, { descendants: true }) QueryMultiareachartinput: QueryList<MultiareaComponent>;
   multiareachartinput:MultiareaComponent[] ;
 
+  @ContentChildren(CandlestickComponent, { descendants: true }) QueryCandlestickchartinput: QueryList<CandlestickComponent>;
+  candlestickchartinput:CandlestickComponent[] ;
+
+
    chartInputArray:any;
 
   constructor() { 
@@ -79,7 +84,8 @@ getComponentData(): any
   this.histogramchartinput=this.QueryHistogramchartinput.toArray();
   this.scatterchartinput=this.QuerySatterchartinput.toArray();
   this.multiareachartinput=this.QueryMultiareachartinput.toArray();
-  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput,this.histogramchartinput,this.scatterchartinput,this.multiareachartinput);
+  this.candlestickchartinput=this.QueryCandlestickchartinput.toArray();
+  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput,this.histogramchartinput,this.scatterchartinput,this.multiareachartinput,this.candlestickchartinput);
  
   return this.chartInputArray;
  

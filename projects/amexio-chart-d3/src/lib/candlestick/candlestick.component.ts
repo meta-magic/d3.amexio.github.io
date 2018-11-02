@@ -15,10 +15,13 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input() data: any[];
   @ViewChild('chartId') chartId: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
-
+  @Input('level') level:number=0;
+  @Input('target') target:number;
+  @Input('drillable-data') drillabledatakey:any[]=[];
+  drillableFlag:boolean = true;
   predefinedColor = [];
   keyArray: any[] = [];
-  transformeddata: any[] = [];
+  transformeddata: any;
   height: number;
   width: number;
   margin: any = {};
@@ -27,16 +30,19 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   svg: any;
   tooltip: any;
   legendArray: any[] = [];
+  httpresponse:any;
   constructor(private myservice: CommanDataService) {
     super("candlestickwaterfallchart");
   }
 
   ngOnInit() {
     this.predefinedColor = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+    if (this.level <= 1) {
     let res;
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
         //this.data = response;
+        this.httpresponse=response;
         this.data = this.getResponseData(response);
       }, (error) => {
       }, () => {
@@ -55,7 +61,53 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
         this.plotD3Chart();
       }, 0);
     }
+  } 
   }
+
+  fetchData(data: any) {
+   
+    let requestJson;
+    let key=this.drillabledatakey;
+    let resp: any;
+    if(this.drillabledatakey.length)
+    {
+         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
+         requestJson=drillabledata;
+
+     }
+    else{
+            requestJson=data;
+        
+        }
+         
+ if (this.httpmethod && this.httpurl) {
+ this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
+            resp = response;
+            this.httpresponse=response;
+        }, (error) => {
+        }, () => {
+            setTimeout(() => {
+                //this.data = this.getResponseData(resp);
+                this.drawChart();
+            }, 0);
+
+
+        });
+
+    }
+}
+
+drawChart() {
+    setTimeout(() => {
+      this.data = this.getResponseData(this.httpresponse);
+      this.transformData(this.data);
+      this.initializeData();
+      this.plotXYAxis();
+      this.plotD3Chart();
+    }, 0);
+
+} 
+
 
   initializeData() {
     this.tooltip = this.toolTip(d3);
@@ -144,12 +196,15 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
       })
       .on("click", (d) => {
         this.onCandlestickClick(d);
+        this.fordrillableClick(this,d,event);
          return this.tooltip.style("visibility", "hidden");
        })
       ;
   }
 
   transformData(data: any) {
+    this.transformeddata=[];
+    this.keyArray=[];
     this.keyArray = data[0];
     data.forEach((element, index) => {
       if (index > 0) {
@@ -203,6 +258,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   }
 
   formLegendData(){
+    this.legendArray=[];
     this.data.forEach((element, index) => {
       for (let [key, value] of Object.entries(element)) {
         if(key == this.keyArray[0] ){
