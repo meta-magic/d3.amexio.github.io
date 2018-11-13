@@ -10,7 +10,8 @@ import { CombochartComponent } from './combochart/combochart.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { MultiareaComponent } from './multiarea/multiarea.component';
 import { ScatterchartComponent } from './scatterchart/scatterchart.component';
-import { CandlestickComponent } from './candlestick/candlestick.component'
+import { CandlestickComponent } from './candlestick/candlestick.component';
+import{BubbleComponent} from './bubble/bubble/bubble.component';
 export const D3_COMPONENTS : any[] = [
   AmexioD3Legend,
   AmexioD3DounutChartComponent,
@@ -24,5 +25,6 @@ export const D3_COMPONENTS : any[] = [
   HistogramComponent,
   MultiareaComponent,
   ScatterchartComponent,
-  CandlestickComponent
+  CandlestickComponent,
+  BubbleComponent
 ]
