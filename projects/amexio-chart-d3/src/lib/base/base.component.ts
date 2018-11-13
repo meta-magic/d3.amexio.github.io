@@ -1,8 +1,7 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Input, Output, EventEmitter, Component } from "@angular/core";
+
 
 export class AmexioD3BaseChartComponent{
-
-   
 
     @Output() onLegendClick: any = new EventEmitter<any>();
 
@@ -163,15 +162,15 @@ export class AmexioD3BaseChartComponent{
     }
 
     protected toolTipForBar(tooltipData: any): any{
-         let tooltiphtml= "<div>";
+         let class1 = "speech-bubble";
+           let tooltiphtml= "<div class=\"" +class1+"\">";
         for (let [key, value] of Object.entries(tooltipData)) {
             let sideStyle="float:left";
             tooltiphtml = tooltiphtml + "<div>";
          tooltiphtml = tooltiphtml + "<span style ="+sideStyle+" ><b>" + key +" "+ "</b>" +value + "</br></span>";
          tooltiphtml = tooltiphtml + "</div>";
         }
-
-         return tooltiphtml;
+          return tooltiphtml;
     }
 
 }
