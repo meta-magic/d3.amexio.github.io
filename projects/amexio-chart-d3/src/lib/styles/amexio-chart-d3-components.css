@@ -1,37 +1,33 @@
 .amexiod3tooltip {
-    background: white;
-    border:  1px solid black;
-    border-radius: 10px;
-    padding: 2px;
-    position: absolute;
-    text-align: center;
-  }
-  
-  .speech-bubble:before{
-    content: "";
+  background: white;
+  border:  1px solid black;
+  /* border-radius: 10px; */
+  padding: 2px;
+  padding-bottom: 15px;
   position: absolute;
-  bottom: -20px;
-  left: 60px;
-  border: 0;
-  border-right-width: 30px;
-  border-bottom-width: 20px;
-  display: block;
-  width: 0;
-  }
-      
+  text-align: center;
+}
 
-  
-  .speech-bubble:after{
+.speech-bubble{
+position: relative;
+/* padding: 10px; */
+margin: 1em 0 3em;
+color: #000;
+
+}
+
+.speech-bubble:after{
+  top: 10px;
   content: "";
   position: absolute;
-  bottom: -20px;
-  left: 80px;
-  border: 0;
-  border-right-width: 10px;
-  border-bottom-width: 20px;
-  border-style: solid;
-  border-color: transparent #fff;
   display: block;
   width: 0;
-  }
-  
+  border-style: solid;
+  left: -20px;
+  bottom: auto;
+  border-width: 10px 20px 15px 0;
+  border-color: transparent white;
+}
+    
+
+ 
