@@ -26,7 +26,7 @@ before_script:
   - gem install sass
   - npm install
   - npm install d3@^5.7.0
-  - ng build --prod amexio-chart-d3
+  - ng build --prod amexio-chart-d3 && sh copycss.sh
   - npm pack dist/amexio-chart-d3/
   - mv amexio-chart-d3-*.tgz amexio-chart-d3.tgz   
 script: 
