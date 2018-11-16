@@ -24,14 +24,18 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   keyArray: any[] = [];
   transformeddata: any[] = [];
   data: any;
+  dataFormatted: any;
+  colordata: any;
   legends: any[];
+  legendarray: any[] = [];
+  legendData: any;
   httpresponse: any;
   constructor(private myservice: CommanDataService) {
     super('scatter');
   }
 
   ngOnInit() {
-
+    this.dataFormatted = [];
     if (this.level <= 1) {
       let resp: any;
       if (this.httpmethod && this.httpurl) {
@@ -42,8 +46,12 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         }, () => {
           setTimeout(() => {
             this.data = this.getResponseData(resp);
+            this.dataFormatted = this.data;
+
+
+            this.transformData(this.dataFormatted);
+            this.colorGeneration();
             this.legendCreation();
-            this.transformData(this.data);
             this.plotScatterChart();
           }, 0);
         });
@@ -51,9 +59,12 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       } else if (this.data) {
 
         setTimeout(() => {
+          this.dataFormatted = this.data;
           this.data = this.getResponseData(this.data);
-          this.legendCreation();
+
           this.transformData(this.data);
+          this.colorGeneration();
+          this.legendCreation();
           this.plotScatterChart();
 
         }, 0);
@@ -94,8 +105,12 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   drawChart() {
     setTimeout(() => {
       this.data = this.getResponseData(this.httpresponse);
-      this.legendCreation();
+      this.dataFormatted = this.data;
+
+
       this.transformData(this.data);
+      this.colorGeneration();
+      this.legendCreation();
       this.plotScatterChart();
     }, 0);
   }
@@ -183,45 +198,81 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       .attr("dy", ".71em")
       .style("text-anchor", "end")
 
-    this.plotLine(svg, x, y, height, width);
+    if (this.dataFormatted[0].length ==2) {
+      this.plotLine(svg, x, y, height, width);
 
-    svg.selectAll(".dot")
-      .data(this.data)
-      .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 4.5)
-      .attr("cursor", "pointer")
-      .attr("cx", function (d) {
-        return x(d[Object.keys(d)[0]]);
-      })
-      .attr("cy", function (d) { return y(d[Object.keys(d)[1]]); })
-      .attr("fill", this.color)
+      svg.selectAll(".dot")
+        .data(this.data)
+        .enter().append("circle")
+        .attr("class", "dot")
+        .attr("fill", this.color)
+        .attr("r", 4.5)
+        .attr("cursor", "pointer")
+        .attr("cx", function (d) {
+          return x(d[Object.keys(d)[0]]);
+        })
+        .attr("cy", function (d) { return y(d[Object.keys(d)[1]]); })
+        .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", (d) => {
+          return tooltip.html(
+            this.formTooltipData(d)
+          )
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+          this.scatterChartClick(d);
+          this.fordrillableClick(this, d, event);
+          return tooltip.style("visibility", "hidden");
+        });
+    } else {
+      this.plotLine(svg, x, y, height, width);
 
-      .on("mouseover", (d) => {
-        return tooltip.style("visibility", "visible");
-      })
-      .on("mousemove", (d) => {
-        return tooltip.html(
-          this.formTooltipData(d)
-        )
-          .style("top", (d3.event.pageY - 10) + "px")
-          .style("left", (d3.event.pageX + 10) + "px");
-      })
-      .on("mouseout", (d) => {
-        return tooltip.style("visibility", "hidden");
-      })
-      .on("click", (d) => {
-        this.scatterChartClick(d);
-        this.fordrillableClick(this, d, event);
-        return tooltip.style("visibility", "hidden");
-      });
+      svg.selectAll(".dot")
+        .data(this.transformeddata)
+        .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", 4.5)
+        .attr("cursor", "pointer")
+        .attr("cx", function (d) {
+          return x(d[Object.keys(d)[0]]);
+        })
+        .attr("cy", function (d) { return y(d[Object.keys(d)[1]]); })
+        .attr("fill", function (d, ) { return d[Object.keys(d)[4]] })
+
+        .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", (d) => {
+          return tooltip.html(
+            this.formTooltipData(d)
+          )
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+          this.scatterChartClick(d);
+          this.fordrillableClick(this, d, event);
+          return tooltip.style("visibility", "hidden");
+        })
+    }
   }
 
   // Method to form tooltip data
   formTooltipData(tooltipData: any) {
     let object = {};
     for (let [key, value] of Object.entries(tooltipData)) {
-      object[key] = value;
+      if (key != 'color') {
+        object[key] = value;
+      }
     }
     return this.toolTipForBar(object);
   }
@@ -237,15 +288,37 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
 
   // method to create Legend
   legendCreation() {
-    this.legends = [];
-    let element = this.data[0];
-    let object = { 'label': element[0] + " " + "vs" + " " + element[1], 'color': this.color };
-    this.legends.push(object);
+    if (this.dataFormatted[0].length == 2) {
+      this.legends = [];
+      let element = this.dataFormatted[0];
+
+      let object = { 'label': element[0] + " " + "vs" + " " + element[1], 'color': this.color };
+      this.legends.push(object);
+    }
+    else {
+      this.legends = [];
+      this.legendarray.forEach(element => {
+        let legendobject = {};
+        legendobject['label'] = element.label;
+        legendobject['color'] = element.color;
+        this.legends.push(legendobject);
+      });
+
+    }
+
   }
 
   // Method on Legend Click
   onScatterLegendClick(legendevent: any) {
+    if (this.dataFormatted[0].length == 2) {
     this.onLegendClick.emit(this.data);
+    } else {
+      this.legendarray.forEach(element => {
+        if(legendevent.label==element.label){
+          this.legendClick(element.value); 
+        }    
+      }); 
+    }
   }
 
   // Method for responsiveness
@@ -268,5 +341,38 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         .call(d3.axisLeft(y)
           .tickSize(-width).tickFormat(''));
     }
+  }
+
+  colorGeneration() {
+    this.legendarray = [];
+    let i = 0;
+    let names = this.dataFormatted
+      .map(e => e[2])
+      .filter((e, i, a) => a.indexOf(e) === i);
+    for (let j = 1; j < names.length; j++) {
+      let value = [];
+      let obj = { "label": "", "color": "", "value": [] };
+      this.transformeddata.forEach(element => {
+        if (element[Object.keys(element)[2]] == names[j]) {
+          element['color'] = this.predefinedcolors[i];
+          value.push(element);
+        }
+      });
+      obj["value"] = value;
+      obj["label"] = names[j];
+      obj["color"] = this.predefinedcolors[i];
+      this.legendarray.push(obj);
+      i++;
+    }
+  }
+
+  formLegendData() {
+    this.legendData = [];
+    this.legendarray.forEach(element => {
+      let legendobject = {};
+      legendobject['label'] = element.label;
+      legendobject['color'] = element.color;
+      this.legendData.push(legendobject);
+    });
   }
 }
