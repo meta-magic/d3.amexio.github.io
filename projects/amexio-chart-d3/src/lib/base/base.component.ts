@@ -162,8 +162,9 @@ export class AmexioD3BaseChartComponent{
     }
 
     protected toolTipForBar(tooltipData: any): any{
-         let class1 = "speech-bubble";
-           let tooltiphtml= "<div class=\"" +class1+"\">";
+        //  let class1 = "speech-bubble";
+        //    let tooltiphtml= "<div class=\"" +class1+"\">";
+        let tooltiphtml= "<div>";
         for (let [key, value] of Object.entries(tooltipData)) {
             let sideStyle="float:left";
             tooltiphtml = tooltiphtml + "<div>";
