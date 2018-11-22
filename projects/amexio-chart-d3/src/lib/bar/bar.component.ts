@@ -14,6 +14,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('width') svgwidth: number;
     @Input('height') svgheight: number = 300;
     @Input() horizontal: boolean = false;
+    @Input('label-color') labelcolor: string = "black";
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid')  divid:ElementRef;
     @ViewChild('drillid') drillid: any;
@@ -228,6 +229,31 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });
+            
+                var yTextPadding = 40;
+                this.svg.selectAll(".label")
+                .data(this.data)
+                .enter()
+                .append("text")
+                .style("font-weight","bold")
+                .attr("text-anchor", "middle")
+                .attr("fill", (d)=>{
+                  if(this.labelcolor.length>0){
+                    return this.labelcolor;
+                  } else {
+                    return "black";
+                  }
+                })
+                .attr("x", (d,i) => {
+                    return x(d[Object.keys(d)[0]])+ margin.left + x.bandwidth()/2;
+                })
+                .attr("y", (d,i) => {
+                     return y(d[Object.keys(d)[1]])+yTextPadding;
+                })
+                .text((d) => {
+                     return d[Object.keys(d)[1]];
+                });
+          
         }
 
         else if (this.horizontal == true) {
@@ -306,7 +332,38 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });
-        }
+
+
+                let yTextPadding = 40;
+                this.svg.selectAll(".label")
+                .data(this.data)
+                .enter()
+                .append("text")
+                .style("font-weight","bold")
+                .attr("text-anchor","middle")
+                .attr("vertical-align","middle")
+                .attr("margin-top",margin.top)
+                .attr("fill", (d)=>{
+                  if(this.labelcolor.length>0){
+                    return this.labelcolor;
+                  } else {
+                    return "black";
+                  }
+                })
+                .attr("x", (d,i) => {
+                  return x(d[Object.keys(d)[1]])+yTextPadding;
+                 })
+                .attr("y", (d,i) => {
+                     return y(d[Object.keys(d)[0]])
+                     + margin.top + y.bandwidth()/2;
+                })
+                .text( (d) => {
+                     return d[Object.keys(d)[1]];
+                });
+          
+        
+
+        }//else ends(horizontal bar logic ends)
 
      
 
