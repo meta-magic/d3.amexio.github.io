@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AmexioD3BaseChartComponent } from '../../base/base.component';
 import { CommanDataService } from '../../services/comman.data.service';
 import * as d3 from 'd3';
@@ -12,6 +12,7 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
   @Input('height') svgheight: number = 300;
   @Input('color') color: any = "blue";
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid')  divid:ElementRef;
   @Input('data-reader') datareader: string;
   @Input('level') level: number = 0;
   @Input('target') target: number;
@@ -19,6 +20,7 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
   @Input('horizontal-scale') hScale: boolean = true;
   @Input('vertical-scale') vScale: boolean = true;
   drillableFlag: boolean = true;
+  resizeflag:boolean=false;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   colors:any[]=[];
@@ -33,9 +35,10 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
   colordata:any;
   bubblechartdata:any[]=[];
   httpresponse:any;
-  constructor(private myservice: CommanDataService) {
+  svg:any;
+  constructor(private myservice: CommanDataService,private cdf: ChangeDetectorRef) {
  
-    super('scatter');
+    super('bubble');
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
 
    }
@@ -156,20 +159,28 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
   }
 
   plotBubbleChart() {
-
+  
     let colors = this.predefinedcolors;
-    if (this.chartId) {
-      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    if(this.resizeflag==false)
+    
+    {
+      if (this.chartId ) {
+     
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
     } else {
-
-      this.svgwidth = this.svgwidth;
+         
+         this.svgwidth = this.svgwidth;
     }
+  }
+
     const tooltip = this.toolTip(d3);
-    const margin = { top: 20, right: 20, bottom: 30, left: 60 };
+    const margin = { top: 20, right: 60, bottom: 30, left: 60 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
 
     let x, y;
+
+  
     x = d3.scaleLinear()
       .rangeRound([0, width]);
 
@@ -180,7 +191,7 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
 
     let yAxis = d3.axisLeft(y);
 
-    let svg = d3.select("#" + this.componentId)
+     this.svg = d3.select("#" + this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -197,7 +208,7 @@ var rScale = d3.scaleSqrt().rangeRound([6, 30]);
 
 rScale.domain([d3.min(this.data, function(d){return  d[Object.keys(d)[4]] }), d3.max(this.data, function(d,i){return  d[Object.keys(d)[4]] })])
 
-    svg.append("g")
+    this.svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
@@ -207,7 +218,7 @@ rScale.domain([d3.min(this.data, function(d){return  d[Object.keys(d)[4]] }), d3
       .attr("y", -6)
       .style("text-anchor", "end");
 
-    svg.append("g")
+    this.svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
       .append("text")
@@ -217,9 +228,9 @@ rScale.domain([d3.min(this.data, function(d){return  d[Object.keys(d)[4]] }), d3
       .attr("dy", ".71em")
       .style("text-anchor", "end")
 
-      this.plotLine(svg, x, y, height, width);
+      this.plotLine(this.svg, x, y, height, width);
 
- let node=svg.selectAll(".dot")
+ let node=this.svg.selectAll(".dot")
       .data( this.bubblechartdata)
       .enter().append("circle")
       .attr("class", "dot")
@@ -270,13 +281,19 @@ formTooltipData(tooltipData: any) {
   this.chartClick(object);
 }
 
-resize() {
+resize(data:any) {
+   this.svgwidth=0;
+  this.svg.selectAll("*").remove();
+
+     this.resizeflag=true;
+     this.svgwidth =this.divid.nativeElement.offsetWidth;
+     
+     this.plotBubbleChart();
 
 }
   xaxisData()
   {
-    
-    console.log("data1",this.data1)
+   
     let array=[];
     this.minxvalue=0;
     this.maxxvalue=0;
@@ -321,7 +338,7 @@ for(let i=1;i<array.length;i++)
          this.legendarray.push(obj);
          i++;
     }
-  console.log("bubbledata",this.colordata);
+
  }
 
 formLegendData()
@@ -383,7 +400,7 @@ transformdata()
 
         }
 
-        console.log("cahrtdata", this.bubblechartdata);
+      
      
 }
 
