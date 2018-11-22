@@ -129,19 +129,26 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   }
   plotD3Chart() {
     this.formLegendData();
-    const outerRadius = (this.svgwidth) / 2;
-    let innerRadius = (this.svgwidth) / 4;
+    //this.transformData(this.data);
+    //  this.data = this.transformeddata;
+    const outerRadius = this.svgwidth / 2;
+    let innerRadius = this.svgwidth / 4;
+
     if (this.pie) {
       innerRadius = 0;
     }
+
     const tooltip = this.toolTip(d3);
+
     const arc = d3.arc()
       .outerRadius(outerRadius)
       .innerRadius(innerRadius);
+
     const pie = d3.pie()
       .value((d) => { 
        return d[Object.keys(d)[1]];
-        });
+     //  return d.value
+       });
 
     const svg = d3.select("#" + this.componentId)
       .append('g')
@@ -152,14 +159,15 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
 
     const path = svg.append('path')
       .attr('d', arc)
-      .attr('fill',  (d, i) => {
+      .attr('fill', function (d, i) {
          if(d.data.color){
           return d.data.color;
         }
         else {
           return "black";
         }
-       })
+      //  return (d && d.data && d.data.color) ? d.data.color : "black"
+      })
       .attr('cursor', 'pointer')
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
@@ -167,6 +175,9 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       .on("mousemove", (d) => {
         return tooltip.html(
           this.formTooltipData(d.data)
+
+        //  this.formLegendData(d.data)
+          // this.toolTipContent(d.data)
         )
           .style("top", (d3.event.pageY - 10) + "px")
           .style("left", (d3.event.pageX + 10) + "px");
@@ -178,51 +189,33 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         this.DonutChartClick(d.data);
         this.fordrillableClick(this,d.data,event);
         return tooltip.style("visibility", "hidden");
-       })
-       svg.append('g').classed('labels',true);
-       svg.append('g').classed('lines',true);
-        var outerArc = d3.arc()
-       //orignally multiplication value was 0.9
-       //this value can be hardcoded as its multiple get multiplied 
-      //  with calculated radius tht can be anything
-       .outerRadius(innerRadius * 1.5)
-       .innerRadius(outerRadius * 1.5);
- var polyline = svg.select('.lines')
-                .selectAll('polyline')
-                .data(pie(this.data))
-              .enter().append('polyline')
-              .attr('class', 'polyline')
-                .attr('points', (d)=> {
-                     // see label transform function for explanations of these three lines.
-                    var pos = outerArc.centroid(d);
-                    pos[0] = outerRadius * 1.1 * (this.midAngle(d) < Math.PI ? 1 : -1);
-                    return [arc.centroid(d), outerArc.centroid(d), pos]
-                })
-                .attr('fill','none')
-                .attr('stroke','#A0A0A0')
-                .attr("stroke-width", 1.0);
+        //this.chartClick(d.data);
+      });
 
-                var label = svg.select('.labels').selectAll('text')
-                .data(pie(this.data))
-              .enter().append('text')
-                .attr('dy', '.35em')
-                 .html((d)=> {
-                    return d.data[Object.keys(d.data)[1]];
-                })
-                .attr('transform', (d)=> {
-                    var pos = outerArc.centroid(d);
-                    pos[0] = outerRadius * 1.11 * (this.midAngle(d) < Math.PI ? 1 : -1);
-                    
-                    return 'translate(' + pos + ')';
-                })
-                .style('text-anchor', (d)=> {
-                    return (this.midAngle(d)) < Math.PI ? 'start' : 'end';
-                });
+    const text = svg.append("text")
+      .transition()
+      .duration(200)
+      .attr("transform", function (d) {
+        return "translate(" + arc.centroid(d) + ")";
+      })
+      .attr("text-anchor", "middle")
+      .text(function (d) {
+
+        return d.data[Object.keys(d.data)[1]]
+
+        //return d.data.value;
+      })
+      .style('fill', function (d) {
+        return (d && d.data && d.data.textcolor) ? d.data.textcolor : "black";
+      })
+      .style('font-size', '12px');
   }
 
-  
-  midAngle(d: any) { return d.startAngle + (d.endAngle - d.startAngle) / 2; } 
-
+  // formLegendData(tooltipData: any) {
+  //   let obj = {};
+  //   obj[tooltipData.label] = tooltipData.value;
+  //   return this.toolTipForBar(obj);
+  // }
 
   formLegendData(){
     this.legendArray=[];
@@ -280,6 +273,8 @@ for (let [key, value] of Object.entries(event)) {
 }
   this.chartClick(object);
 }
+
    resize() {
   }
+
 }
