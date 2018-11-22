@@ -10,6 +10,7 @@ import * as d3 from 'd3';
 })
 export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnInit {
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid:any;
   //@Input() data: any;
   @Input('data') data: any
@@ -25,6 +26,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('horizontal-scale') hScale: boolean = true;
 
   drillableFlag:boolean = true;
+  resizeflag:boolean=false;
   groupbarchartArray: any[] = [];
   legendArray: any;
   xaxisData: any;
@@ -32,6 +34,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   legends: any;
   years:any;
   urllegendArray=[];
+  svg:any;
   constructor(private myservice:CommanDataService) {
   
     super('multibar');
@@ -138,17 +141,20 @@ drawChart() {
     const tooltip = this.toolTip(d3);
     let colors = this.predefinedcolors;
    // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+   if(this.resizeflag==false)
+   {
    if(this.chartId){
     this.svgwidth = this.chartId.nativeElement.offsetWidth;
 } else{
   
          this.svgwidth = this.svgwidth;
     }
+  }  
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const width =  this.svgwidth- margin.left - margin.right;
     const height =this.svgheight - margin.top - margin.bottom;
 
-    let svg = d3.select("#"+this.componentId)
+    this.svg = d3.select("#"+this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -181,21 +187,21 @@ drawChart() {
     }
 
     // add x axis to svg
-    svg.append("g")
+    this.svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x0));
 
     //add y axis to svg
-    svg.append("g")
+    this.svg.append("g")
       .call(d3.axisLeft(y)
         .ticks(10))
 
-        this.plotLine(svg, y, height, width);
+        this.plotLine(this.svg, y, height, width);
 
    // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
 
     //adding bars
-    let slice = svg.selectAll(".slice")
+    let slice = this.svg.selectAll(".slice")
       .data(this.groupbarchartArray)
       .enter().append("g")
       .attr("class", "g")
@@ -245,7 +251,14 @@ drawChart() {
           this.chartClick(object);
   }
 
-  resize() {
+  resize(event:any) {
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+
+    this.plotGroupBarChart();
 
   }
 
