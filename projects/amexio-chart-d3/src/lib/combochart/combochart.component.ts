@@ -15,6 +15,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     @Input('line-color') lineColor: string = "black";
     @Input() horizontal: boolean = false;
     @ViewChild('chartId') chartId: ElementRef;
+    @ViewChild('divid') divid: ElementRef;
     @Input('data-reader') datareader: string;
     @Input('level') level: number = 0;
     @Input('target') target: number;
@@ -22,8 +23,9 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     @Input('line-data-index') lineInput: any;
     @Input('horizontal-scale') hScale : boolean = true;
     drillableFlag: boolean = true;
+    resizeflag:boolean=false;
     data: any;
-
+    svg:any;
     colorflag: boolean = false;
     keyArray: any[] = [];
     transformeddata: any[] = [];
@@ -116,21 +118,24 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     plotD3Chart() {
 
         this.formLegendData();
+        if(this.resizeflag==false)
+        {
         if (this.chartId) {
             this.svgwidth = this.chartId.nativeElement.offsetWidth;
         } else {
 
             this.svgwidth = this.svgwidth;
         }
+    }  
         let lineName: any = this.lineInput;
 
         const tooltip = this.toolTip(d3);
-        const svg = d3.select("#" + this.componentId);
+        this.svg = d3.select("#" + this.componentId);
         const margin = { top: 20, right: 20, bottom: 30, left: 60 };
         const width = this.svgwidth - margin.left - margin.right;
         const height = this.svgheight - margin.top - margin.bottom;
         let x, y;
-        const g = svg.append("g")
+        const g = this.svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         if (this.horizontal == false) {
             x = d3.scaleBand()
@@ -220,14 +225,14 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 });
 
             let shift = margin.left + x.bandwidth() / 2;
-            svg.append("path")
+            this.svg.append("path")
                 .data([this.data])
                 .attr("fill", "none")
                 .style("stroke", this.lineColor)
                 .attr("stroke-width", 1.5)
                 .attr("transform", "translate( " + shift + ", 20 )")
                 .attr("d", valueline);
-            let points1 = svg.selectAll("circle.point1")
+            let points1 = this.svg.selectAll("circle.point1")
                 .data(this.data)
 
             points1.enter().append("circle")
@@ -358,6 +363,14 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     }
 
     resize() {
+
+        this.svgwidth = 0;
+      this.svg.selectAll("*").remove();
+
+     this.resizeflag = true;
+     this.svgwidth = this.divid.nativeElement.offsetWidth;
+     this.plotD3Chart();
+
 
     }
 
