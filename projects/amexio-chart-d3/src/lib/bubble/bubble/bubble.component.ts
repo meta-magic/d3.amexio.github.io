@@ -7,12 +7,12 @@ import * as d3 from 'd3';
   templateUrl: './bubble.component.html',
   styleUrls: ['./bubble.component.css']
 })
-export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnInit {
+export class BubbleComponent extends AmexioD3BaseChartComponent implements OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @Input('color') color: any = "blue";
   @ViewChild('chartId') chartId: ElementRef;
-  @ViewChild('divid')  divid:ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @Input('data-reader') datareader: string;
   @Input('level') level: number = 0;
   @Input('target') target: number;
@@ -20,32 +20,32 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
   @Input('horizontal-scale') hScale: boolean = true;
   @Input('vertical-scale') vScale: boolean = true;
   drillableFlag: boolean = true;
-  resizeflag:boolean=false;
+  resizeflag: boolean = false;
   keyArray: any[] = [];
   transformeddata: any[] = [];
-  colors:any[]=[];
-  data1:any;
-  xaxisArray:any[]=[];
-  xarray:any[]=[];
-  legends:any[]=[];
-  legendarray:any[]=[];
-  legendData:any[]=[];
-  minxvalue:number=0;
-  maxxvalue:number=0;
-  colordata:any;
-  bubblechartdata:any[]=[];
-  httpresponse:any;
-  svg:any;
-  constructor(private myservice: CommanDataService,private cdf: ChangeDetectorRef) {
- 
+  colors: any[] = [];
+  data1: any;
+  xaxisArray: any[] = [];
+  xarray: any[] = [];
+  legends: any[] = [];
+  legendarray: any[] = [];
+  legendData: any[] = [];
+  minxvalue: number = 0;
+  maxxvalue: number = 0;
+  colordata: any;
+  bubblechartdata: any[] = [];
+  httpresponse: any;
+  svg: any;
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef) {
+
     super('bubble');
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
 
-   }
+  }
 
   ngOnInit() {
 
-    this.data1=[];
+    this.data1 = [];
 
     if (this.level <= 1) {
       let resp: any;
@@ -57,28 +57,28 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
         }, () => {
           setTimeout(() => {
             this.data = this.getResponseData(resp);
-            this.data1=this.data;
-            
+            this.data1 = this.data;
+
             this.xaxisData();
             this.transformData(this.data1);
             this.transformdata();
             this.colorGeneration();
             this.formLegendData();
-            this. plotBubbleChart();
+            this.plotBubbleChart();
           }, 0);
         });
 
       } else if (this.data) {
 
         setTimeout(() => {
-          this.data1=this.data;
+          this.data1 = this.data;
           this.data = this.getResponseData(this.data);
           this.xaxisData();
           this.transformData(this.data);
           this.transformdata();
           this.colorGeneration();
           this.formLegendData();
-          this. plotBubbleChart();
+          this.plotBubbleChart();
 
         }, 0);
 
@@ -115,14 +115,14 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
   drawChart() {
     setTimeout(() => {
       this.data = this.getResponseData(this.httpresponse);
-      this.data1=this.data;
-     
+      this.data1 = this.data;
+
       this.xaxisData();
       this.transformData(this.data1);
       this.transformdata();
       this.colorGeneration();
       this.formLegendData();
-      this. plotBubbleChart();  
+      this.plotBubbleChart();
     }, 0);
   }
 
@@ -142,7 +142,7 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
 
 
   transformData(data: any) {
-    this.colordata=[];
+    this.colordata = [];
     this.keyArray = data[0];
     data.forEach((element, index) => {
       if (index > 0) {
@@ -154,24 +154,22 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
       }
     });
     this.data = this.transformeddata;
-    this.colordata=this.transformeddata;
+    this.colordata = this.transformeddata;
 
   }
 
   plotBubbleChart() {
-  
+
     let colors = this.predefinedcolors;
-    if(this.resizeflag==false)
-    
-    {
-      if (this.chartId ) {
-     
+    if (this.resizeflag == false) {
+      if (this.chartId) {
+
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
-    } else {
-         
-         this.svgwidth = this.svgwidth;
+      } else {
+
+        this.svgwidth = this.svgwidth;
+      }
     }
-  }
 
     const tooltip = this.toolTip(d3);
     const margin = { top: 20, right: 60, bottom: 30, left: 60 };
@@ -180,7 +178,7 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
 
     let x, y;
 
-  
+
     x = d3.scaleLinear()
       .rangeRound([0, width]);
 
@@ -191,22 +189,22 @@ export class BubbleComponent  extends AmexioD3BaseChartComponent implements OnIn
 
     let yAxis = d3.axisLeft(y);
 
-     this.svg = d3.select("#" + this.componentId)
+    this.svg = d3.select("#" + this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-   // x.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[1]] })]);
+    // x.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[1]] })]);
     y.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[2]] })]);
 
     x.domain([this.minxvalue, this.maxxvalue]);
 
-                      
-var rScale = d3.scaleSqrt().rangeRound([6, 30]);
+
+    var rScale = d3.scaleSqrt().rangeRound([6, 30]);
 
 
-rScale.domain([d3.min(this.data, function(d){return  d[Object.keys(d)[4]] }), d3.max(this.data, function(d,i){return  d[Object.keys(d)[4]] })])
+    rScale.domain([d3.min(this.data, function (d) { return d[Object.keys(d)[4]] }), d3.max(this.data, function (d, i) { return d[Object.keys(d)[4]] })])
 
     this.svg.append("g")
       .attr("class", "x axis")
@@ -228,19 +226,19 @@ rScale.domain([d3.min(this.data, function(d){return  d[Object.keys(d)[4]] }), d3
       .attr("dy", ".71em")
       .style("text-anchor", "end")
 
-      this.plotLine(this.svg, x, y, height, width);
+    this.plotLine(this.svg, x, y, height, width);
 
- let node=this.svg.selectAll(".dot")
-      .data( this.bubblechartdata)
+    let node = this.svg.selectAll(".dot")
+      .data(this.bubblechartdata)
       .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", function (d){ return rScale(d[Object.keys(d)[4]]);})
+      .attr("r", function (d) { return rScale(d[Object.keys(d)[4]]); })
       .attr("cursor", "pointer")
       .attr("cx", function (d) {
         return x(d[Object.keys(d)[1]]);
       })
       .attr("cy", function (d) { return y(d[Object.keys(d)[2]]); })
-      .attr("fill",  function (d, ) { return d[Object.keys(d)[5]] })
+      .attr("fill", function (d, ) { return d[Object.keys(d)[5]] })
       .attr('opacity', 0.7)
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
@@ -260,157 +258,140 @@ rScale.domain([d3.min(this.data, function(d){return  d[Object.keys(d)[4]] }), d3
         this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
       });
-}
-
-formTooltipData(tooltipData: any) {
-  let object = {};
-  for (let [key, value] of Object.entries(tooltipData)) {
-   if(key != 'color'){
-      object[key] = value;
   }
-  }
-    return this.toolTipForBar(object);
-}
 
- // Method on chart click
- bubbleChartClick(event: any) {
-  let object = {};
-  for (let [key, value] of Object.entries(event)) {
-    object[key] = value;
-  }
-  this.chartClick(object);
-}
-
-resize(data:any) {
-   this.svgwidth=0;
-  this.svg.selectAll("*").remove();
-
-     this.resizeflag=true;
-     this.svgwidth =this.divid.nativeElement.offsetWidth;
-     
-     this.plotBubbleChart();
-
-}
-  xaxisData()
-  {
-<<<<<<< HEAD
-   
-    let array=[];
-=======
-        let array=[];
->>>>>>> f9f654f919c94ab4f3eef44eec752361ba3fab4a
-    this.minxvalue=0;
-    this.maxxvalue=0;
-    this.xaxisArray=[];
-    this.xarray=[];
-       this.data1.forEach(element => {
-            array.push(element[1]);
-        });
-for(let i=1;i<array.length;i++)
-{
-    this.xaxisArray.push(array[i]);
-}
-
-    let minvalue=Math.floor(d3.min(this.xaxisArray));
-    let maxvalue=Math.ceil(d3.max(this.xaxisArray));
-    this.minxvalue=  5*(Math.floor(Math.abs(minvalue/5)));
-    this.maxxvalue=5*(Math.ceil(Math.abs(maxvalue/5)));
-   
-  }
-  
- colorGeneration() {
-  this.legendarray=[]; 
-  let i=0;
-  let names = this.data1
-  .map(e => e[3])
-  .filter((e, i, a) => a.indexOf(e) === i);
-
-  for(let j=1;j<names.length;j++)
-  {
-    let value=[];
-    let obj={"label":"","color":"","value":[]};  
-    this.colordata.forEach(element => {
-              if(element[Object.keys(element)[3]]==names[j]) 
-              {
-                  element['color']=this.predefinedcolors[i];
-                  value.push(element);
-              }
-          });
-         obj["value"]=value;
-         obj["label"]=names[j];
-         obj["color"]=this.predefinedcolors[i];
-         this.legendarray.push(obj);
-         i++;
+  formTooltipData(tooltipData: any) {
+    let object = {};
+    for (let [key, value] of Object.entries(tooltipData)) {
+      if (key != 'color') {
+        object[key] = value;
+      }
     }
-<<<<<<< HEAD
+    return this.toolTipForBar(object);
+  }
 
-=======
->>>>>>> f9f654f919c94ab4f3eef44eec752361ba3fab4a
- }
+  // Method on chart click
+  bubbleChartClick(event: any) {
+    let object = {};
+    for (let [key, value] of Object.entries(event)) {
+      object[key] = value;
+    }
+    this.chartClick(object);
+  }
 
-formLegendData()
-{
-   this.legendData=[];
-   this.legendarray.forEach(element => {
+  resize(data: any) {
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+
+    this.plotBubbleChart();
+
+  }
+  xaxisData() {
+
+    let array = [];
+    this.minxvalue = 0;
+    this.maxxvalue = 0;
+    this.xaxisArray = [];
+    this.xarray = [];
+    this.data1.forEach(element => {
+      array.push(element[1]);
+    });
+    for (let i = 1; i < array.length; i++) {
+      this.xaxisArray.push(array[i]);
+    }
+
+    let minvalue = Math.floor(d3.min(this.xaxisArray));
+    let maxvalue = Math.ceil(d3.max(this.xaxisArray));
+    this.minxvalue = 5 * (Math.floor(Math.abs(minvalue / 5)));
+    this.maxxvalue = 5 * (Math.ceil(Math.abs(maxvalue / 5)));
+
+  }
+
+  colorGeneration() {
+    
+    this.legendarray = [];
+    let i = 0;
+    let names = this.data1
+      .map(e => e[3])
+      .filter((e, i, a) => a.indexOf(e) === i);
+
+    for (let j = 1; j < names.length; j++) {
+      let value = [];
+      let obj = { "label": "", "color": "", "value": [] };
+      this.colordata.forEach(element => {
+        if (element[Object.keys(element)[3]] == names[j]) {
+          element['color'] = this.predefinedcolors[i];
+          value.push(element);
+        }
+      });
+      obj["value"] = value;
+      obj["label"] = names[j];
+      obj["color"] = this.predefinedcolors[i];
+      this.legendarray.push(obj);
+      i++;
+    }
+  }
+
+  formLegendData() {
+    this.legendData = [];
+    this.legendarray.forEach(element => {
       let legendobject = {};
       legendobject['label'] = element.label;
       legendobject['color'] = element.color;
       this.legendData.push(legendobject);
-  });
-}
-
-onBubbleLegendClick(legendevent: any){
-  this.legendarray.forEach(element => {
-    if(legendevent.label==element.label){
-      this.legendClick(element.value); 
-    }    
-  }); 
- 
-}
-
-plotLine(g, x, y, height, width) {
-  if (this.vScale) {
-    g.append('g')
-      .attr("color", "lightgrey")
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(x).
-        tickSize(-this.width).tickFormat('')
-      );
+    });
   }
-  if (this.hScale) {
-    g.append('g')
-      .attr("color", "lightgrey")
-      .call(d3.axisLeft(y)
-        .tickSize(-width).tickFormat(''));
+
+  onBubbleLegendClick(legendevent: any) {
+    this.legendarray.forEach(element => {
+      if (legendevent.label == element.label) {
+        this.legendClick(element.value);
+      }
+    });
+
   }
-}
 
-transformdata()
-{
-  this.bubblechartdata=[]
-   let buubledata=[];
-     this.colordata.forEach((element,i) => {
-            
-          buubledata.push(element[Object.keys(element)[4]]);
-            
-     });
+  plotLine(g, x, y, height, width) {
+    if (this.vScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x).
+          tickSize(-this.width).tickFormat('')
+        );
+    }
+    if (this.hScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
+    }
+  }
+
+  transformdata() {
+    this.bubblechartdata = []
+    let buubledata = [];
+    this.colordata.forEach((element, i) => {
+
+      buubledata.push(element[Object.keys(element)[4]]);
+
+    });
 
 
-        let data=buubledata.sort(function(a, b){return b - a});
+    let data = buubledata.sort(function (a, b) { return b - a });
 
-        for(let j=0;j<=data.length;j++)
-        {
-              this.colordata.forEach(element => {
-                 if(data[j]==element[Object.keys(element)[4]])
-                 this.bubblechartdata.push(element);
-               });
-        }
-<<<<<<< HEAD
+    for (let j = 0; j <= data.length; j++) {
+      this.colordata.forEach(element => {
+        if (data[j] == element[Object.keys(element)[4]])
+          this.bubblechartdata.push(element);
+      });
+    }
 
-      
-     
-=======
->>>>>>> f9f654f919c94ab4f3eef44eec752361ba3fab4a
-}
+
+
+  }
 
 }
