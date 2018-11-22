@@ -293,8 +293,12 @@ resize(data:any) {
 }
   xaxisData()
   {
+<<<<<<< HEAD
    
     let array=[];
+=======
+        let array=[];
+>>>>>>> f9f654f919c94ab4f3eef44eec752361ba3fab4a
     this.minxvalue=0;
     this.maxxvalue=0;
     this.xaxisArray=[];
@@ -314,13 +318,13 @@ for(let i=1;i<array.length;i++)
    
   }
   
- colorGeneration()
- {
+ colorGeneration() {
   this.legendarray=[]; 
   let i=0;
   let names = this.data1
   .map(e => e[3])
   .filter((e, i, a) => a.indexOf(e) === i);
+
   for(let j=1;j<names.length;j++)
   {
     let value=[];
@@ -338,7 +342,10 @@ for(let i=1;i<array.length;i++)
          this.legendarray.push(obj);
          i++;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f9f654f919c94ab4f3eef44eec752361ba3fab4a
  }
 
 formLegendData()
@@ -397,11 +404,13 @@ transformdata()
                  if(data[j]==element[Object.keys(element)[4]])
                  this.bubblechartdata.push(element);
                });
-
         }
+<<<<<<< HEAD
 
       
      
+=======
+>>>>>>> f9f654f919c94ab4f3eef44eec752361ba3fab4a
 }
 
 }
