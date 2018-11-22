@@ -29,11 +29,14 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('drillable-data') drillabledatakey:any[]=[]
   @Input('horizontal-scale') hScale : boolean = true;
   drillableFlag:boolean = true;
+  resizeflag:boolean=false;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid:any;
   @Output() onLegendClick: any = new EventEmitter<any>();
   httpresponse:any;
+  svg:any;
   constructor(private myservice: CommanDataService) {
     super('barstack');
   }
@@ -162,12 +165,15 @@ drawChart() {
     const tooltip = this.toolTip(d3);
     let margin = { top: 20, right: 30, bottom: 30, left: 60 };
     let colors = this.predefinedcolors;
+
+    if(this.resizeflag==false)
+    {
     if(this.chartId){
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
  } else{
     
            this.svgwidth = this.svgwidth;
-      }
+      }}
     //this.svgwidth = this.chartId.nativeElement.offsetWidth;
     let data;
 
@@ -186,8 +192,8 @@ drawChart() {
       .offset(d3.stackOffsetDiverging)
       (this.data);
     series
-    let svg = d3.select("#" + this.componentId),
-      width = this.svgwidth - margin.left - margin.right;
+     this.svg = d3.select("#" + this.componentId);
+     let width = this.svgwidth - margin.left - margin.right;
 
     let height =this.svgheight - margin.top - margin.bottom;
 
@@ -196,7 +202,7 @@ drawChart() {
         return d[Object.keys(d)[0]];
       }))
       .rangeRound([margin.left, width - margin.right])
-      .padding(0.1);
+      .padding(0.3);
 
     let y = d3.scaleLinear()
       .domain([d3.min(this.stackMin(series)), d3.max(this.stackMax(series))])
@@ -210,18 +216,18 @@ drawChart() {
       this.barwidth = x.bandwidth;
     }
 
-    svg.append("g")
+    this.svg.append("g")
     .attr("transform", "translate(0," + y(0) + ")")
     .call(d3.axisBottom(x));
 
-    svg.append("g")
+    this.svg.append("g")
     .attr("transform", "translate(" + margin.left + ",0)")
     .call(d3.axisLeft(y));
 
 
-    this.plotLine(svg,x,y,height,width,margin.left)
+    this.plotLine(this.svg,x,y,height,width,margin.left)
  
-    svg.append("g")
+    this.svg.append("g")
       .selectAll("g")
       .data(series)
       .enter().append("g")
@@ -285,6 +291,15 @@ drawChart() {
   }
 
   resize() {
+
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+
+    this.plotChart();
+
   }
 
 
