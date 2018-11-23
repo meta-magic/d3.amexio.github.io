@@ -350,6 +350,7 @@ drawChart() {
     if (diff < 0) {
       diff = (diff * (-1));
     }
+    // let object = {};
     let object = {};
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
@@ -357,7 +358,6 @@ drawChart() {
         object[this.xaxis] = d.data[Object.keys(d.data)[0]];
       }
     }
-
     this.chartClick(object);
   }
 
