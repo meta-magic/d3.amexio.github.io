@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef,ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { PlotCart } from '../base/chart.component';
@@ -15,6 +15,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
   @Input('data-reader') datareader: string;
   @Input('level') level:number=0 ;
@@ -26,7 +27,8 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   transformeddata: any[] = [];
   legendArray:any[] = [];
   response:any;
-  constructor(private myservice: CommanDataService) {
+  svg:any;
+  constructor(private myservice: CommanDataService,private cdf:ChangeDetectorRef) {
     super('DONUTCHART');
   }
 
@@ -66,8 +68,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       } 
     }   else {
                
-                this.fetchData(this.drillData);
-               
+                this.fetchData(this.drillData);             
     }  
   }
 
@@ -101,8 +102,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
                       
                   }, 0);
             });
-  
-          }
+        }
   }
   
   drawChart()
@@ -114,7 +114,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
    }, 0);
 
   } 
-
 
   getResponseData(httpResponse: any) {
     let responsedata = httpResponse;
@@ -132,13 +131,16 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     this.formLegendData();
     //this.transformData(this.data);
     //  this.data = this.transformeddata;
-    const outerRadius = this.svgwidth / 2;
-    let innerRadius = this.svgwidth / 4;
-
-    if (this.pie) {
-      innerRadius = 0;
-    }
-
+    let outerRadius=0;
+    let innerRadius=0;
+  
+             outerRadius = this.svgwidth / 2;
+             innerRadius = this.svgwidth / 4;
+    
+      if (this.pie) {
+           innerRadius = 0;
+       }
+  
     const tooltip = this.toolTip(d3);
 
     const arc = d3.arc()
@@ -151,14 +153,14 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
      //  return d.value
        });
 
-    const svg = d3.select("#" + this.componentId)
+     this.svg = d3.select("#" + this.componentId)
       .append('g')
       .attr('transform', 'translate(' + this.svgwidth / 2 + ',' + this.svgheight / 2 + ')')
       .selectAll('path')
       .data(pie(this.data))
       .enter();
 
-    const path = svg.append('path')
+    const path = this.svg.append('path')
       .attr('d', arc)
       .attr('fill', function (d, i) {
          if(d.data.color){
@@ -193,7 +195,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         //this.chartClick(d.data);
       });
 
-    const text = svg.append("text")
+    const text = this.svg.append("text")
       .transition()
       .duration(200)
       .attr("transform", function (d) {
@@ -211,12 +213,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       })
       .style('font-size', '12px');
   }
-
-  // formLegendData(tooltipData: any) {
-  //   let obj = {};
-  //   obj[tooltipData.label] = tooltipData.value;
-  //   return this.toolTipForBar(obj);
-  // }
 
   formLegendData(){
     this.legendArray=[];
@@ -273,8 +269,6 @@ for (let [key, value] of Object.entries(event)) {
 }
 }
   this.chartClick(object);
-}
-
-   resize() {
   }
+
 }
