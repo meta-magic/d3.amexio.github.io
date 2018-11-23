@@ -12,13 +12,15 @@ import { CommanDataService } from '../services/comman.data.service';
 export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart {
 
     @ViewChild('chartId') chartId: ElementRef;
+    @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid:any;
     @Input('data-reader') datareader: string;
     @Input('level') level:number=0;
     @Input('target') target:number;
     @Input('drillable-data') drillabledatakey:any[]=[]
     drillableFlag:boolean = true;
-
+    resizeflag:boolean=false;
+ 
     constructor(private myservice: CommanDataService) {
           super('line');
     }
@@ -83,6 +85,14 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
 
     resize() {
 
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    this.plotD3Chart();
+  
+
     }
 
     getResponseData(httpResponse: any) {
@@ -101,12 +111,14 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
   plotD3Chart(): void {
 
        // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+       if(this.resizeflag==false)
+       {
   if(this.chartId){
             this.svgwidth = this.chartId.nativeElement.offsetWidth;
     } else{
                this.svgwidth = this.svgwidth;
         }
-
+    }
         const tooltip = this.toolTip(d3);
 
         const linechart = this.initChart();

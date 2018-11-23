@@ -19,7 +19,9 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   @Input('drillable-data') drillabledatakey: any[] = []
   httpresponse:any;
   drillableFlag: boolean = true;
+  resizeflag:boolean=false;
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Output() onTooltipClick: any = new EventEmitter<any>();
   @Input('horizontal-scale') hScale: boolean = true;
@@ -115,14 +117,17 @@ drawChart() {
 
   initAreaChart() {
     this.tooltip = this.toolTip(d3);
+    if(this.resizeflag==false)
+    {
+
     
     if(this.chartId){
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
- } else{
+    } else{
     
            this.svgwidth = this.svgwidth;
       }
-
+    }
 
       this.margin = { top: 20, right: 20, bottom: 30, left: 30 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
@@ -384,6 +389,16 @@ drawChart() {
   }
 
   resize() {
+
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    console.log("this.data",this.data);
+    this.initAreaChart();
+    this.plotD3Chart();  
+    
+
   }
 
   formTooltipData(tooltipData: any, count: number) {

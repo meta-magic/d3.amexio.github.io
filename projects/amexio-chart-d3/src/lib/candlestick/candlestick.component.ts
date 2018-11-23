@@ -14,12 +14,14 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input('data-reader') datareader: any;
   @Input() data: any[];
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Input('level') level:number=0;
   @Input('target') target:number;
   @Input('drillable-data') drillabledatakey:any[]=[];
   @Input('horizontal-scale') hScale : boolean = true;
   drillableFlag:boolean = true;
+  resizeflag :boolean=false;
   predefinedColor = [];
   keyArray: any[] = [];
   transformeddata: any;
@@ -112,17 +114,22 @@ drawChart() {
 
   initializeData() {
     this.tooltip = this.toolTip(d3);
+
+    if (this.resizeflag == false) {
     if (this.chartId) {
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
     } else {
       this.svgwidth = this.svgwidth;
     }
-    this.margin = { top: 20, right: 30, bottom: 30, left: 60 },
-      this.width = this.svgwidth - this.margin.left - this.margin.right,
-      this.height = this.svgheight - this.margin.top - this.margin.bottom;
+  }
+  this.margin = { top: 20, right: 30, bottom: 30, left: 60 },
+  this.width = this.svgwidth - this.margin.left - this.margin.right,
+  this.height = this.svgheight - this.margin.top - this.margin.bottom;
   }
 
   plotXYAxis() {
+
+    
     // set the ranges
     this.x = d3.scaleBand().range([0, this.width]);
     this.y = d3.scaleLinear()
@@ -299,6 +306,16 @@ drawChart() {
     }
 
   resize(){
+
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+      this.initializeData();
+      this.plotXYAxis();
+      this.plotD3Chart();
+
 
   }
 

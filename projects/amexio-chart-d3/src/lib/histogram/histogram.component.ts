@@ -18,11 +18,14 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('data')  datahisto:any;
   @Input('horizontal-scale') hScale: boolean = true;
   @ViewChild('chartId') chartId: ElementRef;
+  @ViewChild('divid') divid: ElementRef;
   @Input('data-reader') datareader: string;
   @Input('level') level: number = 0;
   @Input('target') target: number;
   @Input('drillable-data') drillabledatakey: any[] = []
   httpresponse:any;
+  svg:any;
+  resizeflag:boolean=false;
   drillableFlag: boolean = true;
   data1: any;
   values: any[] = [];
@@ -215,13 +218,14 @@ drawChart() {
             });
             i++;
       });
-
+    if(this.resizeflag==false)
+    {
     if (this.chartId) {
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
     } else {
 
       this.svgwidth = this.svgwidth;
-    }
+    }}
     const margin = { top: 20, right: 20, bottom: 30, left: 60 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
@@ -230,7 +234,7 @@ drawChart() {
    
     let x, y;
 
-    let svg = d3.select("#"+this.componentId)
+     this.svg = d3.select("#"+this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -249,18 +253,19 @@ drawChart() {
     let z = d3.scaleOrdinal(d3.schemeCategory10);
     this.arrayofLength=[];
     // add x axis to svg
-    svg.append("g")
+    this.svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
 
     let horizontalpadding = 0.05;
     //add y axis to svg
-    svg.append("g")
+    this.svg.append("g")
       .call(d3.axisLeft(y));
 
-      this.plotLine(svg, x, y, height, width);
+      this.plotLine(this.svg, x, y, height, width);
+      console.log("tempdata",tempdata);
 
-  svg.append("g")
+  this.svg.append("g")
       .selectAll("g")
       .data( tempdata)
       .enter( ).append("g")
@@ -412,6 +417,20 @@ drawChart() {
 
   resize() {
 
+    this.svgwidth = 0;
+    this.svg.selectAll("*").remove();
+
+    this.resizeflag = true;
+    this.svgwidth = this.divid.nativeElement.offsetWidth;
+   // console.log("finaldataarray",this.finaldataarray);
+    console.log("svgwidth", this.svgwidth );
+    this.transformData()
+    this.plotXaxis();
+    this.plotYaxis();
+    this.tooltipData();
+    this.dataforChart();
+    this.transformData1(this.finaldataarray);
+    this.plotChart();
   }
 
   dataforChart() {

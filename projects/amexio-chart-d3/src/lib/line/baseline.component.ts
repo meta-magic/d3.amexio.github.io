@@ -5,6 +5,7 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 {
     svgwidth : any;
+    svgheight=300;
     private _data      : any;
     private xaxisdata  : any[];
     private yaxisdata  : any[];
@@ -12,6 +13,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     legends    : any[];
     protected xaxisname : any;
     protected multiseriesdata : any[];
+    svg:any;
 
     @Input('horizontal-scale') hScale : boolean = true;
 
@@ -83,11 +85,11 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
     protected initChart() : any {
 
-        const svg       = d3.select("#"+this.componentId);
+        this.svg       = d3.select("#"+this.componentId);
         const margin    = { top: 20, right: 20, bottom: 30, left: 40 };
         const width     = +this.svgwidth - margin.left - margin.right;
-        const height    = +svg.attr("height") - margin.top - margin.bottom;
-        const g         = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        const height    = +this.svgheight - margin.top - margin.bottom;
+        const g         = this.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         const x = d3.scaleBand()
                     .rangeRound([0, width])
@@ -101,7 +103,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
              
         g.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .attr("color", "grey")
+           .attr("color", "grey")
             .call(d3.axisBottom(x));
 
         g.append("g")
@@ -110,7 +112,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
 
         return{
-            g, x, y, height, width
+             g, x, y, height, width
         }
 
     }    
@@ -122,12 +124,15 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
             g.append('g')
                 .attr("color", "lightgrey")
                 .attr('transform', 'translate(0,' + height + ')')
-                .call(d3.axisBottom(x).tickSize(-this.width).tickFormat(''));
+                .call(d3.axisBottom(x).
+                 tickSize(-this.width).tickFormat('')
+            );
         }
         if(this.hScale){
             g.append('g')
                 .attr("color", "lightgrey")
-                .call(d3.axisLeft(y).tickSize(-width).tickFormat(''));     
+                .call(d3.axisLeft(y)
+                . tickSize(-width).tickFormat(''));     
         }
     }
 

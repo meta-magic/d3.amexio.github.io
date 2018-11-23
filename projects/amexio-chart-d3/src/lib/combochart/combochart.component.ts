@@ -371,7 +371,6 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
      this.svgwidth = this.divid.nativeElement.offsetWidth;
      this.plotD3Chart();
 
-
     }
 
 

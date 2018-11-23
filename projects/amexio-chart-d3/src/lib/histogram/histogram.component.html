@@ -1,5 +1,5 @@
-<div   *ngIf="drillableFlag">
-<table style="width: 100%;" #chartId (window:resize)="resize()">
+<div   *ngIf="drillableFlag" #divid (window:resize)="resize()" >
+<table style="width: 100%;" #chartId >
         <tr>
             <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td>
         </tr>
