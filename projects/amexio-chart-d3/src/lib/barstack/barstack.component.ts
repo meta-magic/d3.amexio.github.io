@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
@@ -10,6 +10,7 @@ import { CommanDataService } from '../services/comman.data.service';
 })
 export class BarstackComponent extends AmexioD3BaseChartComponent implements OnInit {
   legendArray: any[];
+  maxYValue: number = 0;
   keyArray: any[];
   predefinedcolors: any[];
   legends: any[];
@@ -21,102 +22,103 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() barwidth: number = 0;
   @Input() title: String = "";
   @Input() legend: boolean = true;
+  @Input('label-color') labelcolor: string = "black";
   @Input() color: string[] = [];
   @Input('width') svgwidth: number = 300;
   @Input('data-reader') datareader: any;
-  @Input('level') level:number=0;
-  @Input('target') target:number;
-  @Input('drillable-data') drillabledatakey:any[]=[]
-  @Input('horizontal-scale') hScale : boolean = true;
-  drillableFlag:boolean = true;
-  resizeflag:boolean=false;
+  @Input('level') level: number = 0;
+  @Input('target') target: number;
+  @Input('drillable-data') drillabledatakey: any[] = []
+  @Input('horizontal-scale') hScale: boolean = true;
+  drillableFlag: boolean = true;
+  resizeflag: boolean = false;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
-  @ViewChild('drillid') drillid:any;
+  @ViewChild('drillid') drillid: any;
   @Output() onLegendClick: any = new EventEmitter<any>();
-  httpresponse:any;
-  svg:any;
+  httpresponse: any;
+  svg: any;
   constructor(private myservice: CommanDataService) {
     super('barstack');
   }
 
   ngOnInit() {
+
     if (this.level <= 1) {
-    let res;
-    if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-        //this.data = response;
-        this.httpresponse=response;
-        this.data = this.getResponseData(response);
-      }, (error) => {
-      }, () => {
+      let res;
+      if (this.httpmethod && this.httpurl) {
+        this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+          //this.data = response;
+          this.httpresponse = response;
+          this.data = this.getResponseData(response);
+        }, (error) => {
+        }, () => {
+          setTimeout(() => {
+            this.transformData(this.data);
+            this.plotChart();
+          }, 0);
+        });
+      } else if (this.data1) {
+
         setTimeout(() => {
-          this.transformData(this.data);
+          this.transformData(this.data1);
           this.plotChart();
         }, 0);
-      });
-    } else if (this.data1) {
-
-      setTimeout(() => {
-        this.transformData(this.data1);
-        this.plotChart();
-      }, 0);
+      }
     }
-  }
   }
 
 
   fetchData(data: any) {
-   
+
     let requestJson;
-    let key=this.drillabledatakey;
+    let key = this.drillabledatakey;
     let resp: any;
-    if(this.drillabledatakey.length)
-    {
-         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
-         requestJson=drillabledata;
+    if (this.drillabledatakey.length) {
+      let drillabledata = this.getMultipleDrillbleKeyData(data, key);
+      requestJson = drillabledata;
     }
-    else{
-            requestJson=data;  
-        }
-  
-    
- if (this.httpmethod && this.httpurl) {
- this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
-            resp = response;
-            this.httpresponse=response;
-        }, (error) => {
-        }, () => {
-            setTimeout(() => {
-                //this.data = this.getResponseData(resp);
-                this.drawChart();
-                  }, 0);
-              });
-           }
-}
+    else {
+      requestJson = data;
+    }
 
-drawChart() {
-  setTimeout(() => {
-          this.data = this.getResponseData(this.httpresponse);
-          this.transformData(this.data);
-          this.plotChart();
-  }, 0);
 
-} 
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
+        resp = response;
+        this.httpresponse = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          //this.data = this.getResponseData(resp);
+          this.drawChart();
+        }, 0);
+      });
+    }
+  }
+
+  drawChart() {
+    setTimeout(() => {
+      this.data = this.getResponseData(this.httpresponse);
+      this.transformData(this.data);
+      this.plotChart();
+    }, 0);
+
+  }
 
 
   transformData(data1: any) {
-    
+
     this.keyArray = [];
     this.legendArray = [];
-  
+
     data1.forEach((element, i) => {
       if (i == 0) {
         element.forEach((innerelement, index) => {
           if (index > 0) {
             this.legendArray[innerelement] = { 'data': [] };
-            this.keyArray.push(innerelement);          
+            this.keyArray.push(innerelement);
           }
           else if (index == 0) {
             this.xaxis = innerelement;
@@ -148,7 +150,31 @@ drawChart() {
     tempinnerarray.forEach(element => {
       this.data.push(element);
     });
-    this.legends = []
+let maxY: any = 0;
+
+let yaxismaxArray =  []; 
+   //find max for yaxis
+    this.data.forEach((element) => {
+     for (let [key, value] of Object.entries(element) ){
+     
+     this.keyArray.forEach(key1 => {
+       if(key == key1){
+      maxY = maxY + value;
+       }
+     });//keyarray loop ends here
+
+     }//for ends here
+yaxismaxArray.push(maxY);
+maxY = 0;
+    });// foreach ends
+let tempLarge = 0, i;
+for(i = 0; i < yaxismaxArray.length; i++) {
+if(yaxismaxArray[i] > tempLarge) {
+  this.maxYValue = yaxismaxArray[i];
+}//if ends
+}// for ends
+
+     this.legends = []
     this.keyArray.forEach((element, index) => {
       const legenddata = this.legendArray[element];
       if (this.color.length > 0) {
@@ -166,18 +192,17 @@ drawChart() {
     let margin = { top: 20, right: 30, bottom: 30, left: 60 };
     let colors = this.predefinedcolors;
 
-    if(this.resizeflag==false)
-    {
-    if(this.chartId){
-      this.svgwidth = this.chartId.nativeElement.offsetWidth;
- } else{
-    
-           this.svgwidth = this.svgwidth;
-      }}
+    if (this.resizeflag == false) {
+      if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else {
+
+        this.svgwidth = this.svgwidth;
+      }
+    }
     //this.svgwidth = this.chartId.nativeElement.offsetWidth;
     let data;
-
-    data = this.data;
+     data = this.data;
     let keysetarray: string[] = [];
     if (this.httpmethod && this.httpurl) {
       for (let [key, value] of Object.entries(this.data[0])) {
@@ -187,15 +212,15 @@ drawChart() {
       this.keyArray.splice(0, 1);
     }
 
-   
+
     let series = d3.stack().keys(this.keyArray)
       .offset(d3.stackOffsetDiverging)
       (this.data);
     series
-     this.svg = d3.select("#" + this.componentId);
-     let width = this.svgwidth - margin.left - margin.right;
+    this.svg = d3.select("#" + this.componentId);
+    let width = this.svgwidth - margin.left - margin.right;
 
-    let height =this.svgheight - margin.top - margin.bottom;
+    let height = this.svgheight - margin.top - margin.bottom;
 
     let x = d3.scaleBand()
       .domain(data.map((d) => {
@@ -205,29 +230,31 @@ drawChart() {
       .padding(0.3);
 
     let y = d3.scaleLinear()
-      .domain([d3.min(this.stackMin(series)), d3.max(this.stackMax(series))])
+      .domain([d3.min(this.stackMin(series)), 
+        this.maxYValue
+        // d3.max(this.stackMax(series))
+    ])
       .rangeRound([height - margin.bottom, margin.top]);
-      
+
     let z = d3.scaleOrdinal(d3.schemeCategory10);
     if (this.barwidth > 0) {
       this.barwidth = this.barwidth;
     }
     else {
-      this.barwidth = x.bandwidth;
+      this.barwidth = x.bandwidth();
     }
 
     this.svg.append("g")
-    .attr("transform", "translate(0," + y(0) + ")")
-    .call(d3.axisBottom(x));
+      .attr("transform", "translate(0," + y(0) + ")")
+      .call(d3.axisBottom(x));
 
     this.svg.append("g")
-    .attr("transform", "translate(" + margin.left + ",0)")
-    .call(d3.axisLeft(y));
+      .attr("transform", "translate(" + margin.left + ",0)")
+      .call(d3.axisLeft(y));
 
+    this.plotLine(this.svg, x, y, height, width, margin.left)
 
-    this.plotLine(this.svg,x,y,height,width,margin.left)
- 
-    this.svg.append("g")
+   let svgRect =   this.svg.append("g")
       .selectAll("g")
       .data(series)
       .enter().append("g")
@@ -245,10 +272,11 @@ drawChart() {
         }
       })
       .selectAll("rect")
-      .data((d) => { 
-    
-        return d; })
-      .enter().append("rect")
+      .data((d) => {
+         return d;
+      })
+
+      svgRect.enter().append("rect")
       .attr("width", x.bandwidth).attr('id', (d, i) => {
         return d.data[i];
       })
@@ -275,20 +303,42 @@ drawChart() {
       })
       .on("click", (d) => {
         this.setBarClickText(d);
-        this.fordrillableClick(this,d,event);
+        this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
         // this.chartClick(d);
       });
-   
+// -------------------------
+svgRect.enter()
+.append("text")
+.style("font-weight","bold")
+.attr("text-anchor", "middle")
+.attr("fill", (d)=>{
+  if(this.labelcolor.length>0){
+    return this.labelcolor;
+  } else {
+    return "black";
+  }
+})
+ .attr("x", (d) => {
+  return x(+d.data[Object.keys(d.data)[0]]) + x.bandwidth()/2;
+  // +  margin.left;
+})
+.attr("y", (d, index) => {
+  return y(d[1]) + 20;
+})
+.text(function(d){
+     return  d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
+})
+ 
   }
 
   stackMin(serie) {
     return d3.min(serie, function (d) { return d[0]; });
   }
 
-  stackMax(serie) {
-    return d3.max(serie, function (d) { return d[1]; });
-  }
+  // stackMax(serie) {
+  //   return d3.max(serie, function (d) { return d[1]; });
+  // }
 
   resize() {
 
@@ -303,17 +353,16 @@ drawChart() {
   }
 
 
-  plotLine(svg,x,y,height,width,m)
-  {
-      if(this.hScale){
-          svg.append('g')
-             .attr("transform", "translate(" + m+ ",0)")
-              .attr("color", "lightgrey")
-              .call(d3.axisLeft(y)
-              . tickSize(-width).tickFormat(''));     
-      }
+  plotLine(svg, x, y, height, width, m) {
+    if (this.hScale) {
+      svg.append('g')
+        .attr("transform", "translate(" + m + ",0)")
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
+    }
   }
- 
+
 
   legendClick(event: any) {
     let obj = {};
@@ -373,5 +422,6 @@ drawChart() {
     }
     return responsedata;
   }
+
 
 }
