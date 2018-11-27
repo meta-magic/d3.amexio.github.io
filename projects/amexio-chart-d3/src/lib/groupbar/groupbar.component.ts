@@ -9,113 +9,108 @@ import * as d3 from 'd3';
   styleUrls: ['./groupbar.component.css']
 })
 export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnInit {
+  
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
-  @ViewChild('drillid') drillid:any;
+  @ViewChild('drillid') drillid: any;
   //@Input() data: any;
   @Input('data') data: any
   @Input() legend: boolean = true;
   @Input() barwidth: number = 0;
+  @Input('label-color') labelcolor: string = "black";
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @Input('data-reader') datareader: string;
-  @Input('level') level:number=0;
-  @Input('target') target:number;
-  @Input('drillable-data') drillabledatakey:any[]=[]
+  @Input('level') level: number = 0;
+  @Input('target') target: number;
+  @Input('drillable-data') drillabledatakey: any[] = []
   @Input('horizontal-scale') hScale: boolean = true;
 
-  drillableFlag:boolean = true;
-  resizeflag:boolean=false;
+  drillableFlag: boolean = true;
+  resizeflag: boolean = false;
   groupbarchartArray: any[] = [];
   legendArray: any;
   xaxisData: any;
   keyArray: any;
   legends: any;
-  years:any;
-  urllegendArray=[];
-  svg:any;
-  constructor(private myservice:CommanDataService) {
-  
+  years: any;
+  urllegendArray = [];
+  svg: any;
+  constructor(private myservice: CommanDataService) {
     super('multibar');
-   
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
   }
-  
+
   ngOnInit() {
     if (this.level <= 1) {
-    let res:any;
-    if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-          res=response;
-      
-      }, (error) => {
-      }, () => {
+      let res: any;
+      if (this.httpmethod && this.httpurl) {
+        this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+          res = response;
+
+        }, (error) => {
+        }, () => {
+          setTimeout(() => {
+
+            this.data = this.getResponseData(res);
+            this.initializeData();
+            this.plotD3Chart();
+          }, 0);
+
+        });
+
+      } else if (this.data) {
+
+
         setTimeout(() => {
-          
-          this.data= this.getResponseData(res);
+          this.data = this.getResponseData(this.data);
           this.initializeData();
           this.plotD3Chart();
         }, 0);
-    
-      });
-   
-    } else if (this.data) {
 
-      
-      setTimeout(() => {
-        this.data=this.getResponseData(this.data);
-        this.initializeData();
-        this.plotD3Chart();
-      }, 0);
-    
+      }
     }
-  } 
   }
 
   fetchData(data: any) {
-   
     let requestJson;
-    let key=this.drillabledatakey;
+    let key = this.drillabledatakey;
     let resp: any;
-    if(this.drillabledatakey.length)
-    {
-         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
-         requestJson=drillabledata;
+    if (this.drillabledatakey.length) {
+      let drillabledata = this.getMultipleDrillbleKeyData(data, key);
+      requestJson = drillabledata;
+    }
+    else {
+      requestJson = data;
+    }
 
-     }
-    else{
-             requestJson=data;
-        
-        }
-  
-    
- if (this.httpmethod && this.httpurl) {
- this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
-            resp = response;
-        }, (error) => {
-        }, () => {
-            setTimeout(() => {
-                this.data = this.getResponseData(resp);
-                this.drawChart();             
-            }, 0);
-       });
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
+        resp = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          this.data = this.getResponseData(resp);
+          this.drawChart();
+        }, 0);
+      });
 
     }
-}
+  }
 
-drawChart() {
-  setTimeout(() => {
-        
-    this.initializeData();
-    this.plotD3Chart();
-     
-  }, 0);
+  drawChart() {
+    setTimeout(() => {
 
-} 
+      this.initializeData();
+      this.plotD3Chart();
+
+    }, 0);
+
+  }
 
   getResponseData(httpResponse: any) {
-      let responsedata = httpResponse;
+    let responsedata = httpResponse;
     if (this.datareader != null) {
       const dr = this.datareader.split('.');
       for (const ir of dr) {
@@ -124,37 +119,32 @@ drawChart() {
     } else {
       responsedata = httpResponse;
     }
-    return responsedata; 
-  }  
+    return responsedata;
+  }
 
   plotD3Chart(): void {
-
     this.convertToJSON();
     this.plotGroupBarChart();
     this.transformData(this.data);
   }
 
-
   private plotGroupBarChart(): void {
-
-  
     const tooltip = this.toolTip(d3);
     let colors = this.predefinedcolors;
-   // this.svgwidth = this.chartId.nativeElement.offsetWidth;
-   if(this.resizeflag==false)
-   {
-   if(this.chartId){
-    this.svgwidth = this.chartId.nativeElement.offsetWidth;
-} else{
-  
-         this.svgwidth = this.svgwidth;
-    }
-  }  
-    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width =  this.svgwidth- margin.left - margin.right;
-    const height =this.svgheight - margin.top - margin.bottom;
+    // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    if (this.resizeflag == false) {
+      if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else {
 
-    this.svg = d3.select("#"+this.componentId)
+        this.svgwidth = this.svgwidth;
+      }
+    }
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const width = this.svgwidth - margin.left - margin.right;
+    const height = this.svgheight - margin.top - margin.bottom;
+
+    this.svg = d3.select("#" + this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -171,7 +161,7 @@ drawChart() {
       .rangeRound([height, 0]);
 
     //setting x and y domains
-     this.years = this.groupbarchartArray.map(function (d) { return d.labels; });
+    this.years = this.groupbarchartArray.map(function (d) { return d.labels; });
     let label = this.groupbarchartArray[0].values.map(function (d) { return d.label; });
 
     x0.domain(this.years);
@@ -180,10 +170,10 @@ drawChart() {
 
     //dynamic barwidth
     if (this.barwidth > 0) {
-            this.barwidth = this.barwidth;
+      this.barwidth = this.barwidth;
     }
     else {
-             this.barwidth = x0.bandwidth;
+      this.barwidth = x0.bandwidth;
     }
 
     // add x axis to svg
@@ -196,22 +186,23 @@ drawChart() {
       .call(d3.axisLeft(y)
         .ticks(10))
 
-        this.plotLine(this.svg, y, height, width);
+    this.plotLine(this.svg, y, height, width);
 
-   // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
-
-    //adding bars
+    // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
+     //adding bars
     let slice = this.svg.selectAll(".slice")
       .data(this.groupbarchartArray)
       .enter().append("g")
       .attr("class", "g")
       .attr("transform", function (d) { return "translate(" + x0(d.labels) + ",0)"; });
-    slice.selectAll("rect")
+    
+      slice.selectAll("rect")
       .data(function (d) { return d.values; })
       .enter().append("rect")
       .attr("width", x1.bandwidth)
-      .attr("x", function (d) { 
-         return x1(d.label) })
+      .attr("x", function (d) {
+        return x1(d.label)
+      })
       .style("fill", function (d, index) { return colors[index] })
       .attr("y", function (d) { return y(0); })
       .attr("height", function (d) { return height - y(0); })
@@ -220,8 +211,8 @@ drawChart() {
         return tooltip.style("visibility", "visible");
       })
       .on("mousemove", (d) => {
-         return tooltip.html(
-           this.setKey(d)
+        return tooltip.html(
+          this.setKey(d)
           //  this.toolTipContent(d)
         )
           .style("top", (d3.event.pageY - 10) + "px")
@@ -231,35 +222,55 @@ drawChart() {
       })
       .on("click", (d) => {
         this.groupbarClick(d);
-        this.fordrillableClick(this,d,event);
+        this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
         // this.chartClick(d);
-       
-      });
+      })
+
+      // -------------------------------------------------------
+
+      slice.selectAll("text")
+      .data(function (d) { return d.values; })
+      .enter().append("text")
+      .attr("width", x1.bandwidth)
+      .attr("x", function (d) {
+        return x1(d.label) + x1.bandwidth()/2
+      })
+       .attr("y", function (d) { return y(d.value); })
+      .attr("height", function (d) { return height - y(0); })
+      .style("font-weight","bold")
+      .style("font-size","1vw")
+      .attr("text-anchor", "middle")
+      .attr("fill", (d)=>{
+        if(this.labelcolor.length>0){
+          return this.labelcolor;
+        } else {
+          return "black";
+        }
+      })
+      .text(function(d){
+          return d.value;
+         });
 
     slice.selectAll("rect")
-      .attr("y", function (d) { return y(d.value); })
+      .attr("y", function (d) { 
+         return y(d.value); })
       .attr("height", function (d) { return height - y(d.value); });
-
   }
 
-  groupbarClick(d: any){
-
-  let object = {};
-        object[d.label] = d.value;
-        object[this.xaxisData] = d.xaxis;
-          this.chartClick(object);
+  groupbarClick(d: any) {
+    let object = {};
+    object[d.label] = d.value;
+    object[this.xaxisData] = d.xaxis;
+    this.chartClick(object);
   }
 
-  resize(event:any) {
+  resize(event: any) {
     this.svgwidth = 0;
     this.svg.selectAll("*").remove();
-
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-
     this.plotGroupBarChart();
-
   }
 
   legendClick(event: any) {
@@ -276,7 +287,7 @@ drawChart() {
     });
     obj["data"] = data;
     this.onLegendClick.emit(obj);
-    
+
     // this.onLegendClick.emit(legendNode);
   }
 
@@ -296,7 +307,7 @@ drawChart() {
         let singleBarObj = {};
         singleBarObj["value"] = this.data[i][j];
         singleBarObj["label"] = firstRowOfData[j];
-        singleBarObj["xaxis"] =this.data[i][0];
+        singleBarObj["xaxis"] = this.data[i][0];
         multiSeriesArray.push(singleBarObj);
       }
       if (multiSeriesArray.length) {
@@ -379,10 +390,10 @@ drawChart() {
   }
 
   setKey(d: any) {
-       let object = {};
-        object[d.label] = d.value;
-        object[this.xaxisData] = d.xaxis;
-        return (this.toolTipForBar(object));
+    let object = {};
+    object[d.label] = d.value;
+    object[this.xaxisData] = d.xaxis;
+    return (this.toolTipForBar(object));
   }
 
   plotLine(g, y, height, width) {
@@ -393,4 +404,5 @@ drawChart() {
           .tickSize(-width).tickFormat(''));
     }
   }
+
 }

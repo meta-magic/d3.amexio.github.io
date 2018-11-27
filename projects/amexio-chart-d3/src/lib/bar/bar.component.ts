@@ -236,6 +236,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 .enter()
                 .append("text")
                 .style("font-weight","bold")
+                .style("font-size","1vw")
                 .attr("text-anchor", "middle")
                 .attr("fill", (d)=>{
                   if(this.labelcolor.length>0){

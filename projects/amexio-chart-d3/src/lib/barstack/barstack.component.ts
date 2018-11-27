@@ -311,6 +311,7 @@ if(yaxismaxArray[i] > tempLarge) {
 svgRect.enter()
 .append("text")
 .style("font-weight","bold")
+.style("font-size","1vw")
 .attr("text-anchor", "middle")
 .attr("fill", (d)=>{
   if(this.labelcolor.length>0){
