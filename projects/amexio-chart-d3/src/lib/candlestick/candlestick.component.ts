@@ -2,7 +2,8 @@ import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, 
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
-import * as d3 from 'd3';@Component({
+import * as d3 from 'd3';
+@Component({
   selector: 'amexio-d3-chart-waterfall',
   templateUrl: './candlestick.component.html',
   styleUrls: ['./candlestick.component.css']
@@ -13,15 +14,16 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input('height') svgheight: number = 300;
   @Input('data-reader') datareader: any;
   @Input() data: any[];
+  @Input('level') level: number = 0;
+  @Input('target') target: number;
+  @Input('drillable-data') drillabledatakey: any[] = [];
+  @Input('label-color') labelcolor: string = "black";
+  @Input('horizontal-scale') hScale: boolean = true;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
-  @Input('level') level:number=0;
-  @Input('target') target:number;
-  @Input('drillable-data') drillabledatakey:any[]=[];
-  @Input('horizontal-scale') hScale : boolean = true;
-  drillableFlag:boolean = true;
-  resizeflag :boolean=false;
+  drillableFlag: boolean = true;
+  resizeflag: boolean = false;
   predefinedColor = [];
   keyArray: any[] = [];
   transformeddata: any;
@@ -33,7 +35,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   svg: any;
   tooltip: any;
   legendArray: any[] = [];
-  httpresponse:any;
+  httpresponse: any;
   constructor(private myservice: CommanDataService) {
     super("candlestickwaterfallchart");
   }
@@ -41,66 +43,59 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   ngOnInit() {
     this.predefinedColor = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
     if (this.level <= 1) {
-    let res;
-    if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-        //this.data = response;
-        this.httpresponse=response;
-        this.data = this.getResponseData(response);
-      }, (error) => {
-      }, () => {
+      let res;
+      if (this.httpmethod && this.httpurl) {
+        this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+          //this.data = response;
+          this.httpresponse = response;
+          this.data = this.getResponseData(response);
+        }, (error) => {
+        }, () => {
+          setTimeout(() => {
+            this.transformData(this.data);
+            this.initializeData();
+            this.plotXYAxis();
+            this.plotD3Chart();
+          }, 0);
+        });
+      } else if (this.data) {
         setTimeout(() => {
           this.transformData(this.data);
           this.initializeData();
           this.plotXYAxis();
           this.plotD3Chart();
         }, 0);
-      });
-    } else if (this.data) {
-      setTimeout(() => {
-        this.transformData(this.data);
-        this.initializeData();
-        this.plotXYAxis();
-        this.plotD3Chart();
-      }, 0);
+      }
     }
-  } 
   }
 
   fetchData(data: any) {
-   
     let requestJson;
-    let key=this.drillabledatakey;
+    let key = this.drillabledatakey;
     let resp: any;
-    if(this.drillabledatakey.length)
-    {
-         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
-         requestJson=drillabledata;
-
-     }
-    else{
-            requestJson=data;
-        
-        }
-         
- if (this.httpmethod && this.httpurl) {
- this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
-            resp = response;
-            this.httpresponse=response;
-        }, (error) => {
-        }, () => {
-            setTimeout(() => {
-                //this.data = this.getResponseData(resp);
-                this.drawChart();
-            }, 0);
-
-
-        });
+    if (this.drillabledatakey.length) {
+      let drillabledata = this.getMultipleDrillbleKeyData(data, key);
+      requestJson = drillabledata;
+    }
+    else {
+      requestJson = data;
+    }
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
+        resp = response;
+        this.httpresponse = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          //this.data = this.getResponseData(resp);
+          this.drawChart();
+        }, 0);
+      });
 
     }
-}
+  }
 
-drawChart() {
+  drawChart() {
     setTimeout(() => {
       this.data = this.getResponseData(this.httpresponse);
       this.transformData(this.data);
@@ -108,28 +103,23 @@ drawChart() {
       this.plotXYAxis();
       this.plotD3Chart();
     }, 0);
-
-} 
-
+  }
 
   initializeData() {
     this.tooltip = this.toolTip(d3);
-
     if (this.resizeflag == false) {
-    if (this.chartId) {
-      this.svgwidth = this.chartId.nativeElement.offsetWidth;
-    } else {
-      this.svgwidth = this.svgwidth;
+      if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else {
+        this.svgwidth = this.svgwidth;
+      }
     }
-  }
-  this.margin = { top: 20, right: 30, bottom: 30, left: 60 },
-  this.width = this.svgwidth - this.margin.left - this.margin.right,
-  this.height = this.svgheight - this.margin.top - this.margin.bottom;
+    this.margin = { top: 20, right: 30, bottom: 30, left: 60 },
+      this.width = this.svgwidth - this.margin.left - this.margin.right,
+      this.height = this.svgheight - this.margin.top - this.margin.bottom;
   }
 
   plotXYAxis() {
-
-    
     // set the ranges
     this.x = d3.scaleBand().range([0, this.width]);
     this.y = d3.scaleLinear()
@@ -137,14 +127,13 @@ drawChart() {
     // scale the range of the data
     let candlestickArray = this.data.map((d) => {
       return d[Object.keys(d)[0]];
-      // d.name;
-    });
+     });
     this.x.domain(candlestickArray);
     let max = d3.max(this.data, (d) => { return d.end; });
     this.y.domain([0, max]);
 
     this.svg = d3.select("#" + this.componentId)
-    // d3.select("body").append("svg")
+      // d3.select("body").append("svg")
       .attr("width", this.width + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
       .append("g")
@@ -158,18 +147,11 @@ drawChart() {
     // add the Y Axis
     this.svg.append("g")
       .call(d3.axisLeft(this.y));
-      this.plotLine(this.svg,this.x,this.y,this.height,this.width);
+    this.plotLine(this.svg, this.x, this.y, this.height, this.width);
   }
 
 
   plotD3Chart() {
-    //  this.data = [
-    //   { name: "Product Revenue", value: 420000 },
-    //   { name: "Services Revenue", value: 210000 },
-    //   { name: "Fixed Costs", value: -170000 },
-    //   { name: "letiable Costs", value: -140000 }
-    // ];
-
     let bar = this.svg.selectAll(".bar")
       .data(this.data)
       .enter().append("g")
@@ -177,8 +159,7 @@ drawChart() {
       .attr("transform", (d) => {
         return "translate(" + this.x(
           d[Object.keys(d)[0]]
-          // d.name
-        ) + ",0)";
+         ) + ",0)";
       });
 
     bar.append("rect")
@@ -206,27 +187,43 @@ drawChart() {
       })
       .on("click", (d) => {
         this.onCandlestickClick(d);
-        this.fordrillableClick(this,d,event);
-         return this.tooltip.style("visibility", "hidden");
+        this.fordrillableClick(this, d, event);
+        return this.tooltip.style("visibility", "hidden");
+      })
+    bar.append("text")
+      .style("font-weight", "bold")
+      .style("font-size", "1vw")
+      .attr("text-anchor", "middle")
+      .attr("fill", (d) => {
+        if (this.labelcolor.length > 0) {
+          return this.labelcolor;
+        } else {
+          return "black";
+        }
+      })
+      .attr("x", (d) => {
+        return (this.x.bandwidth()) / 2;
+      })
+      .attr("y", (d, index) => {
+        return this.y(Math.max(d.start, d.end)) + 20;
        })
-      ;
+      .text(function (d) {
+         return d[Object.keys(d)[1]]
+       });
   }
 
-
-  plotLine(svg,x,y,height,width)
-{
-
-    if(this.hScale){
-        svg.append('g')
-            .attr("color", "lightgrey")
-            .call(d3.axisLeft(y)
-            . tickSize(-width).tickFormat(''));     
+  plotLine(svg, x, y, height, width) {
+    if (this.hScale) {
+      svg.append('g')
+        .attr("color", "lightgrey")
+        .call(d3.axisLeft(y)
+          .tickSize(-width).tickFormat(''));
     }
-}
+  }
 
   transformData(data: any) {
-    this.transformeddata=[];
-    this.keyArray=[];
+    this.transformeddata = [];
+    this.keyArray = [];
     this.keyArray = data[0];
     data.forEach((element, index) => {
       if (index > 0) {
@@ -265,58 +262,54 @@ drawChart() {
     return responsedata;
   }
 
-  formTooltipData(tooltipData:any) {
-    let object ={};
+  formTooltipData(tooltipData: any) {
+    let object = {};
     object[this.keyArray[0]] = tooltipData[Object.keys(tooltipData)[0]];
     object[this.keyArray[1]] = tooltipData[Object.keys(tooltipData)[1]];
     return this.toolTipForBar(object);
   }
 
   onCandlestickClick(chartData: any) {
-    let object ={};
+    let object = {};
     object[this.keyArray[0]] = chartData[Object.keys(chartData)[0]];
     object[this.keyArray[1]] = chartData[Object.keys(chartData)[1]];
     this.chartClick(object);
   }
 
-  formLegendData(){
-    this.legendArray=[];
+  formLegendData() {
+    this.legendArray = [];
     this.data.forEach((element, index) => {
       for (let [key, value] of Object.entries(element)) {
-        if(key == this.keyArray[0] ){
-          let object ={};
+        if (key == this.keyArray[0]) {
+          let object = {};
           object["label"] = value;
           object["color"] = this.predefinedColor[index];
           this.legendArray.push(object);
         }
       }
-    });    
-   }
+    });
+  }
 
-   onCandlestickLegendClick(chartData: any){
-       let object = {};
-      this.data.forEach(element => {
-         for (let [key, value] of Object.entries(element)) {
-           if(value ==  chartData.label) {
-            object[ chartData.label] = element.value;
-          }
+  onCandlestickLegendClick(chartData: any) {
+    let object = {};
+    this.data.forEach(element => {
+      for (let [key, value] of Object.entries(element)) {
+        if (value == chartData.label) {
+          object[chartData.label] = element.value;
         }
-      });
-      this.onLegendClick.emit(object);
-    }
+      }
+    });
+    this.onLegendClick.emit(object);
+  }
 
-  resize(){
-
+  resize() {
     this.svgwidth = 0;
     this.svg.selectAll("*").remove();
-
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-      this.initializeData();
-      this.plotXYAxis();
-      this.plotD3Chart();
-
-
+    this.initializeData();
+    this.plotXYAxis();
+    this.plotD3Chart();
   }
 
 }
