@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, 
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
+import{DeviceQueryService} from '../services/device.query.service';
 import * as d3 from 'd3';
 @Component({
   selector: 'amexio-d3-chart-waterfall',
@@ -36,7 +37,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   tooltip: any;
   legendArray: any[] = [];
   httpresponse: any;
-  constructor(private myservice: CommanDataService) {
+  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
     super("candlestickwaterfallchart");
   }
 
@@ -114,7 +115,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
         this.svgwidth = this.svgwidth;
       }
     }
-    this.margin = { top: 20, right: 30, bottom: 30, left: 60 },
+    this.margin = { top: 20, right: 30, bottom: 50, left: 60 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
       this.height = this.svgheight - this.margin.top - this.margin.bottom;
   }
@@ -141,9 +142,31 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
         "translate(" + this.margin.left + "," + this.margin.top + ")");
 
     // add the X Axis
-    this.svg.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
-      .call(d3.axisBottom(this.x));
+
+    if(this.device.IsDesktop()==true)
+    {
+      this.svg.append("g")
+          .attr("transform", "translate(0," + this.height + ")")
+          .call(d3.axisBottom(this.x))
+    }
+  else
+   {
+     this.svg.append("g")
+          .attr("transform", "translate(0," + this.height + ")")
+          .call(d3.axisBottom(this.x)).
+           selectAll("text")
+           .attr("y", 0)
+           .attr("x", 9)
+           .attr("dy", ".35em")
+           .attr("transform", "rotate(60)")
+           .style("text-anchor", "start");
+
+  }
+
+    // this.svg.append("g")
+    //   .attr("transform", "translate(0," + this.height + ")")
+    //   .call(d3.axisBottom(this.x));
+
     // add the Y Axis
     this.svg.append("g")
       .call(d3.axisLeft(this.y));

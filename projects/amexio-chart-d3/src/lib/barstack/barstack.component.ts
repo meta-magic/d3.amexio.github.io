@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter, 
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
+import{DeviceQueryService} from '../services/device.query.service';
 
 @Component({
   selector: 'amexio-d3-chart-barstack',
@@ -39,7 +40,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Output() onLegendClick: any = new EventEmitter<any>();
   httpresponse: any;
   svg: any;
-  constructor(private myservice: CommanDataService) {
+  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
     super('barstack');
   }
 
@@ -189,7 +190,7 @@ if(yaxismaxArray[i] > tempLarge) {
 
   plotChart() {
     const tooltip = this.toolTip(d3);
-    let margin = { top: 20, right: 30, bottom: 30, left: 60 };
+    let margin = { top: 20, right: 30, bottom: 50, left: 60 };
     let colors = this.predefinedcolors;
 
     if (this.resizeflag == false) {
@@ -244,10 +245,27 @@ if(yaxismaxArray[i] > tempLarge) {
       this.barwidth = x.bandwidth();
     }
 
-    this.svg.append("g")
+
+    if(this.device.IsDesktop()==true)
+    {
+      this.svg.append("g")
       .attr("transform", "translate(0," + y(0) + ")")
       .call(d3.axisBottom(x));
+    }
+  else
+   {
+    this.svg.append("g")
+    .attr("transform", "translate(0," + y(0) + ")")
+    .call(d3.axisBottom(x)).
+           selectAll("text")
+           .attr("y", 0)
+           .attr("x", 9)
+           .attr("dy", ".35em")
+           .attr("transform", "rotate(60)")
+           .style("text-anchor", "start");
 
+  }
+   
     this.svg.append("g")
       .attr("transform", "translate(" + margin.left + ",0)")
       .call(d3.axisLeft(y));
