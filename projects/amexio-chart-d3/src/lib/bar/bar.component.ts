@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, } from "@an
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
+import{DeviceQueryService} from '../services/device.query.service';
 
 import * as d3 from 'd3';
 
@@ -37,7 +38,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     transformeddata: any[] = [];
     object: any;
     legendArray: any[] = [];
-    constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef) {
+    constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef,private device:DeviceQueryService) {
 
         super('bar');
        
@@ -175,11 +176,26 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         
           
             // add x axis to svg
-          g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x))
-
-
+            if(this.device.IsDesktop()==true)
+            {
+              g.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x))
+            }
+          else
+           {
+            g.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x)).
+                   selectAll("text")
+                   .attr("y", 0)
+                   .attr("x", 9)
+                   .attr("dy", ".35em")
+                   .attr("transform", "rotate(60)")
+                   .style("text-anchor", "start");
+     
+          }
+         
             //add y axis to svg
           g.append("g")
                 .call(d3.axisLeft(y)
