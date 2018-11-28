@@ -218,6 +218,12 @@ drawChart() {
             });
             i++;
       });
+
+      let chartdata=[];
+      for(i=0;i<tempdata.length-1;i++)
+      {
+              chartdata.push(tempdata[i]);
+      }
     if(this.resizeflag==false)
     {
     if (this.chartId) {
@@ -263,11 +269,10 @@ drawChart() {
       .call(d3.axisLeft(y));
 
       this.plotLine(this.svg, x, y, height, width);
-      console.log("tempdata",tempdata);
 
   this.svg.append("g")
       .selectAll("g")
-      .data( tempdata)
+      .data( chartdata)
       .enter( ).append("g")
       .attr("fill", this.color)
       .selectAll("rect")
@@ -281,7 +286,7 @@ drawChart() {
       })
       .attr("cursor", "pointer")
       .attr("height", (d, index) => {
-        return y(d[0]) - y(d[1] - horizontalpadding);
+        return Math.abs(y(d[0]) - y(d[1] - horizontalpadding));
       })
       .attr("transform", function (d, i) {
         var translate = [barWidth * i, 0];
@@ -305,8 +310,8 @@ drawChart() {
          this.fordrillableClick(this,d,event);
         return tooltip.style("visibility", "hidden");
          });
-  }
 
+  }
 
   histogramClick(obj: any){
 
@@ -314,9 +319,10 @@ drawChart() {
     let data= this.datahisto[0];
     let label1=data[1];
     let label2=data[0];
-
+     if(obj.label.length)
+     {
      object[label2+":"] = obj.label;
-     object[label1+":"] = obj.value;
+     object[label1+":"] = obj.value;}
     
      this.chartClick(object);
     }
@@ -422,8 +428,7 @@ drawChart() {
 
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-   // console.log("finaldataarray",this.finaldataarray);
-    console.log("svgwidth", this.svgwidth );
+  
     this.transformData()
     this.plotXaxis();
     this.plotYaxis();
