@@ -15,6 +15,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('height') svgheight: number = 300;
     @Input() horizontal: boolean = false;
     @Input('label-color') labelcolor: string = "black";
+    @Input('label') labelflag: boolean = false;
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid')  divid:ElementRef;
     @ViewChild('drillid') drillid: any;
@@ -229,7 +230,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     return tooltip.style("visibility", "hidden");
                     //this.chartClick(d);
                 });
-            
+
+                if(this.labelflag)
+            {
                 var yTextPadding = 40;
                 this.svg.selectAll(".label")
                 .data(this.data)
@@ -254,7 +257,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 .text((d) => {
                      return d[Object.keys(d)[1]];
                 });
-          
+          }//if ends fr 
         }
 
         else if (this.horizontal == true) {
