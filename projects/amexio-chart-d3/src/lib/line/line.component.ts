@@ -112,7 +112,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
 
   plotD3Chart(): void {
 
-       // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    
        if(this.resizeflag==false)
        {
   if(this.chartId){

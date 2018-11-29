@@ -106,7 +106,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
         x.domain(this.xaxisdata.map( (d) => { return d.label;}));
         y.domain([0, d3.max(this.yaxisdata,  (d) => { return d.value; })]);
-         
+
+        //add axis 
         if(this.deviceQueryService.IsDesktop()==true)
         {
           g.append("g")
