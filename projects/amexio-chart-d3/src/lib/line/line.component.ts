@@ -18,6 +18,8 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     @ViewChild('drillid') drillid:any;
     @Input('data-reader') datareader: string;
     @Input('level') level:number=0;
+    @Input('label') labelflag: boolean = false;
+    @Input('label-color') labelcolor: string = "black";
     @Input('target') target:number;
     @Input('drillable-data') drillabledatakey:any[]=[]
     drillableFlag:boolean = true;
@@ -181,6 +183,33 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
                  this.fordrillableClick(this,d,event);
                  return tooltip.style("visibility", "hidden");
             });
+
+      //lets plot labels here
+      if (this.labelflag) {
+        g.selectAll('label')
+          .data(data)
+          .enter()
+          .append('text')
+          .style("font-weight", "bold")
+          .attr("text-anchor", "middle")
+          .attr("fill", (d) => {
+            if (this.labelcolor.length > 0) {
+              return this.labelcolor;
+            } else {
+              return "black";
+            }
+          })
+          .attr("x", function (d, i) {
+            return x(d.label);
+          })
+          .attr("y", function (d, i) {
+            return y(d.value) - 10;
+          })
+          .text(function (d) {
+            return d.value;
+          })
+      }
+
     }
 
 lineChartClick(d: any){

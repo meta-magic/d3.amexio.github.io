@@ -92,7 +92,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     protected initChart() : any {
 
         this.svg       = d3.select("#"+this.componentId);
-        const margin    = { top: 20, right: 20, bottom: 30, left: 40 };
+        const margin    = { top: 40, right: 20, bottom: 30, left: 40 };
         const width     = +this.svgwidth - margin.left - margin.right;
         const height    = +this.svgheight - margin.top - margin.bottom;
         const g         = this.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
