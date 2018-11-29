@@ -19,6 +19,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() legend: boolean = true;
   @Input() barwidth: number = 0;
   @Input('label-color') labelcolor: string = "black";
+  @Input('label') labelflag: boolean = false;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
@@ -250,7 +251,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       })
 
       // -------------------------------------------------------
-
+      if(this.labelflag) {
       slice.selectAll("text")
       .data(function (d) { return d.values; })
       .enter().append("text")
@@ -273,7 +274,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .text(function(d){
           return d.value;
          });
-
+}
     slice.selectAll("rect")
       .attr("y", function (d) { 
          return y(d.value); })

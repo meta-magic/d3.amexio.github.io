@@ -19,6 +19,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input('target') target: number;
   @Input('drillable-data') drillabledatakey: any[] = [];
   @Input('label-color') labelcolor: string = "black";
+  @Input('label') labelflag: boolean = false;
   @Input('horizontal-scale') hScale: boolean = true;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
@@ -213,6 +214,8 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
         this.fordrillableClick(this, d, event);
         return this.tooltip.style("visibility", "hidden");
       })
+    
+    if(this.labelflag) {
     bar.append("text")
       .style("font-weight", "bold")
       .style("font-size", "1vw")
@@ -233,6 +236,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
       .text(function (d) {
          return d[Object.keys(d)[1]]
        });
+      }
   }
 
   plotLine(svg, x, y, height, width) {
