@@ -26,7 +26,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() legend: boolean = true;
   @Input('label-color') labelcolor: string = "black";
   @Input() color: string[] = [];
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number=300;
   @Input('data-reader') datareader: any;
   @Input('level') level: number = 0;
   @Input('target') target: number;
@@ -220,9 +220,10 @@ if(yaxismaxArray[i] > tempLarge) {
       (this.data);
     series
     this.svg = d3.select("#" + this.componentId);
+
     let width = this.svgwidth - margin.left - margin.right;
 
-    let height = this.svgheight - margin.top - margin.bottom;
+    let height = this.chartId.nativeElement.offsetHeight- margin.top - margin.bottom;
 
     let x = d3.scaleBand()
       .domain(data.map((d) => {
