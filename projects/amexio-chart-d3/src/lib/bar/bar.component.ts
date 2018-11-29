@@ -353,7 +353,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     //this.chartClick(d);
                 });
 
-
+                 if(this.labelflag)
+                 {
                 let yTextPadding = 40;
                 this.svg.selectAll(".label")
                 .data(this.data)
@@ -380,7 +381,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 .text( (d) => {
                      return d[Object.keys(d)[1]];
                 });
-          
+          }
         
 
         }//else ends(horizontal bar logic ends)

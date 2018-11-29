@@ -21,6 +21,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   xaxis: any;
   @Input('data') data1: any
   @Input() barwidth: number = 0;
+  @Input('label') labelflag: boolean = false;
   @Input() title: String = "";
   @Input() legend: boolean = true;
   @Input('label-color') labelcolor: string = "black";
@@ -326,6 +327,7 @@ if(yaxismaxArray[i] > tempLarge) {
         // this.chartClick(d);
       });
 // -------------------------
+if(this.labelflag) {
 svgRect.enter()
 .append("text")
 .style("font-weight","bold")
@@ -348,6 +350,7 @@ svgRect.enter()
 .text(function(d){
      return  d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
 })
+}
  
   }
 
