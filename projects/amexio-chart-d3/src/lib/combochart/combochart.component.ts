@@ -4,6 +4,7 @@ import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
 import * as d3 from 'd3';
 import { stringify } from "@angular/core/src/render3/util";
+import{DeviceQueryService} from '../services/device.query.service';
 @Component({
     selector: 'amexio-d3-combochart',
     templateUrl: './combochart.component.html',
@@ -32,7 +33,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     object: any;
     legendArray: any[] = [];
     httpresponse:any;
-    constructor(private myservice: CommanDataService) {
+    constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
         super('combochart');
     }
     ngOnInit() {
@@ -131,7 +132,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
 
         const tooltip = this.toolTip(d3);
         this.svg = d3.select("#" + this.componentId);
-        const margin = { top: 20, right: 20, bottom: 30, left: 60 };
+        const margin = { top: 20, right: 20, bottom: 80, left: 60 };
         const width = this.svgwidth - margin.left - margin.right;
         const height = this.svgheight - margin.top - margin.bottom;
         let x, y;
@@ -164,10 +165,26 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             }
             y.domain([0, range]);
 
-            // add x axis to svg
+
+            if(this.device.IsDesktop()==true)
+            {
+              g.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x))
+            }
+          else
+           {
             g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x)).
+                   selectAll("text")
+                   .attr("y", 0)
+                   .attr("x", 9)
+                   .attr("dy", ".35em")
+                   .attr("transform", "rotate(65)")
+                   .style("text-anchor", "start");
+     
+          }
             //add y axis to svg
             g.append("g")
                 .call(d3.axisLeft(y)

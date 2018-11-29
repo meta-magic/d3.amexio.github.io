@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
+import{DeviceQueryService} from '../services/device.query.service';
 
 import * as d3 from 'd3';
 
@@ -33,7 +34,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   legendarray: any[] = [];
   legendData: any;
   httpresponse: any;
-  constructor(private myservice: CommanDataService) {
+  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
     super('scatter');
   }
 
@@ -184,15 +185,42 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     x.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[0]] })]);
     y.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[1]] })]);
 
-    this.svg.append("g")
-      .attr("class", "x axis")
+    if(this.device.IsDesktop()==true)
+    {
+      this.svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
-      .append("text")
-      .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
-      .style("text-anchor", "end");
+       .append("text")
+       .attr("y", 0)
+       .attr("x", 9)
+       .attr("dy", ".35em")
+       .style("text-anchor", "start");
+    }
+  else
+   {
+    this.svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis).
+     selectAll("text")
+     .attr("y", 0)
+     .attr("x", 9)
+     .attr("dy", ".35em")
+     .attr("transform", "rotate(60)")
+     .style("text-anchor", "start");
+  }
+
+
+
+    // this.svg.append("g")
+    //   .attr("class", "x axis")
+    //   .attr("transform", "translate(0," + height + ")")
+    //   .call(xAxis)
+    //   .append("text")
+    //   .attr("class", "label")
+    //   .attr("x", width)
+    //   .attr("y", -6)
+    //   .style("text-anchor", "end");
 
     this.svg.append("g")
       .attr("class", "y axis")

@@ -207,7 +207,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
 
     rScale.domain([d3.min(this.data, function (d) { return d[Object.keys(d)[4]] }), d3.max(this.data, function (d, i) { return d[Object.keys(d)[4]] })])
 
-debugger;
+
 
     if(this.device.IsDesktop()==true)
     {
@@ -233,18 +233,7 @@ debugger;
      .attr("transform", "rotate(60)")
      .style("text-anchor", "start");
   }
-
-
-    // this.svg.append("g")
-    //   .attr("class", "x axis")
-    //   .attr("transform", "translate(0," + height + ")")
-    //   .call(xAxis)
-    //   .append("text")
-    //   .attr("class", "label")
-    //   .attr("x", 0)
-    //   .attr("y", 9)
-    //   .style("text-anchor", "end");
-
+  
     this.svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)

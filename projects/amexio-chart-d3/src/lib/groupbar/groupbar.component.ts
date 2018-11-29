@@ -2,6 +2,7 @@
 import { Component, OnInit,Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import {CommanDataService} from '../services/comman.data.service'
+import{DeviceQueryService} from '../services/device.query.service';
 import * as d3 from 'd3';
 @Component({
   selector: 'amexio-d3-chart-multiseries',
@@ -37,7 +38,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   years: any;
   urllegendArray = [];
   svg: any;
-  constructor(private myservice: CommanDataService) {
+  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
     super('multibar');
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
   }
@@ -140,7 +141,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         this.svgwidth = this.svgwidth;
       }
     }
-    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const margin = { top: 20, right: 20, bottom: 50, left: 40 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
 
@@ -177,9 +178,30 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     }
 
     // add x axis to svg
-    this.svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x0));
+
+
+
+    if(this.device.IsDesktop()==true)
+            {
+              this.svg.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x0))
+            }
+          else
+           {
+            this.svg.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x0)).
+                   selectAll("text")
+                   .attr("y", 0)
+                   .attr("x", 9)
+                   .attr("dy", ".35em")
+                   .attr("transform", "rotate(60)")
+                   .style("text-anchor", "start");
+     
+          }
+
+  
 
     //add y axis to svg
     this.svg.append("g")

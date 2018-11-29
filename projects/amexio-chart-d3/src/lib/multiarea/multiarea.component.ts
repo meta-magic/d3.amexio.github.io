@@ -4,6 +4,7 @@ import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
 import * as d3 from 'd3';
 import { Key } from 'selenium-webdriver';
+import{DeviceQueryService} from '../services/device.query.service';
 
 @Component({
   selector: 'amexio-d3-chart-multiarea',
@@ -43,7 +44,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   data1: any[] = [];
   legendArray: any[] = [];
   tooltip: any;
-  constructor(private myservice: CommanDataService) {
+  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
 
     super("areachart");
   }
@@ -129,12 +130,11 @@ drawChart() {
       }
     }
 
-      this.margin = { top: 20, right: 20, bottom: 30, left: 30 },
+      this.margin = { top: 20, right: 20, bottom: 50, left: 30 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
       this.height = this.svgheight - this.margin.top - this.margin.bottom;
     //find max and initialize max
     this.maximumValue = this.findMaxData(this.data);
-
 
     this.x = d3.scalePoint()
       .range([0, this.width])
@@ -160,9 +160,25 @@ drawChart() {
     let counter: number;
     let g = this.svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     // add the X 
+    if(this.device.IsDesktop()==true)
+    {
+      g.append("g")
+          .attr("transform", "translate(0," + this.height + ")")
+          .call(d3.axisBottom(this.x))
+    }
+  else
+   {
     g.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
-      .call(d3.axisBottom(this.x));
+          .attr("transform", "translate(0," + this.height + ")")
+          .call(d3.axisBottom(this.x)).
+           selectAll("text")
+           .attr("y", 0)
+           .attr("x", 9)
+           .attr("dy", ".35em")
+           .attr("transform", "rotate(60)")
+           .style("text-anchor", "start");
+
+  }
     // add the Y Axis
     g.append("g")
       .call(d3.axisLeft(this.y));
@@ -394,7 +410,6 @@ drawChart() {
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-    console.log("this.data",this.data);
     this.initAreaChart();
     this.plotD3Chart();  
     

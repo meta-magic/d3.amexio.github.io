@@ -3,6 +3,7 @@ import { Component, Input, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
+import{DeviceQueryService} from '../services/device.query.service';
 import * as d3 from 'd3';
 
 @Component({
@@ -50,7 +51,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   tempp: any;
   tooltipArray: any[] = [];
    index=0;
-  constructor(private myservice:CommanDataService) {
+  constructor(private myservice:CommanDataService,private device:DeviceQueryService) {
     super('histogram');
   }
 
@@ -232,7 +233,7 @@ drawChart() {
 
       this.svgwidth = this.svgwidth;
     }}
-    const margin = { top: 20, right: 20, bottom: 30, left: 60 };
+    const margin = { top: 20, right: 20, bottom: 50, left: 60 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
  
@@ -259,10 +260,27 @@ drawChart() {
     let z = d3.scaleOrdinal(d3.schemeCategory10);
     this.arrayofLength=[];
     // add x axis to svg
-    this.svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
 
+    if(this.device.IsDesktop()==true)
+    {
+    this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x))
+    }
+  else
+   {
+    this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x)).
+           selectAll("text")
+           .attr("y", 0)
+           .attr("x", 9)
+           .attr("dy", ".35em")
+           .attr("transform", "rotate(60)")
+           .style("text-anchor", "start");
+
+  }
+    
     let horizontalpadding = 0.05;
     //add y axis to svg
     this.svg.append("g")
