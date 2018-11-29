@@ -5,6 +5,8 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommanDataService } from '../services/comman.data.service';
+import { DeviceQueryService } from "../services/device.query.service";
+
 @Component({
     selector: 'amexio-d3-chart-line',
     templateUrl: "./line.component.html"
@@ -21,8 +23,8 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     drillableFlag:boolean = true;
     resizeflag:boolean=false;
  
-    constructor(private myservice: CommanDataService) {
-          super('line');
+    constructor(public deviceQueryService: DeviceQueryService,public myservice:CommanDataService) {
+          super(deviceQueryService);
     }
 
     ngOnInit() {

@@ -1,6 +1,7 @@
 import { Input } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
+import{DeviceQueryService} from '../services/device.query.service';
 
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 {
@@ -24,6 +25,11 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     @Input('http-url') httpurl: any;
     
     @Input('http-method') httpmethod: any;
+
+    constructor(public deviceQueryService: DeviceQueryService) {
+        super('line');
+    }
+
 
     set data(v:any){
         this._data = v;
@@ -100,12 +106,28 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
         x.domain(this.xaxisdata.map( (d) => { return d.label;}));
         y.domain([0, d3.max(this.yaxisdata,  (d) => { return d.value; })]);
-             
+         
+        if(this.deviceQueryService.IsDesktop()==true)
+        {
+          g.append("g")
+              .attr("transform", "translate(0," + height + ")")
+              .attr("color", "grey")
+              .call(d3.axisBottom(x))
+        }
+      else
+       {
         g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-           .attr("color", "grey")
-            .call(d3.axisBottom(x));
-
+              .attr("transform", "translate(0," + height + ")")
+              .attr("color", "grey")
+              .call(d3.axisBottom(x)).
+               selectAll("text")
+               .attr("y", 0)
+               .attr("x", 9)
+               .attr("dy", ".35em")
+               .attr("transform", "rotate(60)")
+               .style("text-anchor", "start");
+      }
+     
         g.append("g")
             .attr("color", "grey")
             .call(d3.axisLeft(y));
