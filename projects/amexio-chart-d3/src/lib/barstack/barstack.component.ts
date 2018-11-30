@@ -41,6 +41,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Output() onLegendClick: any = new EventEmitter<any>();
   httpresponse: any;
   svg: any;
+  offsetheight:any;
   constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
     super('barstack');
   }
@@ -191,15 +192,15 @@ if(yaxismaxArray[i] > tempLarge) {
 
   plotChart() {
     const tooltip = this.toolTip(d3);
-    let margin = { top: 20, right: 30, bottom: 50, left: 60 };
+    let margin = { top: 20, right: 30, bottom:90, left: 60 };
     let colors = this.predefinedcolors;
-
-    if (this.resizeflag == false) {
+  
+    if (this.device.IsDesktop()) {
       if (this.chartId) {
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
       } else {
 
-        this.svgwidth = this.svgwidth;
+         this.svgwidth = this.svgwidth;
       }
     }
     //this.svgwidth = this.chartId.nativeElement.offsetWidth;
@@ -222,15 +223,25 @@ if(yaxismaxArray[i] > tempLarge) {
     this.svg = d3.select("#" + this.componentId);
 
     let width = this.svgwidth - margin.left - margin.right;
-
-    let height = this.chartId.nativeElement.offsetHeight- margin.top - margin.bottom;
+    let height;
+   // height=this.chartId.nativeElement.offsetHeight-20;
+   
+    if(this.device.IsDesktop())
+        {
+            
+               this.offsetheight = this.chartId.nativeElement.offsetHeight;
+               height =  this.offsetheight;
+        }
+        else{
+                 height=this.chartId.nativeElement.offsetHeight-10;
+          }
 
     let x = d3.scaleBand()
       .domain(data.map((d) => {
         return d[Object.keys(d)[0]];
       }))
       .rangeRound([margin.left, width - margin.right])
-      .padding(0.3);
+      .padding(0.35);
 
     let y = d3.scaleLinear()
       .domain([d3.min(this.stackMin(series)), 
@@ -239,13 +250,13 @@ if(yaxismaxArray[i] > tempLarge) {
     ])
       .rangeRound([height - margin.bottom, margin.top]);
 
-    let z = d3.scaleOrdinal(d3.schemeCategory10);
-    if (this.barwidth > 0) {
-      this.barwidth = this.barwidth;
-    }
-    else {
-      this.barwidth = x.bandwidth();
-    }
+   
+    // if (this.barwidth > 0) {
+    //   this.barwidth = this.barwidth;
+    // }
+    // else {
+    //   this.barwidth = x.bandwidth();
+    // }
 
 
     if(this.device.IsDesktop()==true)
@@ -297,7 +308,7 @@ if(yaxismaxArray[i] > tempLarge) {
       })
 
       svgRect.enter().append("rect")
-      .attr("width", x.bandwidth).attr('id', (d, i) => {
+      .attr("width", x.bandwidth()).attr('id', (d, i) => {
         return d.data[i];
       })
       .attr("x", (d) => {
@@ -370,7 +381,6 @@ svgRect.enter()
 
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-
     this.plotChart();
 
   }
