@@ -16,11 +16,14 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   @Input('height') svgheight: number = 350;
   @Input('data-reader') datareader: any;
   @Input('level') level: number = 0;
+  @Input('label-color') labelcolor: string = "black";
+  @Input('label') labelflag: boolean = false;
   @Input('target') target: number;
   @Input('drillable-data') drillabledatakey: any[] = []
   httpresponse:any;
   drillableFlag: boolean = true;
-  resizeflag:boolean=false;
+  resizeflag:boolean = false;
+  togglelabel: boolean = false;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -50,7 +53,8 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   }
 
   ngOnInit() {
-    let res;
+    this.togglelabel = false;
+     let res;
      if(this.level<=1){
     if (this.httpmethod && this.httpurl) {
       this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
@@ -130,7 +134,7 @@ drawChart() {
       }
     }
 
-      this.margin = { top: 20, right: 20, bottom: 50, left: 30 },
+      this.margin = { top: 30, right: 44, bottom: 50, left: 30 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
       this.height = this.svgheight - this.margin.top - this.margin.bottom;
     //find max and initialize max
@@ -200,6 +204,7 @@ drawChart() {
   }
 
   PlotLineDot(g: any, i: number, thisa: this) {
+    let flag = this.togglelabel;
     const line = d3.line()
       .x( (d)=> { return thisa.x(d[Object.keys(d)[0]]); })
       .y( (d)=> { return thisa.y(d[Object.keys(d)[i]]); });
@@ -241,7 +246,7 @@ drawChart() {
         return this.tooltip.style("visibility", "hidden");
       })
 
-      .style("opacity", 0.1)
+      .style("opacity", 1)
       .on("click", (d) => {
         this.onAreaTooltipClick(d, i);
         this.fordrillableClick(this, d, event);
@@ -252,6 +257,51 @@ drawChart() {
         // "translate(" + this.margin.left + "," + 0 + ")");
         "translate(" +  0 + "," + 0 + ")");
 
+    // -----------------------------------------------------------------
+    if(this.labelflag) {
+    g.selectAll('labels')
+    .data(thisa.data)
+    .enter()
+    .append('text')
+    .style("font-weight","bold")
+    .attr("text-anchor", "middle")
+    .attr("fill", (d)=>{
+      if(this.labelcolor.length>0){
+        return this.labelcolor;
+      } else {
+        return "black";
+      }
+    })
+    .attr("x", function(d) {
+      // let length = String(d[Object.keys(d)[i]]).length
+        return thisa.x(d[Object.keys(d)[0]]) + 20;
+     })
+    .attr("y", function(d) {
+      let key: any = [Object.keys(d)[i]];
+        if(flag)
+      {
+        return thisa.y(d[key]) - 5;// fr up
+      } 
+      else {
+        return thisa.y(d[key]) + 15;
+           }
+      // return thisa.y(d[Object.keys(d)[i]]);
+        //  return y(d[Object.keys(d)[1]])+yTextPadding;
+    })
+    .text(function(d){
+          return d[Object.keys(d)[i]];
+    })
+    .attr("transform",
+       "translate(" +  0 + "," + 0 + ")");
+
+}
+     if(this.togglelabel) {
+      this.togglelabel = false;
+     }
+     else {
+      this.togglelabel = true;
+     }
+     
   }
 
   plotAreaChart(g: any, i: number, thisa: this) {
@@ -405,15 +455,12 @@ drawChart() {
   }
 
   resize() {
-
     this.svgwidth = 0;
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
     this.initAreaChart();
-    this.plotD3Chart();  
-    
-
+    this.plotD3Chart();
   }
 
   formTooltipData(tooltipData: any, count: number) {
