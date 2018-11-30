@@ -33,10 +33,13 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     object: any;
     legendArray: any[] = [];
     httpresponse:any;
+    offsetheight:any;
+   
     constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
         super('combochart');
     }
     ngOnInit() {
+      
         if (this.level <= 1) {
             let resp: any;
             if (this.httpmethod && this.httpurl) {
@@ -132,9 +135,21 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
 
         const tooltip = this.toolTip(d3);
         this.svg = d3.select("#" + this.componentId);
-        const margin = { top: 20, right: 20, bottom: 80, left: 60 };
+        const margin = { top: 20, right: 20, bottom: 85, left: 60 };
         const width = this.svgwidth - margin.left - margin.right;
-        const height = this.svgheight - margin.top - margin.bottom;
+        let height;
+     
+
+        console.log("offsetheight",this.offsetheight);
+        if(this.device.IsDesktop()==true)
+        {
+            
+            this.offsetheight = this.chartId.nativeElement.offsetHeight-20-90;
+               height =  this.offsetheight;
+        }
+        else{
+                 height=this.svgheight-margin.top-margin.bottom;
+          }
         let x, y;
         const g = this.svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -386,6 +401,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
 
      this.resizeflag = true;
      this.svgwidth = this.divid.nativeElement.offsetWidth;
+   //  this.svgheight=this.offsetheight;
      this.plotD3Chart();
 
     }
