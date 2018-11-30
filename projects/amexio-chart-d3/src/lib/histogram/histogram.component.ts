@@ -1,22 +1,21 @@
-
 import { Component, Input, ViewChild, ElementRef, OnInit } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 import * as d3 from 'd3';
-
 @Component({
   selector: 'amexio-d3-chart-histogram',
   templateUrl: './histogram.component.html',
   styleUrls: ['./histogram.component.css']
 })
 export class HistogramComponent extends AmexioD3BaseChartComponent implements OnInit {
-
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 400;
-  @Input('color') color:string="blue";
-  @Input('data')  datahisto:any;
+  @Input('color') color: string = "blue";
+  @Input('data') datahisto: any;
+  @Input('label') labelflag: boolean = false;
+  @Input('label-color') labelcolor: string = "black";
   @Input('horizontal-scale') hScale: boolean = true;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
@@ -24,9 +23,9 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('level') level: number = 0;
   @Input('target') target: number;
   @Input('drillable-data') drillabledatakey: any[] = []
-  httpresponse:any;
-  svg:any;
-  resizeflag:boolean=false;
+  httpresponse: any;
+  svg: any;
+  resizeflag: boolean = false;
   drillableFlag: boolean = true;
   data1: any;
   values: any[] = [];
@@ -50,23 +49,40 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   xaxis: any;
   tempp: any;
   tooltipArray: any[] = [];
-   index=0;
-  constructor(private myservice:CommanDataService,private device:DeviceQueryService) {
+  index = 0;
+  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
     super('histogram');
   }
 
   ngOnInit() {
-    let res:any
-    if(this.level<=1){
-    if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-          res=response;
-           this.httpresponse=response;
-      }, (error) => {
-      }, () => {
+    let res: any
+    if (this.level <= 1) {
+      if (this.httpmethod && this.httpurl) {
+        this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+          res = response;
+          this.httpresponse = response;
+        }, (error) => {
+        }, () => {
+          setTimeout(() => {
+            this.datahisto = [];
+            this.datahisto = this.getResponseData(res);
+            this.transformData()
+            this.plotXaxis();
+            this.plotYaxis();
+            this.tooltipData();
+            this.dataforChart();
+            this.transformData1(this.finaldataarray);
+            this.plotChart();
+
+          }, 0);
+
+        });
+
+      } else if (this.datahisto) {
+
+
         setTimeout(() => {
-          this.datahisto=[];
-          this.datahisto= this.getResponseData(res);
+          this.datahisto = this.getResponseData(this.datahisto);
           this.transformData()
           this.plotXaxis();
           this.plotYaxis();
@@ -74,83 +90,66 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
           this.dataforChart();
           this.transformData1(this.finaldataarray);
           this.plotChart();
-       
-        }, 0);
-    
-      });
-   
-    } else if (this.datahisto) {
 
-      
-      setTimeout(() => {
-        this.datahisto=this.getResponseData(this.datahisto);
-        this.transformData()
-        this.plotXaxis();
-        this.plotYaxis();
-        this.tooltipData();
-        this.dataforChart();
-        this.transformData1(this.finaldataarray);
-        this.plotChart();
-      
-      }, 0);
-    
-    } }
+        }, 0);
+
+      }
+    }
   }
 
   fetchData(data: any) {
-   
-    let requestJson;
-    let key=this.drillabledatakey;
-    let resp: any;
-    if(this.drillabledatakey.length)
-    {
-         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
-         requestJson=drillabledata;
-    }
-    else{
-            requestJson=data;  
-        }
-  
-    
- if (this.httpmethod && this.httpurl) {
- this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
-            resp = response;
-            this.httpresponse=response;
-        }, (error) => {
-        }, () => {
-            setTimeout(() => {
-                //this.data = this.getResponseData(resp);
-                this.drawChart();
-                  }, 0);
-              });
-           }
-}
 
-drawChart() {
-  setTimeout(() => { 
-          this.datahisto = this.getResponseData(this.httpresponse);
-          this.transformData()
-          this.plotXaxis();
-          this.plotYaxis();
-          this.tooltipData();
-          this.dataforChart();
-          this.transformData1(this.finaldataarray);
-          this.plotChart();
-  }, 0);
-} 
+    let requestJson;
+    let key = this.drillabledatakey;
+    let resp: any;
+    if (this.drillabledatakey.length) {
+      let drillabledata = this.getMultipleDrillbleKeyData(data, key);
+      requestJson = drillabledata;
+    }
+    else {
+      requestJson = data;
+    }
+
+
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
+        resp = response;
+        this.httpresponse = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          //this.data = this.getResponseData(resp);
+          this.drawChart();
+        }, 0);
+      });
+    }
+  }
+
+  drawChart() {
+    setTimeout(() => {
+      this.datahisto = this.getResponseData(this.httpresponse);
+      this.transformData()
+      this.plotXaxis();
+      this.plotYaxis();
+      this.tooltipData();
+      this.dataforChart();
+      this.transformData1(this.finaldataarray);
+      this.plotChart();
+    }, 0);
+  }
 
   getResponseData(httpResponse: any) {
     let responsedata = httpResponse;
-  if (this.datareader != null) {
-    const dr = this.datareader.split('.');
-    for (const ir of dr) {
-      responsedata = responsedata[ir];
+    if (this.datareader != null) {
+      const dr = this.datareader.split('.');
+      for (const ir of dr) {
+        responsedata = responsedata[ir];
+      }
+    } else {
+      responsedata = httpResponse;
     }
-  } else {
-    responsedata = httpResponse;
+    return responsedata;
   }
-  return responsedata; 
-}  
 
   transformData1(data1: any) {
     this.keyArray = [];
@@ -198,108 +197,120 @@ drawChart() {
   }
 
   plotChart() {
+
     const tooltip = this.toolTip(d3);
     let data;
     data = this.data;
     let keysetarray: string[] = [];
     let series;
-     series=[];
-      series = d3.stack().keys(this.keyArray)
+    series = [];
+    series = d3.stack().keys(this.keyArray)
       .offset(d3.stackOffsetDiverging)
       (this.data);
-      let i=0;
-      let tempdata;
-      tempdata=[];
-      tempdata=series;
-      tempdata.forEach(element => {
-            element.forEach(innerelement => {
-                       let singletooltip=[];
-                    singletooltip.push(innerelement.data.tooltipdata[i]);
-                innerelement.push(singletooltip);
-            });
-            i++;
+    let i = 0;
+    let tempdata;
+    tempdata = [];
+    tempdata = series;
+    tempdata.forEach(element => {
+      element.forEach(innerelement => {
+        let singletooltip = [];
+        singletooltip.push(innerelement.data.tooltipdata[i]);
+        innerelement.push(singletooltip);
       });
+      i++;
+    });
 
-      let chartdata=[];
-      for(i=0;i<tempdata.length-1;i++)
-      {
-              chartdata.push(tempdata[i]);
+    let chartdata = [];
+    for (i = 0; i < tempdata.length - 1; i++) {
+      chartdata.push(tempdata[i]);
+    }
+    if (this.resizeflag == false) {
+      if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else {
+
+        this.svgwidth = this.svgwidth;
       }
-    if(this.resizeflag==false)
-    {
-    if (this.chartId) {
-      this.svgwidth = this.chartId.nativeElement.offsetWidth;
-    } else {
-
-      this.svgwidth = this.svgwidth;
-    }}
+    }
     const margin = { top: 20, right: 20, bottom: 50, left: 60 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
- 
-   //const height = +svg.attr("height") - margin.top - margin.bottom;
-   
+
+    //const height = +svg.attr("height") - margin.top - margin.bottom;
+
     let x, y;
 
-     this.svg = d3.select("#"+this.componentId)
+    this.svg = d3.select("#" + this.componentId)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
+
     let barWidth = (width / this.chartData.length);
-  
+    let inc = barWidth / 2;
     x = d3.scalePoint()
       .domain(this.xaxisArray, function (d) { return d; })
       .rangeRound([0, width]);
 
-    
-     y = d3.scaleLinear().rangeRound([height, 0]);
-     y .domain([0, d3.max(this.arrayofLength)]);
-      
+
+    y = d3.scaleLinear().rangeRound([height, 0]);
+    y.domain([0, d3.max(this.arrayofLength)]);
+
     let z = d3.scaleOrdinal(d3.schemeCategory10);
-    this.arrayofLength=[];
+    this.arrayofLength = [];
     // add x axis to svg
 
-    if(this.device.IsDesktop()==true)
-    {
-    this.svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x))
+    if (this.device.IsDesktop() == true) {
+      this.svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
     }
-  else
-   {
-    this.svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x)).
-           selectAll("text")
-           .attr("y", 0)
-           .attr("x", 9)
-           .attr("dy", ".35em")
-           .attr("transform", "rotate(60)")
-           .style("text-anchor", "start");
+    else {
+      this.svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x)).
+        selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
 
-  }
-    
+    }
+
     let horizontalpadding = 0.05;
     //add y axis to svg
     this.svg.append("g")
       .call(d3.axisLeft(y));
 
-      this.plotLine(this.svg, x, y, height, width);
-
-  this.svg.append("g")
+    this.plotLine(this.svg, x, y, height, width);
+   
+ let histogramBar = this.svg.append("g")
       .selectAll("g")
-      .data( chartdata)
-      .enter( ).append("g")
+      .data(chartdata)
+      .enter().append("g")
       .attr("fill", this.color)
       .selectAll("rect")
       .data((d) => {
         return d;
       })
-      .enter(  ).append("rect")
+
+    let histogramBar1 = this.svg.append("g")
+      .selectAll("g")
+      .data(chartdata)
+      .enter().append("g")
+      // .attr("fill", this.color)
+      .selectAll("labels")
+      .data((d) => {
+        return d;
+      })
+    let cnt = 0;
+
+
+    histogramBar.enter().append("rect")
       .attr("width", barWidth - 1)
       .attr("y", (d, index) => {
+        cnt++;
         return y(d[1]);
       })
       .attr("cursor", "pointer")
@@ -314,48 +325,120 @@ drawChart() {
         return tooltip.style("visibility", "visible");
       }).on("mousemove",
         (d: any) => {
-            let data= d[2];
+          let data = d[2];
           return tooltip.html(this.setKey(data[0]))
-         .style("top", (d3.event.pageY - 10) + "px")
-         .style("left", (d3.event.pageX + 10) + "px");
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
 
         }).on("mouseout", (d) => {
           return tooltip.style("visibility", "hidden");
         })
-        .on("click", (d) => {
-         let clickdata=d[2];  
-         this.histogramClick(clickdata[0]);
-         this.fordrillableClick(this,d,event);
+      .on("click", (d) => {
+        let clickdata = d[2];
+        this.histogramClick(clickdata[0]);
+        this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
-         });
+      });
+   if(this.labelflag) {
+    histogramBar1.enter()
+      .append("text")
+      .style("font-weight", "bold")
+      .attr("text-anchor", "middle")
+      .attr("fill", (d) => {
+        if(this.labelcolor.length>0){
+          return this.labelcolor;
+        } else {
+        return "black";
+        }
+      })
+      .attr("y", function (d, i) {
+        return y(d[1]);
+      })
+      .text(function (d) {
+       
+        let data: any;
+        let data2: any;
+        data = d[2];
+        data2 = data[0];
+        if (data2) {
+          return data2.value;
+        }
+        else {
+          return null;
+        }
+      })
+      .attr("transform", function (d, i) {
+        var translate = [((barWidth * i) + barWidth / 2), (Math.abs(y(d[0]) - y(d[1] - horizontalpadding)))];
+        return "translate(" + translate + ")";
+      });
+    }
+
+    //  .append("label")
+    // //  .attr("width", barWidth - 1)
+    //  .attr("y", (d, index) => {
+    //    return y(d[1]);
+    //  })
+    // ---------------------------------------------------------
+
+    //   this.svg.append("g")
+    //   .selectAll("g")
+    //   .data( chartdata)
+    //   .enter( ).append("g")
+    //   // .attr("fill", this.color)
+    //   // .selectAll("rect")
+    //   .data((d) => {
+    //     return d;
+    //   })
+    //   histogramBar.enter(  )
+    //   .append("text")
+    //   // .attr("width", barWidth - 1)
+    //   .attr("y", (d, index) => {
+    //     return y(d[1]);
+    //   })
+    //    .attr("height", (d, index) => {
+    //     return Math.abs(y(d[0]) - y(d[1] - horizontalpadding));
+    //   })
+    //   .attr("transform", function (d, i) {
+    //     var translate = [barWidth * i, 0];
+    //     return "translate(" + translate + ")";
+    //   })
+    //   .text(function(d){
+    //     console.log("aksa");
+    //       return "aksa";
+    //   })
+    //   .style("font-weight","bold")
+    // .attr("text-anchor", "middle")
+    // .attr("fill", (d)=>{
+    //     return "black";
+    // });
+
 
   }
 
-  histogramClick(obj: any){
+  histogramClick(obj: any) {
 
     let object = {};
-    let data= this.datahisto[0];
-    let label1=data[1];
-    let label2=data[0];
-     if(obj.label.length)
-     {
-     object[label2+":"] = obj.label;
-     object[label1+":"] = obj.value;}
-    
-     this.chartClick(object);
+    let data = this.datahisto[0];
+    let label1 = data[1];
+    let label2 = data[0];
+    if (obj.label.length) {
+      object[label2 + ":"] = obj.label;
+      object[label1 + ":"] = obj.value;
     }
 
+    this.chartClick(object);
+  }
 
-    legendClick(event:any)
-    {
 
-      this.onLegendClick.emit(this.datahisto);
+  legendClick(event: any) {
 
-    }
+    this.onLegendClick.emit(this.datahisto);
+
+  }
 
   transformData() {
-    this.array=[];
-    this.values=[];
+    this.array = [];
+    this.values = [];
     this.datahisto.forEach(element => {
       this.values.push(element[1]);
     });
@@ -365,6 +448,7 @@ drawChart() {
   }
 
   plotXaxis() {
+
     this.xaxisArray = [];
     this.xaxisArray.push(0);
     let newvalue: number = 0;
@@ -435,7 +519,7 @@ drawChart() {
       data["value"] = this.arrayofLength[i];
       this.chartData.push(data);
     }
-    this.array=[];
+    this.array = [];
 
   }
 
@@ -446,7 +530,7 @@ drawChart() {
 
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-  
+
     this.transformData()
     this.plotXaxis();
     this.plotYaxis();
@@ -457,7 +541,7 @@ drawChart() {
   }
 
   dataforChart() {
-    this.finaldataarray=[]=[];
+    this.finaldataarray = [] = [];
     let initialArray: any[] = [];
     let temparray: any[] = [];
     initialArray.push('level');
@@ -472,7 +556,7 @@ drawChart() {
     let length = this.arrayofLength.length;
     let num = 1;
     let number = 1;
-    let j=0;
+    let j = 0;
     this.finaldataarray.push(initialArray);
 
     for (let i = 0; i < this.arrayofLength.length; i++) {
@@ -499,7 +583,7 @@ drawChart() {
           maxElement--;
         }
       }
-       temparray.push(this.tooltipArray[j])
+      temparray.push(this.tooltipArray[j])
       this.finaldataarray.push(temparray);
       j++;
     }
@@ -507,6 +591,7 @@ drawChart() {
 
 
   tooltipData() {
+
     let arrayofTooltip: any[] = [];
     let obj = { "label": "", "value": "" };
     this.datahisto.forEach(element => {
@@ -539,20 +624,20 @@ drawChart() {
       this.tooltipArray.push(tooltipdata);
       value1 = value2;
     }
- }
+  }
 
 
   setKey(obj: any) {
-  
-    let object = {};
-    let data= this.datahisto[0];
-    let label1=data[1];
-    let label2=data[0];
 
-     object[label2+":"] = obj.label;
-     object[label1+":"] = obj.value;
-     
-      return (this.toolTipForBar(object))
+    let object = {};
+    let data = this.datahisto[0];
+    let label1 = data[1];
+    let label2 = data[0];
+
+    object[label2 + ":"] = obj.label;
+    object[label1 + ":"] = obj.value;
+
+    return (this.toolTipForBar(object))
   }
 
   plotLine(g, x, y, height, width) {
