@@ -40,6 +40,10 @@ export class AmexioD3PieChartComponent  implements  OnInit {
 
    @Input('drillable-data') drillabledatakey:any
 
+   @Input('label-color') labelcolor: string = "black";
+
+   @Input('label') labelflag: boolean = false;
+   
    drillableFlag:boolean = true;
 
    drillData: any;
