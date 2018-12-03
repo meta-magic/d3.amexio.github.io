@@ -11,8 +11,11 @@ import{DeviceQueryService} from '../services/device.query.service';
     styleUrls: ['./combochart.component.css']
 })
 export class CombochartComponent extends AmexioD3BaseChartComponent implements PlotCart {
+   
     @Input('width') svgwidth: number = 300;
     @Input('height') svgheight: number = 300;
+    @Input('label-color') labelcolor: string = "black";
+    @Input('label') labelflag: boolean = false;
     @Input('line-color') lineColor: string = "black";
     @Input() horizontal: boolean = false;
     @ViewChild('chartId') chartId: ElementRef;
@@ -22,30 +25,30 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     @Input('target') target: number;
     @Input('drillable-data') drillabledatakey: any[] = []
     @Input('line-data-index') lineInput: any;
-    @Input('horizontal-scale') hScale : boolean = true;
+    @Input('horizontal-scale') hScale: boolean = true;
     drillableFlag: boolean = true;
-    resizeflag:boolean=false;
+    resizeflag: boolean = false;
     data: any;
-    svg:any;
+    svg: any;
     colorflag: boolean = false;
     keyArray: any[] = [];
     transformeddata: any[] = [];
     object: any;
     legendArray: any[] = [];
-    httpresponse:any;
-    offsetheight:any;
-   
-    constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
+    httpresponse: any;
+    offsetheight: any;
+
+    constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
         super('combochart');
     }
     ngOnInit() {
-      
+
         if (this.level <= 1) {
             let resp: any;
             if (this.httpmethod && this.httpurl) {
                 this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
                     resp = response;
-                    this.httpresponse=response;
+                    this.httpresponse = response;
                 }, (error) => {
                 }, () => {
                     setTimeout(() => {
@@ -53,7 +56,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                         this.transformData(this.data)
                         this.initializeData();
                         this.plotD3Chart();
-                    
+
                     }, 0);
                 });
 
@@ -71,7 +74,6 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
         }
     }
     fetchData(data: any) {
-
         let requestJson;
         let key = this.drillabledatakey;
         let resp: any;
@@ -86,11 +88,11 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
         if (this.httpmethod && this.httpurl) {
             this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
                 resp = response;
-                this.httpresponse=response;
+                this.httpresponse = response;
             }, (error) => {
             }, () => {
                 setTimeout(() => {
-                   // this.data = this.getResponseData(resp);
+                    // this.data = this.getResponseData(resp);
                     this.drawChart();
                 }, 0);
             });
@@ -98,7 +100,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     }
 
     drawChart() {
-        setTimeout(() => { 
+        setTimeout(() => {
             this.data = this.getResponseData(this.httpresponse);
             this.transformData(this.data)
             this.initializeData();
@@ -122,34 +124,31 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     plotD3Chart() {
 
         this.formLegendData();
-        if(this.resizeflag==false)
-        {
-        if (this.chartId) {
-            this.svgwidth = this.chartId.nativeElement.offsetWidth;
-        } else {
+        if (this.resizeflag == false) {
+            if (this.chartId) {
+                this.svgwidth = this.chartId.nativeElement.offsetWidth;
+            } else {
 
-            this.svgwidth = this.svgwidth;
+                this.svgwidth = this.svgwidth;
+            }
         }
-    }  
         let lineName: any = this.lineInput;
 
         const tooltip = this.toolTip(d3);
         this.svg = d3.select("#" + this.componentId);
-        const margin = { top: 20, right: 20, bottom: 85, left: 60 };
+        const margin = { top: 30, right: 20, bottom: 85, left: 60 };
         const width = this.svgwidth - margin.left - margin.right;
         let height;
-     
 
-        console.log("offsetheight",this.offsetheight);
-        if(this.device.IsDesktop()==true)
-        {
-            
-            this.offsetheight = this.chartId.nativeElement.offsetHeight-20-90;
-               height =  this.offsetheight;
+
+         if (this.device.IsDesktop() == true) {
+
+            this.offsetheight = this.chartId.nativeElement.offsetHeight - 20 - 90;
+            height = this.offsetheight;
         }
-        else{
-                 height=this.svgheight-margin.top-margin.bottom;
-          }
+        else {
+            height = this.svgheight - margin.top - margin.bottom;
+        }
         let x, y;
         const g = this.svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -181,32 +180,30 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             y.domain([0, range]);
 
 
-            if(this.device.IsDesktop()==true)
-            {
-              g.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x))
+            if (this.device.IsDesktop() == true) {
+                g.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x))
             }
-          else
-           {
-            g.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x)).
-                   selectAll("text")
-                   .attr("y", 0)
-                   .attr("x", 9)
-                   .attr("dy", ".35em")
-                   .attr("transform", "rotate(65)")
-                   .style("text-anchor", "start");
-     
-          }
+            else {
+                g.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x)).
+                    selectAll("text")
+                    .attr("y", 0)
+                    .attr("x", 9)
+                    .attr("dy", ".35em")
+                    .attr("transform", "rotate(65)")
+                    .style("text-anchor", "start");
+
+            }
             //add y axis to svg
             g.append("g")
                 .call(d3.axisLeft(y)
                     .ticks(10))
 
-           this.plotLine(g,x,y,height,width); 
-           
+            this.plotLine(g, x, y, height, width);
+
             //add bar chart
             g.selectAll(".bar")
                 .data(this.data)
@@ -240,7 +237,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 .on("click", (d) => {
 
                     this.barChartClick(d);
-                    this.fordrillableClick(this, d,event);
+                    this.fordrillableClick(this, d, event);
                     return tooltip.style("visibility", "hidden");
                 });
             //line code start
@@ -299,25 +296,79 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 })
                 .on("click", (d) => {
                     this.onComboLineClick(d);
-                    this.fordrillableClick(this, d,event);
+                    this.fordrillableClick(this, d, event);
                     return tooltip.style("visibility", "hidden");
                 });
             //line code ends
+           //make labels optional
+           if(this.labelflag) {
+            //bar label
+            var yTextPadding = 20;
+            g.selectAll("labels")
+                .data(this.data)
+                .enter()
+                .append("text")
+                .style("font-weight", "bold")
+                .attr("text-anchor", "middle")
+                .attr("fill", (d) => {
+                    if (this.labelcolor.length > 0) {
+                        return this.labelcolor;
+                    } else {
+                        return "black";
+                    }
+                })
+                .attr("x", function (d, i) {
+                    return x(d[Object.keys(d)[0]]) + x.bandwidth() / 2;
+                })
+                .attr("y", function (d, i) {
+                    return y(d[Object.keys(d)[1]]) - 5;
+                    // + yTextPadding;
+                })
+                .text(function (d) {
+                    return d[Object.keys(d)[1]];
+                });
+
+
+            //line label
+            this.svg.selectAll("labels")
+                .data(this.data)
+                .enter().append("text")
+                .style("font-weight", "bold")
+                .attr("text-anchor", "middle")
+                .attr("fill", (d) => {
+                    if (this.labelcolor.length > 0) {
+                        return this.labelcolor;
+                    } else {
+                        return "black";
+                    }
+                })
+                .attr("x", (d) => {
+                    return x(d[Object.keys(d)[0]]);
+                })
+                .attr("y", (d) => {
+                    return y(d[lineName]);
+                })
+                .text(function (d) {
+                    return d[lineName];
+                })
+                .attr("transform", "translate( " + shift + ", 10 )")
+            //line label code ends
+            }//optional label loop ends
+
+        } // if (this.horizontal == false) ends
+
+
+    }
+
+    plotLine(g, x, y, height, width) {
+
+        if (this.hScale) {
+            g.append('g')
+                .attr("color", "lightgrey")
+                .call(d3.axisLeft(y)
+                    .tickSize(-width).tickFormat(''));
         }
-
-
     }
-
-    plotLine(g,x,y,height,width)
-{
-
-    if(this.hScale){
-        g.append('g')
-            .attr("color", "lightgrey")
-            .call(d3.axisLeft(y)
-            . tickSize(-width).tickFormat(''));     
-    }
-}
     formTooltipData(tooltipData: any) {
         let object = {};
         for (let [key, value] of Object.entries(tooltipData)) {
@@ -329,9 +380,9 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     }
 
     transformData(data: any) {
-        this.transformeddata=[];
+        this.transformeddata = [];
         this.keyArray = data[0];
-   
+
         data.forEach((element, index) => {
             if (index > 0) {
                 let DummyObject = {};
@@ -397,12 +448,12 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     resize() {
 
         this.svgwidth = 0;
-      this.svg.selectAll("*").remove();
+        this.svg.selectAll("*").remove();
 
-     this.resizeflag = true;
-     this.svgwidth = this.divid.nativeElement.offsetWidth;
-   //  this.svgheight=this.offsetheight;
-     this.plotD3Chart();
+        this.resizeflag = true;
+        this.svgwidth = this.divid.nativeElement.offsetWidth;
+        //  this.svgheight=this.offsetheight;
+        this.plotD3Chart();
 
     }
 
