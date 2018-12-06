@@ -11,7 +11,10 @@ import * as d3 from 'd3';
 export class BubbleComponent extends AmexioD3BaseChartComponent implements OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
+  @Input('label-color') labelcolor: string = "black";
+  @Input('label') labelflag: boolean = false;
   @Input('color') color: any = "blue";
+  @Input('zoom-enable') zoomflag: boolean = false;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Input('data-reader') datareader: string;
@@ -22,6 +25,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   @Input('vertical-scale') vScale: boolean = true;
   drillableFlag: boolean = true;
   resizeflag: boolean = false;
+  zoominitiated:boolean = false;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   colors: any[] = [];
@@ -30,6 +34,9 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   xarray: any[] = [];
   legends: any[] = [];
   legendarray: any[] = [];
+  node: any;
+  nodelabel: any;
+  resizebtnflag = false;
   legendData: any[] = [];
   minxvalue: number = 0;
   maxxvalue: number = 0;
@@ -37,17 +44,13 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   bubblechartdata: any[] = [];
   httpresponse: any;
   svg: any;
-  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef,private device:DeviceQueryService) {
-
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('bubble');
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
-
   }
 
   ngOnInit() {
-
     this.data1 = [];
-
     if (this.level <= 1) {
       let resp: any;
       if (this.httpmethod && this.httpurl) {
@@ -202,38 +205,36 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     x.domain([this.minxvalue, this.maxxvalue]);
 
 
-    var rScale = d3.scaleSqrt().rangeRound([6, 30]);
+    let rScale = d3.scaleSqrt().rangeRound([6, 30]);
 
 
     rScale.domain([d3.min(this.data, function (d) { return d[Object.keys(d)[4]] }), d3.max(this.data, function (d, i) { return d[Object.keys(d)[4]] })])
 
 
 
-    if(this.device.IsDesktop()==true)
-    {
+    if (this.device.IsDesktop() == true) {
       this.svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-       .append("text")
-       .attr("y", 0)
-       .attr("x", 9)
-       .attr("dy", ".35em")
-       .style("text-anchor", "start");
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start");
     }
-  else
-   {
-    this.svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis).
-     selectAll("text")
-     .attr("y", 0)
-     .attr("x", 9)
-     .attr("dy", ".35em")
-     .attr("transform", "rotate(60)")
-     .style("text-anchor", "start");
-  }
-  
+    else {
+      this.svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis).
+        selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
+    }
+
     this.svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
@@ -246,7 +247,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
 
     this.plotLine(this.svg, x, y, height, width);
 
-    let node = this.svg.selectAll(".dot")
+    this.node = this.svg.selectAll(".dot")
       .data(this.bubblechartdata)
       .enter().append("circle")
       .attr("class", "dot")
@@ -272,10 +273,65 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
+        if(!this.zoominitiated) {
         this.bubbleChartClick(d);
         this.fordrillableClick(this, d, event);
-        return tooltip.style("visibility", "hidden");
+        return tooltip.style("visibility", "hidden");}
       });
+
+    //label
+    if (this.labelflag) {
+      this.nodelabel = this.svg.selectAll("labels")
+        .data(this.bubblechartdata)
+        .enter().append("text")
+        .style("font-weight", "bold")
+        .style("font-size", (d) => {
+          return rScale(d[Object.keys(d)[4]]) - 4;
+        })
+        .attr("text-anchor", "middle")
+        .attr("fill", (d) => {
+          if (this.labelcolor.length > 0) {
+            return this.labelcolor;
+          } else {
+            return "black";
+          }
+        })
+        .attr("x", (d) => {
+          return x(d[Object.keys(d)[1]]);
+        })
+        .attr("y", (d) => { return y(d[Object.keys(d)[2]]); })
+        .text((d) => {
+          return d[Object.keys(d)[0]];
+        })
+    }
+
+    //create zoom handler 
+   if(this.zoomflag) {
+     this.zoominitiated = true;
+    let zoom_handler = d3.zoom()
+      .on("zoom", this.zoom_actions.bind(this));
+    zoom_handler(this.svg);
+  }
+  }
+
+  togglebtnflag() {
+    this.resizebtnflag = true;
+  }
+
+  zoom_actions() {
+    this.node.attr("transform", d3.event.transform);
+    if (this.labelflag) {
+      this.nodelabel.attr("transform", d3.event.transform);
+    }
+    this.resizebtnflag = true;
+    this.zoominitiated= false;
+  }
+
+  resizesvg() {
+    // this.svg = null;
+    this.svg.selectAll("*").remove();
+    this.plotBubbleChart();
+    this.resizebtnflag = false;
   }
 
   formTooltipData(tooltipData: any) {
@@ -300,10 +356,8 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   resize(data: any) {
     this.svgwidth = 0;
     this.svg.selectAll("*").remove();
-
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
-
     this.plotBubbleChart();
 
   }
@@ -329,7 +383,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   }
 
   colorGeneration() {
-    
+
     this.legendarray = [];
     let i = 0;
     let names = this.data1
@@ -398,7 +452,6 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
 
     });
 
-
     let data = buubledata.sort(function (a, b) { return b - a });
 
     for (let j = 0; j <= data.length; j++) {
@@ -407,8 +460,6 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
           this.bubblechartdata.push(element);
       });
     }
-
-
 
   }
 
