@@ -30,7 +30,7 @@ before_script:
   - npm pack dist/amexio-chart-d3/
   - mv amexio-chart-d3-*.tgz amexio-chart-d3.tgz   
 script: 
-  - git clone https://github.com/meta-magic/amexio-ios.git 
+  - git clone https://github.com/meta-magic/amexio-ios.git -b v5.4
   - cd amexio-ios
   - cp -rf ../amexio-chart-d3.tgz .
   - git add amexio-chart-d3.tgz
