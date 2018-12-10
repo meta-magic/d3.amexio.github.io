@@ -11,6 +11,7 @@ import{ScatterchartComponent} from'../scatterchart/scatterchart.component'
 import{MultiareaComponent} from '../multiarea/multiarea.component'
 import{CandlestickComponent} from '../candlestick/candlestick.component'
 import{BubbleComponent} from'../bubble/bubble/bubble.component'
+import{AmexioD3TimelineChartComponent} from '../timeline/timeline.component'
 import {
   AfterContentInit, AfterViewInit, ContentChildren,
   ElementRef, EventEmitter, Input, Output, QueryList, ViewChild,
@@ -55,6 +56,9 @@ export class ViewDrillableComponent implements OnInit {
   @ContentChildren(BubbleComponent, { descendants: true }) QueryBubblechartinput: QueryList<BubbleComponent>;
   bubblechartinput:BubbleComponent[] ;
 
+  @ContentChildren(AmexioD3TimelineChartComponent, { descendants: true }) QueryTimechartinput: QueryList<AmexioD3TimelineChartComponent>;
+  timelinechartinput:AmexioD3TimelineChartComponent[] ;
+
    chartInputArray:any;
 
   constructor() { 
@@ -89,7 +93,8 @@ getComponentData(): any
   this.multiareachartinput=this.QueryMultiareachartinput.toArray();
   this.candlestickchartinput=this.QueryCandlestickchartinput.toArray();
   this.bubblechartinput=this.QueryBubblechartinput.toArray();
-  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput,this.histogramchartinput,this.scatterchartinput,this.multiareachartinput,this.candlestickchartinput,this.bubblechartinput);
+  this.timelinechartinput=this.QueryTimechartinput.toArray();
+  this.chartInputArray=this.chartInputArray.concat( this.barchartinput,this.groupbarchartinput,this.linechartinput,this.donutchartinput,this.piechartinput,this.barstackchartinput,this.combochartinput,this.histogramchartinput,this.scatterchartinput,this.multiareachartinput,this.candlestickchartinput,this.bubblechartinput,this.timelinechartinput);
  
   return this.chartInputArray;
  

@@ -12,6 +12,7 @@ import { MultiareaComponent } from './multiarea/multiarea.component';
 import { ScatterchartComponent } from './scatterchart/scatterchart.component';
 import { CandlestickComponent } from './candlestick/candlestick.component';
 import{BubbleComponent} from './bubble/bubble/bubble.component';
+import{AmexioD3TimelineChartComponent} from './timeline/timeline.component'
 export const D3_COMPONENTS : any[] = [
   AmexioD3Legend,
   AmexioD3DounutChartComponent,
@@ -26,5 +27,6 @@ export const D3_COMPONENTS : any[] = [
   MultiareaComponent,
   ScatterchartComponent,
   CandlestickComponent,
-  BubbleComponent
+  BubbleComponent,
+  AmexioD3TimelineChartComponent
 ]
