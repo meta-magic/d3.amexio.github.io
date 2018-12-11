@@ -16,15 +16,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid:any;
-    @Input('data-reader') datareader: string;
-    @Input('level') level:number=0;
-    @Input('label') labelflag: boolean = false;
-    @Input('label-color') labelcolor: string = "black";
-    @Input('target') target:number;
-    @Input('drillable-data') drillabledatakey:any[]=[]
-    drillableFlag:boolean = true;
-    resizeflag:boolean=false;
- 
+     
     constructor(public deviceQueryService: DeviceQueryService,public myservice:CommanDataService) {
           super(deviceQueryService);
     }
@@ -143,8 +135,8 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     private plotLine(g: any, x: any, y: any, height: any, width: any, data: any, tooltip: any, i: number): void {
 
         const line = d3.line()
-            .x(function (d) { return x(d.label); })
-            .y(function (d) { return y(d.value); });
+            .x((d)=> { return x(d.label); })
+            .y((d)=> { return y(d.value); });
 
         g.append("path")
             .datum(data)
@@ -199,13 +191,13 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
               return "black";
             }
           })
-          .attr("x", function (d, i) {
+          .attr("x",(d, i)=> {
             return x(d.label);
           })
-          .attr("y", function (d, i) {
+          .attr("y",(d, i)=> {
             return y(d.value) - 10;
           })
-          .text(function (d) {
+          .text((d)=> {
             return d.value;
           })
       }

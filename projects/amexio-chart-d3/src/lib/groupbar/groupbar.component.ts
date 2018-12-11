@@ -14,23 +14,13 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
-  //@Input() data: any;
-  @Input('data') data: any
+   @Input('data') data: any
   @Input() legend: boolean = true;
   @Input() barwidth: number = 0;
-  @Input('label-color') labelcolor: string = "black";
-  @Input('label') labelflag: boolean = false;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
-  @Input('data-reader') datareader: string;
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = []
-  @Input('horizontal-scale') hScale: boolean = true;
 
-  drillableFlag: boolean = true;
-  resizeflag: boolean = false;
   groupbarchartArray: any[] = [];
   legendArray: any;
   xaxisData: any;
@@ -163,12 +153,12 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .rangeRound([height, 0]);
 
     //setting x and y domains
-    this.years = this.groupbarchartArray.map(function (d) { return d.labels; });
-    let label = this.groupbarchartArray[0].values.map(function (d) { return d.label; });
+    this.years = this.groupbarchartArray.map((d)=> { return d.labels; });
+    let label = this.groupbarchartArray[0].values.map((d)=> { return d.label; });
 
     x0.domain(this.years);
     x1.domain(label).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(this.groupbarchartArray, function (labels) { return d3.max(labels.values, function (d) { return d.value; }); })]);
+    y.domain([0, d3.max(this.groupbarchartArray,(labels)=> { return d3.max(labels.values,(d)=> { return d.value; }); })]);
 
     //dynamic barwidth
     if (this.barwidth > 0) {
@@ -217,18 +207,18 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .data(this.groupbarchartArray)
       .enter().append("g")
       .attr("class", "g")
-      .attr("transform", function (d) { return "translate(" + x0(d.labels) + ",0)"; });
+      .attr("transform",(d)=> { return "translate(" + x0(d.labels) + ",0)"; });
     
       slice.selectAll("rect")
-      .data(function (d) { return d.values; })
+      .data((d)=> { return d.values; })
       .enter().append("rect")
       .attr("width", x1.bandwidth)
-      .attr("x", function (d) {
+      .attr("x",(d)=> {
         return x1(d.label)
       })
-      .style("fill", function (d, index) { return colors[index] })
-      .attr("y", function (d) { return y(0); })
-      .attr("height", function (d) { return height - y(0); })
+      .style("fill",(d, index)=> { return colors[index] })
+      .attr("y",(d)=> { return y(0); })
+      .attr("height",(d)=> { return height - y(0); })
       .attr("cursor", "pointer")
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
@@ -253,14 +243,14 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       // -------------------------------------------------------
       if(this.labelflag) {
       slice.selectAll("text")
-      .data(function (d) { return d.values; })
+      .data((d)=> { return d.values; })
       .enter().append("text")
       .attr("width", x1.bandwidth)
-      .attr("x", function (d) {
+      .attr("x",(d)=> {
         return x1(d.label) + x1.bandwidth()/2
       })
-       .attr("y", function (d) { return y(d.value); })
-      .attr("height", function (d) { return height - y(0); })
+       .attr("y",(d)=> { return y(d.value); })
+      .attr("height",(d)=> { return height - y(0); })
       .style("font-weight","bold")
       .style("font-size","1vw")
       .attr("text-anchor", "middle")
@@ -271,14 +261,14 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
           return "black";
         }
       })
-      .text(function(d){
+      .text((d)=>{
           return d.value;
          });
 }
     slice.selectAll("rect")
-      .attr("y", function (d) { 
+      .attr("y",(d)=> { 
          return y(d.value); })
-      .attr("height", function (d) { return height - y(d.value); });
+      .attr("height",(d)=> { return height - y(d.value); });
   }
 
   groupbarClick(d: any) {

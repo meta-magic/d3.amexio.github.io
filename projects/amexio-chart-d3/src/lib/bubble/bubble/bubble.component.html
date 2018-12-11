@@ -1,7 +1,7 @@
 <div *ngIf="drillableFlag" #divid (window:resize)="resize($event)">
     <table style="width: 100%;" #chartId>
         <tr>
-            <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} {{resizebtnflag}}
+            <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}}
                 <span *ngIf="resizebtnflag">
                     <button type="reset" class="fa fa-arrow-left" style="cursor: pointer; float:right" (click)="resizesvg()">
                     </button>

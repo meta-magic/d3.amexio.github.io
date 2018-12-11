@@ -28,6 +28,24 @@ export class AmexioD3BaseChartComponent{
 
     @Input('title') title: any = "";
 
+    @Input('label-color') labelcolor: string = "black";
+
+    @Input('label') labelflag: boolean = false;
+    
+    // -------------- added later on
+    @Input('data-reader') datareader: string;
+    @Input('level') level: number = 0;
+    @Input('target') target: number;
+    @Input('drillable-data') drillabledatakey: any[] = [];
+    @Input('horizontal-scale') hScale: boolean = true;   
+    @Input('vertical-scale')   vScale : boolean = false;
+
+    resizeflag: boolean = false;
+    //-------------------
+
+    drillableFlag: boolean = true;
+
+
     predefinedcolors: string[];
     
     componentId : string;

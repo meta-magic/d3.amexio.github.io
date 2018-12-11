@@ -14,19 +14,12 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('height') svgheight: number = 400;
   @Input('color') color: string = "blue";
   @Input('data') datahisto: any;
-  @Input('label') labelflag: boolean = false;
-  @Input('label-color') labelcolor: string = "black";
-  @Input('horizontal-scale') hScale: boolean = true;
+ 
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
-  @Input('data-reader') datareader: string;
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = []
+ 
   httpresponse: any;
   svg: any;
-  resizeflag: boolean = false;
-  drillableFlag: boolean = true;
   data1: any;
   values: any[] = [];
   array: any[] = [];
@@ -249,7 +242,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     let barWidth = (width / this.chartData.length);
     let inc = barWidth / 2;
     x = d3.scalePoint()
-      .domain(this.xaxisArray, function (d) { return d; })
+      .domain(this.xaxisArray,(d)=> { return d; })
       .rangeRound([0, width]);
 
 
@@ -317,8 +310,8 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       .attr("height", (d, index) => {
         return Math.abs(y(d[0]) - y(d[1] - horizontalpadding));
       })
-      .attr("transform", function (d, i) {
-        var translate = [barWidth * i, 0];
+      .attr("transform",(d, i)=> {
+        let translate = [barWidth * i, 0];
         return "translate(" + translate + ")";
       })
       .on("mouseover", (d) => {
@@ -351,10 +344,10 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
         return "black";
         }
       })
-      .attr("y", function (d, i) {
+      .attr("y",(d, i)=> {
         return y(d[1]);
       })
-      .text(function (d) {
+      .text((d)=> {
        
         let data: any;
         let data2: any;
@@ -367,56 +360,14 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
           return null;
         }
       })
-      .attr("transform", function (d, i) {
-        var translate = [((barWidth * i) + barWidth / 2), (Math.abs(y(d[0]) - y(d[1] - horizontalpadding)))];
+      .attr("transform",(d, i)=> {
+        let translate = [((barWidth * i) + barWidth / 2), (Math.abs(y(d[0]) - y(d[1] - horizontalpadding)))];
         return "translate(" + translate + ")";
       });
     }
-
-    //  .append("label")
-    // //  .attr("width", barWidth - 1)
-    //  .attr("y", (d, index) => {
-    //    return y(d[1]);
-    //  })
-    // ---------------------------------------------------------
-
-    //   this.svg.append("g")
-    //   .selectAll("g")
-    //   .data( chartdata)
-    //   .enter( ).append("g")
-    //   // .attr("fill", this.color)
-    //   // .selectAll("rect")
-    //   .data((d) => {
-    //     return d;
-    //   })
-    //   histogramBar.enter(  )
-    //   .append("text")
-    //   // .attr("width", barWidth - 1)
-    //   .attr("y", (d, index) => {
-    //     return y(d[1]);
-    //   })
-    //    .attr("height", (d, index) => {
-    //     return Math.abs(y(d[0]) - y(d[1] - horizontalpadding));
-    //   })
-    //   .attr("transform", function (d, i) {
-    //     var translate = [barWidth * i, 0];
-    //     return "translate(" + translate + ")";
-    //   })
-    //   .text(function(d){
-    //     console.log("aksa");
-    //       return "aksa";
-    //   })
-    //   .style("font-weight","bold")
-    // .attr("text-anchor", "middle")
-    // .attr("fill", (d)=>{
-    //     return "black";
-    // });
-
-
   }
 
   histogramClick(obj: any) {
-
     let object = {};
     let data = this.datahisto[0];
     let label1 = data[1];
@@ -425,15 +376,11 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       object[label2 + ":"] = obj.label;
       object[label1 + ":"] = obj.value;
     }
-
     this.chartClick(object);
   }
 
-
   legendClick(event: any) {
-
     this.onLegendClick.emit(this.datahisto);
-
   }
 
   transformData() {
@@ -448,12 +395,10 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   }
 
   plotXaxis() {
-
     this.xaxisArray = [];
     this.xaxisArray.push(0);
     let newvalue: number = 0;
     let value = Math.ceil(d3.max(this.array));
-
     if (value % 10 == 0) {
       value = value;
     } else {
@@ -467,7 +412,6 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   }
 
   plotYaxis() {
-
     let tempvalue = 0;
     let lengthofArray = 0;
     let lengthcount = 0;
@@ -482,7 +426,6 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     this.xaxisArray.forEach(element1 => {
       this.yaxisArray = [];
       this.array.forEach(element2 => {
-
         if (tempvalue < element2 && element2 <= element1) {
           this.yaxisArray.push(element2);
         }
@@ -496,8 +439,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       }
       templength = lengthcount;
       tempvalue = element1;
-      //this.histogramarray.push(this.yaxisArray);
-      this.lengtharray.push(lengthofArray);
+       this.lengtharray.push(lengthofArray);
     });
 
     let value = Math.ceil(templength);
@@ -591,7 +533,6 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
 
 
   tooltipData() {
-
     let arrayofTooltip: any[] = [];
     let obj = { "label": "", "value": "" };
     this.datahisto.forEach(element => {

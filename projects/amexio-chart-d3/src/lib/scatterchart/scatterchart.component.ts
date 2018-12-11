@@ -14,18 +14,10 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @Input('color') color: any = "blue";
-  @Input('label-color') labelcolor: string = "black";
-  @Input('label') labelflag: boolean = false;
+ 
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
-  @Input('data-reader') datareader: string;
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = [];
-  @Input('horizontal-scale') hScale: boolean = true;
-  @Input('vertical-scale') vScale: boolean = true;
-  drillableFlag: boolean = true;
-  resizeflag: boolean = false;
+ 
   svg: any;
   keyArray: any[] = [];
   transformeddata: any[] = [];
@@ -181,8 +173,8 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    x.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[0]] })]);
-    y.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[1]] })]);
+    x.domain([0, d3.max(this.data,(d)=> { return d[Object.keys(d)[0]] })]);
+    y.domain([0, d3.max(this.data,(d)=> { return d[Object.keys(d)[1]] })]);
 
     if (this.device.IsDesktop() == true) {
       this.svg.append("g")
@@ -239,15 +231,14 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         .attr("fill", this.color)
         .attr("r", 4.5)
         .attr("cursor", "pointer")
-        .attr("cx", function (d) {
-          debugger;
-          return x(d[Object.keys(d)[0]]);
+        .attr("cx",(d) => {
+           return x(d[Object.keys(d)[0]]);
         })
-        .attr("cy", function (d) { return y(d[Object.keys(d)[1]]); })
+        .attr("cy",(d) => { return y(d[Object.keys(d)[1]]); })
         .on("mouseover", (d) => {
           return tooltip.style("visibility", "visible");
         })
-        .on("mousemove", (d) => {
+        .on("mousemove",(d) => {
           return tooltip.html(
             this.formTooltipData(d)
           )
@@ -298,11 +289,11 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         .attr("class", "dot")
         .attr("r", 4.5)
         .attr("cursor", "pointer")
-        .attr("cx", function (d) {
+        .attr("cx",(d)=> {
           return x(d[Object.keys(d)[0]]);
         })
-        .attr("cy", function (d) { return y(d[Object.keys(d)[1]]); })
-        .attr("fill", function (d, ) { return d[Object.keys(d)[4]] })
+        .attr("cy",(d)=> { return y(d[Object.keys(d)[1]]); })
+        .attr("fill",(d)=> { return d[Object.keys(d)[4]] })
 
         .on("mouseover", (d) => {
           return tooltip.style("visibility", "visible");

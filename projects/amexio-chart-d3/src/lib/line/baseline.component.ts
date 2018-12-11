@@ -16,10 +16,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     protected multiseriesdata : any[];
     svg:any;
 
-    @Input('horizontal-scale') hScale : boolean = true;
-
-    @Input('vertical-scale')   vScale : boolean = false;
-
+  
     @Input('data') 
 
     @Input('http-url') httpurl: any;

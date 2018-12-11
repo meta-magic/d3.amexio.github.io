@@ -14,22 +14,13 @@ import{DeviceQueryService} from '../services/device.query.service';
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 350;
-  @Input('data-reader') datareader: any;
-  @Input('level') level: number = 0;
-  @Input('label-color') labelcolor: string = "black";
-  @Input('label') labelflag: boolean = false;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = []
-  httpresponse:any;
-  drillableFlag: boolean = true;
-  resizeflag:boolean = false;
-  togglelabel: boolean = false;
+   
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Output() onTooltipClick: any = new EventEmitter<any>();
-  @Input('horizontal-scale') hScale: boolean = true;
-
+  httpresponse:any;
+  togglelabel: boolean = false;
   svg: any;
   x: any;
   y: any;
@@ -272,11 +263,11 @@ drawChart() {
         return "black";
       }
     })
-    .attr("x", function(d) {
+    .attr("x",(d)=> {
       // let length = String(d[Object.keys(d)[i]]).length
         return thisa.x(d[Object.keys(d)[0]]) + 20;
      })
-    .attr("y", function(d) {
+    .attr("y",(d)=> {
       let key: any = [Object.keys(d)[i]];
         if(flag)
       {
@@ -288,7 +279,7 @@ drawChart() {
       // return thisa.y(d[Object.keys(d)[i]]);
         //  return y(d[Object.keys(d)[1]])+yTextPadding;
     })
-    .text(function(d){
+    .text((d)=>{
           return d[Object.keys(d)[i]];
     })
     .attr("transform",
@@ -300,8 +291,7 @@ drawChart() {
      }
      else {
       this.togglelabel = true;
-     }
-     
+     }  
   }
 
   plotAreaChart(g: any, i: number, thisa: this) {

@@ -6,7 +6,7 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
   selector: 'amexio-d3-chart-pie',
   templateUrl: './pie.component.html'
 })
-export class AmexioD3PieChartComponent  implements  OnInit {
+export class AmexioD3PieChartComponent implements  OnInit {
 
   @Input('data') data: any;
 

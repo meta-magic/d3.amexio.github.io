@@ -14,20 +14,13 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
    
     @Input('width') svgwidth: number = 300;
     @Input('height') svgheight: number = 300;
-    @Input('label-color') labelcolor: string = "black";
-    @Input('label') labelflag: boolean = false;
     @Input('line-color') lineColor: string = "black";
     @Input() horizontal: boolean = false;
+    @Input('line-data-index') lineInput: any;
+    
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid') divid: ElementRef;
-    @Input('data-reader') datareader: string;
-    @Input('level') level: number = 0;
-    @Input('target') target: number;
-    @Input('drillable-data') drillabledatakey: any[] = []
-    @Input('line-data-index') lineInput: any;
-    @Input('horizontal-scale') hScale: boolean = true;
-    drillableFlag: boolean = true;
-    resizeflag: boolean = false;
+ 
     data: any;
     svg: any;
     colorflag: boolean = false;
@@ -242,12 +235,12 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 });
             //line code start
             let valueline = d3.line()
-                .x(function (d) {
+                .x((d)=> {
                     return x(
                         d[Object.keys(d)[0]]
                     );
                 })
-                .y(function (d) {
+                .y((d)=> {
                     return y(
                         d[lineName]
                     );
@@ -303,7 +296,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
            //make labels optional
            if(this.labelflag) {
             //bar label
-            var yTextPadding = 20;
+            let yTextPadding = 20;
             g.selectAll("labels")
                 .data(this.data)
                 .enter()
@@ -317,17 +310,16 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                         return "black";
                     }
                 })
-                .attr("x", function (d, i) {
+                .attr("x",(d, i)=> {
                     return x(d[Object.keys(d)[0]]) + x.bandwidth() / 2;
                 })
-                .attr("y", function (d, i) {
+                .attr("y",(d, i)=> {
                     return y(d[Object.keys(d)[1]]) - 5;
                     // + yTextPadding;
                 })
-                .text(function (d) {
+                .text((d)=> {
                     return d[Object.keys(d)[1]];
                 });
-
 
             //line label
             this.svg.selectAll("labels")
@@ -348,7 +340,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                 .attr("y", (d) => {
                     return y(d[lineName]);
                 })
-                .text(function (d) {
+                .text((d)=> {
                     return d[lineName];
                 })
                 .attr("transform", "translate( " + shift + ", 10 )")
@@ -356,12 +348,9 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             }//optional label loop ends
 
         } // if (this.horizontal == false) ends
-
-
     }
 
     plotLine(g, x, y, height, width) {
-
         if (this.hScale) {
             g.append('g')
                 .attr("color", "lightgrey")
@@ -369,6 +358,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
                     .tickSize(-width).tickFormat(''));
         }
     }
+
     formTooltipData(tooltipData: any) {
         let object = {};
         for (let [key, value] of Object.entries(tooltipData)) {
@@ -382,7 +372,6 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     transformData(data: any) {
         this.transformeddata = [];
         this.keyArray = data[0];
-
         data.forEach((element, index) => {
             if (index > 0) {
                 let DummyObject = {};
@@ -432,8 +421,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
             }
         }
         this.comboLineClick(object);
-        //this.chartClick(object);
-    }
+     }
 
     formTooltipLineData(data: any) {
         let object = {};
@@ -446,16 +434,10 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     }
 
     resize() {
-
         this.svgwidth = 0;
         this.svg.selectAll("*").remove();
-
         this.resizeflag = true;
         this.svgwidth = this.divid.nativeElement.offsetWidth;
-        //  this.svgheight=this.offsetheight;
-        this.plotD3Chart();
-
+         this.plotD3Chart();
     }
-
-
 }

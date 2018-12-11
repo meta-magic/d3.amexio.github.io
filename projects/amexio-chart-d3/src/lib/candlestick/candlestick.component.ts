@@ -13,19 +13,10 @@ import * as d3 from 'd3';
 export class CandlestickComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
-  @Input('data-reader') datareader: any;
-  @Input() data: any[];
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = [];
-  @Input('label-color') labelcolor: string = "black";
-  @Input('label') labelflag: boolean = false;
-  @Input('horizontal-scale') hScale: boolean = true;
+   @Input() data: any[];
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
-  drillableFlag: boolean = true;
-  resizeflag: boolean = false;
   predefinedColor = [];
   keyArray: any[] = [];
   transformeddata: any;
@@ -233,7 +224,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
       .attr("y", (d, index) => {
         return this.y(Math.max(d.start, d.end)) + 20;
        })
-      .text(function (d) {
+      .text((d)=> {
          return d[Object.keys(d)[1]]
        });
       }

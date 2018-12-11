@@ -21,19 +21,10 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   xaxis: any;
   @Input('data') data1: any
   @Input() barwidth: number = 0;
-  @Input('label') labelflag: boolean = false;
-  @Input() title: String = "";
+   @Input() title: String = "";
   @Input() legend: boolean = true;
-  @Input('label-color') labelcolor: string = "black";
-  @Input() color: string[] = [];
+   @Input() color: string[] = [];
   @Input('width') svgwidth: number=300;
-  @Input('data-reader') datareader: any;
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = []
-  @Input('horizontal-scale') hScale: boolean = true;
-  drillableFlag: boolean = true;
-  resizeflag: boolean = false;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
@@ -47,13 +38,11 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   }
 
   ngOnInit() {
-
     if (this.level <= 1) {
       let res;
       if (this.httpmethod && this.httpurl) {
         this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-          //this.data = response;
-          this.httpresponse = response;
+           this.httpresponse = response;
           this.data = this.getResponseData(response);
         }, (error) => {
         }, () => {
@@ -63,7 +52,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
           }, 0);
         });
       } else if (this.data1) {
-
         setTimeout(() => {
           this.transformData(this.data1);
           this.plotChart();
@@ -72,9 +60,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     }
   }
 
-
   fetchData(data: any) {
-
     let requestJson;
     let key = this.drillabledatakey;
     let resp: any;
@@ -86,7 +72,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       requestJson = data;
     }
 
-
     if (this.httpmethod && this.httpurl) {
       this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
         resp = response;
@@ -94,8 +79,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       }, (error) => {
       }, () => {
         setTimeout(() => {
-          //this.data = this.getResponseData(resp);
-          this.drawChart();
+           this.drawChart();
         }, 0);
       });
     }
@@ -107,12 +91,10 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       this.transformData(this.data);
       this.plotChart();
     }, 0);
-
   }
 
 
   transformData(data1: any) {
-
     this.keyArray = [];
     this.legendArray = [];
 
@@ -154,7 +136,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       this.data.push(element);
     });
 let maxY: any = 0;
-
 let yaxismaxArray =  []; 
    //find max for yaxis
     this.data.forEach((element) => {
@@ -194,12 +175,10 @@ if(yaxismaxArray[i] > tempLarge) {
     const tooltip = this.toolTip(d3);
     let margin = { top: 20, right: 30, bottom:90, left: 60 };
     let colors = this.predefinedcolors;
-  
     if (this.device.IsDesktop()) {
       if (this.chartId) {
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
       } else {
-
          this.svgwidth = this.svgwidth;
       }
     }
@@ -223,9 +202,7 @@ if(yaxismaxArray[i] > tempLarge) {
     this.svg = d3.select("#" + this.componentId);
 
     let width = this.svgwidth - margin.left - margin.right;
-    let height;
-   // height=this.chartId.nativeElement.offsetHeight-20;
-   
+    let height;   
     if(this.device.IsDesktop())
         {
             
@@ -249,16 +226,6 @@ if(yaxismaxArray[i] > tempLarge) {
         // d3.max(this.stackMax(series))
     ])
       .rangeRound([height - margin.bottom, margin.top]);
-
-   
-    // if (this.barwidth > 0) {
-    //   this.barwidth = this.barwidth;
-    // }
-    // else {
-    //   this.barwidth = x.bandwidth();
-    // }
-
-
     if(this.device.IsDesktop()==true)
     {
       this.svg.append("g")
@@ -276,7 +243,6 @@ if(yaxismaxArray[i] > tempLarge) {
            .attr("dy", ".35em")
            .attr("transform", "rotate(60)")
            .style("text-anchor", "start");
-
   }
    
     this.svg.append("g")
@@ -354,37 +320,27 @@ svgRect.enter()
 })
  .attr("x", (d) => {
   return x(+d.data[Object.keys(d.data)[0]]) + x.bandwidth()/2;
-  // +  margin.left;
-})
+ })
 .attr("y", (d, index) => {
   return y(d[1]) + 20;
 })
-.text(function(d){
+.text((d)=>{
      return  d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
 })
 }
- 
   }
 
   stackMin(serie) {
-    return d3.min(serie, function (d) { return d[0]; });
+    return d3.min(serie,(d)=> { return d[0]; });
   }
-
-  // stackMax(serie) {
-  //   return d3.max(serie, function (d) { return d[1]; });
-  // }
-
+ 
   resize() {
-
     this.svgwidth = 0;
     this.svg.selectAll("*").remove();
-
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
     this.plotChart();
-
   }
-
 
   plotLine(svg, x, y, height, width, m) {
     if (this.hScale) {
@@ -417,11 +373,9 @@ svgRect.enter()
     }
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
-        //  let object = { 'label': key, 'value': value , 'legend': d.data[Object.keys(d.data)[0]]};
-        let object = {};
+         let object = {};
         object[key] = value;
         object[this.xaxis] = d.data[Object.keys(d.data)[0]];
-
         return (this.toolTipForBar(object));
       }
     }
@@ -432,8 +386,7 @@ svgRect.enter()
     if (diff < 0) {
       diff = (diff * (-1));
     }
-    // let object = {};
-    let object = {};
+     let object = {};
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
         object[key] = value;
@@ -455,6 +408,5 @@ svgRect.enter()
     }
     return responsedata;
   }
-
 
 }

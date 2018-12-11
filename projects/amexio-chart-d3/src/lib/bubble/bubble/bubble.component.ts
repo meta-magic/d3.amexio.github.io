@@ -11,20 +11,11 @@ import * as d3 from 'd3';
 export class BubbleComponent extends AmexioD3BaseChartComponent implements OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
-  @Input('label-color') labelcolor: string = "black";
-  @Input('label') labelflag: boolean = false;
   @Input('color') color: any = "blue";
   @Input('zoom-enable') zoomflag: boolean = false;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
-  @Input('data-reader') datareader: string;
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
-  @Input('drillable-data') drillabledatakey: any[] = [];
-  @Input('horizontal-scale') hScale: boolean = true;
-  @Input('vertical-scale') vScale: boolean = true;
-  drillableFlag: boolean = true;
-  resizeflag: boolean = false;
+ 
   zoominitiated:boolean = false;
   keyArray: any[] = [];
   transformeddata: any[] = [];
@@ -57,12 +48,11 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           resp = response;
           this.httpresponse = resp;
-        }, (error) => {
+        }, (error) => { 
         }, () => {
           setTimeout(() => {
             this.data = this.getResponseData(resp);
             this.data1 = this.data;
-
             this.xaxisData();
             this.transformData(this.data1);
             this.transformdata();
@@ -73,7 +63,6 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         });
 
       } else if (this.data) {
-
         setTimeout(() => {
           this.data1 = this.data;
           this.data = this.getResponseData(this.data);
@@ -83,15 +72,12 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
           this.colorGeneration();
           this.formLegendData();
           this.plotBubbleChart();
-
         }, 0);
-
       }
     }
   }
 
   fetchData(data: any) {
-
     let requestJson;
     let key = this.drillabledatakey;
     let resp: any;
@@ -120,7 +106,6 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     setTimeout(() => {
       this.data = this.getResponseData(this.httpresponse);
       this.data1 = this.data;
-
       this.xaxisData();
       this.transformData(this.data1);
       this.transformdata();
@@ -143,8 +128,6 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     return responsedata;
   }
 
-
-
   transformData(data: any) {
     this.colordata = [];
     this.keyArray = data[0];
@@ -159,11 +142,9 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     });
     this.data = this.transformeddata;
     this.colordata = this.transformeddata;
-
   }
 
   plotBubbleChart() {
-
     let colors = this.predefinedcolors;
     if (this.resizeflag == false) {
       if (this.chartId) {
@@ -181,8 +162,6 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     const height = this.svgheight - margin.top - margin.bottom;
 
     let x, y;
-
-
     x = d3.scaleLinear()
       .rangeRound([0, width]);
 
@@ -199,18 +178,13 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // x.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[1]] })]);
-    y.domain([0, d3.max(this.data, function (d) { return d[Object.keys(d)[2]] })]);
+     y.domain([0, d3.max(this.data,(d)=> { return d[Object.keys(d)[2]] })]);
 
     x.domain([this.minxvalue, this.maxxvalue]);
 
-
     let rScale = d3.scaleSqrt().rangeRound([6, 30]);
 
-
-    rScale.domain([d3.min(this.data, function (d) { return d[Object.keys(d)[4]] }), d3.max(this.data, function (d, i) { return d[Object.keys(d)[4]] })])
-
-
+    rScale.domain([d3.min(this.data,(d)=> { return d[Object.keys(d)[4]] }), d3.max(this.data,(d, i)=> { return d[Object.keys(d)[4]] })])
 
     if (this.device.IsDesktop() == true) {
       this.svg.append("g")
@@ -251,13 +225,13 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
       .data(this.bubblechartdata)
       .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", function (d) { return rScale(d[Object.keys(d)[4]]); })
+      .attr("r",(d)=> { return rScale(d[Object.keys(d)[4]]); })
       .attr("cursor", "pointer")
-      .attr("cx", function (d) {
+      .attr("cx",(d)=> {
         return x(d[Object.keys(d)[1]]);
       })
-      .attr("cy", function (d) { return y(d[Object.keys(d)[2]]); })
-      .attr("fill", function (d, ) { return d[Object.keys(d)[5]] })
+      .attr("cy",(d)=> { return y(d[Object.keys(d)[2]]); })
+      .attr("fill",(d)=> { return d[Object.keys(d)[5]] })
       .attr('opacity', 0.7)
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
@@ -273,10 +247,11 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-        if(!this.zoominitiated) {
+         // if(!this.zoominitiated) {
         this.bubbleChartClick(d);
         this.fordrillableClick(this, d, event);
-        return tooltip.style("visibility", "hidden");}
+        return tooltip.style("visibility", "hidden");
+      // }
       });
 
     //label
@@ -302,6 +277,27 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         .attr("y", (d) => { return y(d[Object.keys(d)[2]]); })
         .text((d) => {
           return d[Object.keys(d)[0]];
+        })
+        .attr("cursor", "pointer")
+        .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", (d) => {
+          return tooltip.html(
+            this.formTooltipData(d)
+          )
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+           // if(!this.zoominitiated) {
+          this.bubbleChartClick(d);
+          this.fordrillableClick(this, d, event);
+          return tooltip.style("visibility", "hidden");
+        // }
         })
     }
 
@@ -452,7 +448,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
 
     });
 
-    let data = buubledata.sort(function (a, b) { return b - a });
+    let data = buubledata.sort((a, b)=> { return b - a });
 
     for (let j = 0; j <= data.length; j++) {
       this.colordata.forEach(element => {

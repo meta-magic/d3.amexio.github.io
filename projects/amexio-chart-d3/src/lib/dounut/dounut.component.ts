@@ -15,16 +15,9 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
-  @Input('label-color') labelcolor: string = "black";
-  @Input('label') labelflag: boolean = false;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
-  @Input('data-reader') datareader: string;
-  @Input('level') level: number = 0;
-  @Input('target') target: number;
   @Input() drillData: any;
-  @Input('drillable-data') drillabledatakey: any
-  drillableFlag: boolean = true;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   legendArray: any[] = [];
@@ -160,7 +153,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
 
     const path = this.svg.append('path')
       .attr('d', arc)
-      .attr('fill', function (d, i) {
+      .attr('fill',(d, i)=> {
         if (d.data.color) {
           return d.data.color;
         }
@@ -196,17 +189,17 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       const text = this.svg.append("text")
         .transition()
         .duration(200)
-        .attr("transform", function (d) {
+        .attr("transform",(d)=> {
           return "translate(" + arc.centroid(d) + ")";
         })
         .attr("text-anchor", "middle")
-        .text(function (d) {
+        .text((d)=> {
 
           return d.data[Object.keys(d.data)[1]]
 
           //return d.data.value;
         })
-        .style('fill', function (d) {
+        .style('fill',(d)=> {
           if(this.labelcolor.length>0){
             return this.labelcolor;
           } else {
