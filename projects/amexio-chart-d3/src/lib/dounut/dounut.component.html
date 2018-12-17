@@ -1,16 +1,19 @@
-<div *ngIf="drillableFlag" #chartId>
-
-
+<div *ngIf="drillableFlag" #chartId  (window:resize)="resize($event)">
     <div colspan="2" style="font-size: 18px; font-weight: bold; ">
         {{title}}
     </div>
-        <div style="display: flex;flex-direction: row">
+        <div [ngClass]="'donutcss'">
             <svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 300 300" [attr.height]="height" [attr.width]="width" [attr.id]="componentId">
             </svg>
             <div>
 
            <div style="display: block; padding: 1%;">
+               <div *ngIf="desktoplegend">
                     <amexio-d3-legend *ngIf="legend" (onClick)="onDonutLegendClick($event)" [data]="legendArray" style="height:100%;"></amexio-d3-legend>
+              </div> 
+              <div *ngIf="mobilelegend">
+                    <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="onDonutLegendClick($event)" [data]="legendArray" style="height:100%;"></amexio-d3-legend>
+              </div>    
           </div>
    </div>
     

@@ -1,0 +1,13 @@
+.donutcss{
+
+     display: flex;
+     flex-direction: "row";
+}
+
+@media screen and (max-width: 1024px) {
+    .donutcss{
+
+       display: flex;
+       flex-direction: "column";
+   }
+  }

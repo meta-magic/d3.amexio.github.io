@@ -4,10 +4,12 @@ import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { PlotCart } from '../base/chart.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommanDataService } from '../services/comman.data.service';
+import{DeviceQueryService} from '../services/device.query.service';
 
 @Component({
   selector: 'amexio-d3-chart-donut',
-  templateUrl: './dounut.component.html'
+  templateUrl: './dounut.component.html',
+  styleUrls: ['./donut.component.css']
 })
 export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent implements PlotCart {
 
@@ -17,13 +19,15 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
+  desktoplegend:boolean=false;
+  mobilelegend:boolean=false;
   @Input() drillData: any;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   legendArray: any[] = [];
   response: any;
   svg: any;
-  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef) {
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef,private device:DeviceQueryService) {
     super('DONUTCHART');
   }
 
@@ -150,6 +154,19 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       .selectAll('path')
       .data(pie(this.data))
       .enter();
+      
+   if(this.device.IsDesktop()==true)
+      {
+                 this.desktoplegend=true;
+                 this.mobilelegend=false;
+      }
+      // else{
+      //        if(this.device.IsPhone()==true && this.device.IsTablet()==true)
+      //        {
+      //             this.desktoplegend=false;
+      //             this.mobilelegend=true;
+      //        }
+      // }
 
     const path = this.svg.append('path')
       .attr('d', arc)
@@ -233,7 +250,6 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     this.legendClick(obj);
   }
 
-
   transformData(data: any) {
     this.keyArray = data[0];
     data.forEach((element, index) => {
@@ -267,5 +283,13 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
     }
     this.chartClick(object);
   }
+
+  resize(data: any) {
+
+     this.desktoplegend=false;
+     this.mobilelegend=true;
+     this.plotD3Chart();
+
+}
 
 }
