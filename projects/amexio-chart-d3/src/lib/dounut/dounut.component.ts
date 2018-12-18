@@ -217,7 +217,7 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
           //return d.data.value;
         })
         .style('fill',(d)=> {
-          if(this.labelcolor.length>0){
+          if(this.labelcolor && this.labelcolor.length>0){
             return this.labelcolor;
           } else {
             return "black";

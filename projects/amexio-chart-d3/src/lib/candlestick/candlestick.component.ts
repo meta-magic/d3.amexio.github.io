@@ -212,7 +212,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
       .style("font-size", "1vw")
       .attr("text-anchor", "middle")
       .attr("fill", (d) => {
-        if (this.labelcolor.length > 0) {
+        if (this.labelcolor && this.labelcolor.length > 0) {
           return this.labelcolor;
         } else {
           return "black";

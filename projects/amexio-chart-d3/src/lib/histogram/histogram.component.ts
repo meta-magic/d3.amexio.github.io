@@ -338,7 +338,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       .style("font-weight", "bold")
       .attr("text-anchor", "middle")
       .attr("fill", (d) => {
-        if(this.labelcolor.length>0){
+        if(this.labelcolor && this.labelcolor.length>0){
           return this.labelcolor;
         } else {
         return "black";

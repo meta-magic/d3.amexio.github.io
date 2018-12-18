@@ -265,7 +265,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         })
         .attr("text-anchor", "middle")
         .attr("fill", (d) => {
-          if (this.labelcolor.length > 0) {
+          if (this.labelcolor && this.labelcolor.length > 0) {
             return this.labelcolor;
           } else {
             return "black";

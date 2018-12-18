@@ -185,7 +185,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
           .style("font-weight", "bold")
           .attr("text-anchor", "middle")
           .attr("fill", (d) => {
-            if (this.labelcolor.length > 0) {
+            if (this.labelcolor && this.labelcolor.length > 0) {
               return this.labelcolor;
             } else {
               return "black";
