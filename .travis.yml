@@ -30,12 +30,12 @@ before_script:
   - npm pack dist/amexio-chart-d3/
   - mv amexio-chart-d3-*.tgz amexio-chart-d3.tgz   
 script: 
-  - git clone https://github.com/meta-magic/amexio-ios.git -b v5.4
+  - git clone https://github.com/meta-magic/amexio-ios.git -b v5.4-dec
   - cd amexio-ios
   - cp -rf ../amexio-chart-d3.tgz .
   - git add amexio-chart-d3.tgz
   - git commit -m "date"
-  - git push --force --quiet "https://deepali-arvind:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" HEAD:v5.4
+  - git push --force --quiet "https://deepali-arvind:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" HEAD:v5.4-dec
 after_success: 
   - codecov
 cache:
