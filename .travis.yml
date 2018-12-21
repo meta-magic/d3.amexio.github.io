@@ -35,7 +35,7 @@ script:
   - cp -rf ../amexio-chart-d3.tgz .
   - git add amexio-chart-d3.tgz
   - git commit -m "date"
-  - git push --force --quiet "https://deepali-arvind:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" HEAD:v5.4-dec
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then  git push --force --quiet "https://deepali-arvind:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" HEAD:v5.4-dec; fi
 after_success: 
   - codecov
 cache:
