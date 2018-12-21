@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, } from "@an
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 
 import * as d3 from 'd3';
 
@@ -18,7 +18,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('label-color') labelcolor: string = "black";
     @Input('label') labelflag: boolean = false;
     @ViewChild('chartId') chartId: ElementRef;
-    @ViewChild('divid')  divid:ElementRef;
+    @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid: any;
     @Input('data-reader') datareader: string;
     @Input('level') level: number = 0;
@@ -27,25 +27,25 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('horizontal-scale') hScale: boolean = true;
     resizeflag: boolean = false;
     checkmob: boolean;
-    resizeg:any;
+    resizeg: any;
     drillableFlag: boolean = true;
     data: any;
-    xaxis:any;
-    yaxis:any;
-    svg:any;
+    xaxis: any;
+    yaxis: any;
+    svg: any;
     colorflag: boolean = false;
     keyArray: any[] = [];
     transformeddata: any[] = [];
     object: any;
     legendArray: any[] = [];
-    constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef,private device:DeviceQueryService) {
+    constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
 
         super('bar');
-       
+
 
     }
     ngOnInit() {
-      
+
 
         if (this.level <= 1) {
             let resp: any;
@@ -130,28 +130,28 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     plotD3Chart(): any {
 
         this.formLegendData();
-           if(this.resizeflag==false){
-           if(this.chartId ){
+        if (this.resizeflag == false) {
+            if (this.chartId) {
 
-             this.svgwidth = this.chartId.nativeElement.offsetWidth;
-             
-          } else{
+                this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
-                    this.svgwidth = this.svgwidth;
-               }
+            } else {
+
+                this.svgwidth = this.svgwidth;
             }
+        }
 
-    
-        
+
+
         const tooltip = this.toolTip(d3);
-        this.svg = d3.select("#" + this.componentId) ;
-        const margin = { top: 20, right:60, bottom: 30, left: 60 };
-      
+        this.svg = d3.select("#" + this.componentId);
+        const margin = { top: 20, right: 60, bottom: 30, left: 60 };
+
         const width = this.svgwidth - margin.left - margin.right;
         const height = this.svgheight - margin.top - margin.bottom;
-   
+
         //const height = +svg.attr("height") - margin.top - margin.bottom;
-      
+
         let x, y;
         const g = this.svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -173,37 +173,35 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                 return d[Object.keys(d)[1]];
                 //return d.value;
             })]);
-        
-          
+
+
             // add x axis to svg
-            if(this.device.IsDesktop()==true)
-            {
-              g.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x))
+            if (this.device.IsDesktop() == true) {
+                g.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x))
             }
-          else
-           {
-            g.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x)).
-                   selectAll("text")
-                   .attr("y", 0)
-                   .attr("x", 9)
-                   .attr("dy", ".35em")
-                   .attr("transform", "rotate(60)")
-                   .style("text-anchor", "start");
-     
-          }
-         
+            else {
+                g.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x)).
+                    selectAll("text")
+                    .attr("y", 0)
+                    .attr("x", 9)
+                    .attr("dy", ".35em")
+                    .attr("transform", "rotate(60)")
+                    .style("text-anchor", "start");
+
+            }
+
             //add y axis to svg
-          g.append("g")
+            g.append("g")
                 .call(d3.axisLeft(y)
                     .ticks(10))
-        
-          this.plotLine(g, x, y, height, width);
 
-           //add bar chart
+            this.plotLine(g, x, y, height, width);
+
+            //add bar chart
             g.selectAll(".bar")
                 .data(this.data)
                 .enter()
@@ -247,33 +245,32 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     //this.chartClick(d);
                 });
 
-                if(this.labelflag)
-            {
+            if (this.labelflag) {
                 var yTextPadding = 40;
                 this.svg.selectAll(".label")
-                .data(this.data)
-                .enter()
-                .append("text")
-                .style("font-weight","bold")
-                .style("font-size","1vw")
-                .attr("text-anchor", "middle")
-                .attr("fill", (d)=>{
-                  if(this.labelcolor.length>0){
-                    return this.labelcolor;
-                  } else {
-                    return "black";
-                  }
-                })
-                .attr("x", (d,i) => {
-                    return x(d[Object.keys(d)[0]])+ margin.left + x.bandwidth()/2;
-                })
-                .attr("y", (d,i) => {
-                     return y(d[Object.keys(d)[1]])+yTextPadding;
-                })
-                .text((d) => {
-                     return d[Object.keys(d)[1]];
-                });
-          }//if ends fr 
+                    .data(this.data)
+                    .enter()
+                    .append("text")
+                    .style("font-weight", "bold")
+                    .style("font-size", "1vw")
+                    .attr("text-anchor", "middle")
+                    .attr("fill", (d) => {
+                        if (this.labelcolor.length > 0) {
+                            return this.labelcolor;
+                        } else {
+                            return "black";
+                        }
+                    })
+                    .attr("x", (d, i) => {
+                        return x(d[Object.keys(d)[0]]) + margin.left + x.bandwidth() / 2;
+                    })
+                    .attr("y", (d, i) => {
+                        return y(d[Object.keys(d)[1]]) + yTextPadding;
+                    })
+                    .text((d) => {
+                        return d[Object.keys(d)[1]];
+                    });
+            }//if ends fr 
         }
 
         else if (this.horizontal == true) {
@@ -307,7 +304,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             //add y axis to svg
             g.append("g")
                 .call(d3.axisLeft(y))
-              
+
             this.plotLine(g, x, y, height, width);
             //add bar chart
             g.selectAll(".bar")
@@ -353,40 +350,39 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     //this.chartClick(d);
                 });
 
-                 if(this.labelflag)
-                 {
+            if (this.labelflag) {
                 let yTextPadding = 40;
                 this.svg.selectAll(".label")
-                .data(this.data)
-                .enter()
-                .append("text")
-                .style("font-weight","bold")
-                .attr("text-anchor","middle")
-                .attr("vertical-align","middle")
-                .attr("margin-top",margin.top)
-                .attr("fill", (d)=>{
-                  if(this.labelcolor.length>0){
-                    return this.labelcolor;
-                  } else {
-                    return "black";
-                  }
-                })
-                .attr("x", (d,i) => {
-                  return x(d[Object.keys(d)[1]])+yTextPadding;
-                 })
-                .attr("y", (d,i) => {
-                     return y(d[Object.keys(d)[0]])
-                     + margin.top + y.bandwidth()/2;
-                })
-                .text( (d) => {
-                     return d[Object.keys(d)[1]];
-                });
-          }
-        
+                    .data(this.data)
+                    .enter()
+                    .append("text")
+                    .style("font-weight", "bold")
+                    .attr("text-anchor", "middle")
+                    .attr("vertical-align", "middle")
+                    .attr("margin-top", margin.top)
+                    .attr("fill", (d) => {
+                        if (this.labelcolor.length > 0) {
+                            return this.labelcolor;
+                        } else {
+                            return "black";
+                        }
+                    })
+                    .attr("x", (d, i) => {
+                        return x(d[Object.keys(d)[1]]) + yTextPadding;
+                    })
+                    .attr("y", (d, i) => {
+                        return y(d[Object.keys(d)[0]])
+                            + margin.top + y.bandwidth() / 2;
+                    })
+                    .text((d) => {
+                        return d[Object.keys(d)[1]];
+                    });
+            }
+
 
         }//else ends(horizontal bar logic ends)
 
-     
+
 
     }
 
@@ -460,19 +456,19 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     }
 
     resize(data: any) {
-      
+
         this.svg.selectAll("*").remove();
-  
-        this.resizeflag=true;
+
+        this.resizeflag = true;
         this.svgwidth = this.divid.nativeElement.offsetWidth;
-     
+
         this.cdf.detectChanges();
         this.plotD3Chart();
-   
+
     }
 
 
 
-    
+
 
 }

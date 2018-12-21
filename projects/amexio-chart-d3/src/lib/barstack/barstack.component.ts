@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter, 
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 
 @Component({
   selector: 'amexio-d3-chart-barstack',
@@ -21,10 +21,10 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   xaxis: any;
   @Input('data') data1: any
   @Input() barwidth: number = 0;
-   @Input() title: String = "";
+  @Input() title: String = "";
   @Input() legend: boolean = true;
-   @Input() color: string[] = [];
-  @Input('width') svgwidth: number=300;
+  @Input() color: string[] = [];
+  @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
@@ -32,8 +32,8 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Output() onLegendClick: any = new EventEmitter<any>();
   httpresponse: any;
   svg: any;
-  offsetheight:any;
-  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
+  offsetheight: any;
+  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
     super('barstack');
   }
 
@@ -42,7 +42,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       let res;
       if (this.httpmethod && this.httpurl) {
         this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-           this.httpresponse = response;
+          this.httpresponse = response;
           this.data = this.getResponseData(response);
         }, (error) => {
         }, () => {
@@ -79,7 +79,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       }, (error) => {
       }, () => {
         setTimeout(() => {
-           this.drawChart();
+          this.drawChart();
         }, 0);
       });
     }
@@ -135,30 +135,30 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     tempinnerarray.forEach(element => {
       this.data.push(element);
     });
-let maxY: any = 0;
-let yaxismaxArray =  []; 
-   //find max for yaxis
+    let maxY: any = 0;
+    let yaxismaxArray = [];
+    //find max for yaxis
     this.data.forEach((element) => {
-     for (let [key, value] of Object.entries(element) ){
-     
-     this.keyArray.forEach(key1 => {
-       if(key == key1){
-      maxY = maxY + value;
-       }
-     });//keyarray loop ends here
+      for (let [key, value] of Object.entries(element)) {
 
-     }//for ends here
-yaxismaxArray.push(maxY);
-maxY = 0;
+        this.keyArray.forEach(key1 => {
+          if (key == key1) {
+            maxY = maxY + value;
+          }
+        });//keyarray loop ends here
+
+      }//for ends here
+      yaxismaxArray.push(maxY);
+      maxY = 0;
     });// foreach ends
-let tempLarge = 0, i;
-for(i = 0; i < yaxismaxArray.length; i++) {
-if(yaxismaxArray[i] > tempLarge) {
-  this.maxYValue = yaxismaxArray[i];
-}//if ends
-}// for ends
+    let tempLarge = 0, i;
+    for (i = 0; i < yaxismaxArray.length; i++) {
+      if (yaxismaxArray[i] > tempLarge) {
+        this.maxYValue = yaxismaxArray[i];
+      }//if ends
+    }// for ends
 
-     this.legends = []
+    this.legends = []
     this.keyArray.forEach((element, index) => {
       const legenddata = this.legendArray[element];
       if (this.color.length > 0) {
@@ -173,18 +173,18 @@ if(yaxismaxArray[i] > tempLarge) {
 
   plotChart() {
     const tooltip = this.toolTip(d3);
-    let margin = { top: 20, right: 30, bottom:90, left: 60 };
+    let margin = { top: 20, right: 30, bottom: 90, left: 60 };
     let colors = this.predefinedcolors;
     if (this.device.IsDesktop()) {
       if (this.chartId) {
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
       } else {
-         this.svgwidth = this.svgwidth;
+        this.svgwidth = this.svgwidth;
       }
     }
     //this.svgwidth = this.chartId.nativeElement.offsetWidth;
     let data;
-     data = this.data;
+    data = this.data;
     let keysetarray: string[] = [];
     if (this.httpmethod && this.httpurl) {
       for (let [key, value] of Object.entries(this.data[0])) {
@@ -202,16 +202,15 @@ if(yaxismaxArray[i] > tempLarge) {
     this.svg = d3.select("#" + this.componentId);
 
     let width = this.svgwidth - margin.left - margin.right;
-    let height;   
-    if(this.device.IsDesktop())
-        {
-            
-               this.offsetheight = this.chartId.nativeElement.offsetHeight;
-               height =  this.offsetheight;
-        }
-        else{
-                 height=this.chartId.nativeElement.offsetHeight-10;
-          }
+    let height;
+    if (this.device.IsDesktop()) {
+
+      this.offsetheight = this.chartId.nativeElement.offsetHeight;
+      height = this.offsetheight;
+    }
+    else {
+      height = this.chartId.nativeElement.offsetHeight - 10;
+    }
 
     let x = d3.scaleBand()
       .domain(data.map((d) => {
@@ -221,37 +220,35 @@ if(yaxismaxArray[i] > tempLarge) {
       .padding(0.35);
 
     let y = d3.scaleLinear()
-      .domain([d3.min(this.stackMin(series)), 
-        this.maxYValue
+      .domain([d3.min(this.stackMin(series)),
+      this.maxYValue
         // d3.max(this.stackMax(series))
-    ])
+      ])
       .rangeRound([height - margin.bottom, margin.top]);
-    if(this.device.IsDesktop()==true)
-    {
+    if (this.device.IsDesktop() == true) {
       this.svg.append("g")
-      .attr("transform", "translate(0," + y(0) + ")")
-      .call(d3.axisBottom(x));
+        .attr("transform", "translate(0," + y(0) + ")")
+        .call(d3.axisBottom(x));
     }
-  else
-   {
-    this.svg.append("g")
-    .attr("transform", "translate(0," + y(0) + ")")
-    .call(d3.axisBottom(x)).
-           selectAll("text")
-           .attr("y", 0)
-           .attr("x", 9)
-           .attr("dy", ".35em")
-           .attr("transform", "rotate(60)")
-           .style("text-anchor", "start");
-  }
-   
+    else {
+      this.svg.append("g")
+        .attr("transform", "translate(0," + y(0) + ")")
+        .call(d3.axisBottom(x)).
+        selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
+    }
+
     this.svg.append("g")
       .attr("transform", "translate(" + margin.left + ",0)")
       .call(d3.axisLeft(y));
 
     this.plotLine(this.svg, x, y, height, width, margin.left)
 
-   let svgRect =   this.svg.append("g")
+    let svgRect = this.svg.append("g")
       .selectAll("g")
       .data(series)
       .enter().append("g")
@@ -270,10 +267,10 @@ if(yaxismaxArray[i] > tempLarge) {
       })
       .selectAll("rect")
       .data((d) => {
-         return d;
+        return d;
       })
 
-      svgRect.enter().append("rect")
+    svgRect.enter().append("rect")
       .attr("width", x.bandwidth()).attr('id', (d, i) => {
         return d.data[i];
       })
@@ -304,36 +301,36 @@ if(yaxismaxArray[i] > tempLarge) {
         return tooltip.style("visibility", "hidden");
         // this.chartClick(d);
       });
-// -------------------------
-if(this.labelflag) {
-svgRect.enter()
-.append("text")
-.style("font-weight","bold")
-.style("font-size","1vw")
-.attr("text-anchor", "middle")
-.attr("fill", (d)=>{
-  if(this.labelcolor && this.labelcolor.length>0){
-    return this.labelcolor;
-  } else {
-    return "black";
-  }
-})
- .attr("x", (d) => {
-  return x(+d.data[Object.keys(d.data)[0]]) + x.bandwidth()/2;
- })
-.attr("y", (d, index) => {
-  return y(d[1]) + 20;
-})
-.text((d)=>{
-     return  d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
-})
-}
+    // -------------------------
+    if (this.labelflag) {
+      svgRect.enter()
+        .append("text")
+        .style("font-weight", "bold")
+        .style("font-size", "1vw")
+        .attr("text-anchor", "middle")
+        .attr("fill", (d) => {
+          if (this.labelcolor && this.labelcolor.length > 0) {
+            return this.labelcolor;
+          } else {
+            return "black";
+          }
+        })
+        .attr("x", (d) => {
+          return x(+d.data[Object.keys(d.data)[0]]) + x.bandwidth() / 2;
+        })
+        .attr("y", (d, index) => {
+          return y(d[1]) + 20;
+        })
+        .text((d) => {
+          return d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
+        })
+    }
   }
 
   stackMin(serie) {
-    return d3.min(serie,(d)=> { return d[0]; });
+    return d3.min(serie, (d) => { return d[0]; });
   }
- 
+
   resize() {
     this.svgwidth = 0;
     this.svg.selectAll("*").remove();
@@ -373,7 +370,7 @@ svgRect.enter()
     }
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
-         let object = {};
+        let object = {};
         object[key] = value;
         object[this.xaxis] = d.data[Object.keys(d.data)[0]];
         return (this.toolTipForBar(object));
@@ -386,7 +383,7 @@ svgRect.enter()
     if (diff < 0) {
       diff = (diff * (-1));
     }
-     let object = {};
+    let object = {};
     for (let [key, value] of Object.entries(d.data)) {
       if (value == diff) {
         object[key] = value;

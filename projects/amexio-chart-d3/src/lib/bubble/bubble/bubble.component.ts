@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AmexioD3BaseChartComponent } from '../../base/base.component';
 import { CommanDataService } from '../../services/comman.data.service';
-import{DeviceQueryService} from '../../services/device.query.service';
+import { DeviceQueryService } from '../../services/device.query.service';
 import * as d3 from 'd3';
 @Component({
   selector: 'amexio-d3-chart-bubble',
@@ -15,8 +15,8 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   @Input('zoom-enable') zoomflag: boolean = false;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
- 
-  zoominitiated:boolean = false;
+
+  zoominitiated: boolean = false;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   colors: any[] = [];
@@ -48,7 +48,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
           resp = response;
           this.httpresponse = resp;
-        }, (error) => { 
+        }, (error) => {
         }, () => {
           setTimeout(() => {
             this.data = this.getResponseData(resp);
@@ -178,13 +178,13 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-     y.domain([0, d3.max(this.data,(d)=> { return d[Object.keys(d)[2]] })]);
+    y.domain([0, d3.max(this.data, (d) => { return d[Object.keys(d)[2]] })]);
 
     x.domain([this.minxvalue, this.maxxvalue]);
 
     let rScale = d3.scaleSqrt().rangeRound([6, 30]);
 
-    rScale.domain([d3.min(this.data,(d)=> { return d[Object.keys(d)[4]] }), d3.max(this.data,(d, i)=> { return d[Object.keys(d)[4]] })])
+    rScale.domain([d3.min(this.data, (d) => { return d[Object.keys(d)[4]] }), d3.max(this.data, (d, i) => { return d[Object.keys(d)[4]] })])
 
     if (this.device.IsDesktop() == true) {
       this.svg.append("g")
@@ -225,13 +225,13 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
       .data(this.bubblechartdata)
       .enter().append("circle")
       .attr("class", "dot")
-      .attr("r",(d)=> { return rScale(d[Object.keys(d)[4]]); })
+      .attr("r", (d) => { return rScale(d[Object.keys(d)[4]]); })
       .attr("cursor", "pointer")
-      .attr("cx",(d)=> {
+      .attr("cx", (d) => {
         return x(d[Object.keys(d)[1]]);
       })
-      .attr("cy",(d)=> { return y(d[Object.keys(d)[2]]); })
-      .attr("fill",(d)=> { return d[Object.keys(d)[5]] })
+      .attr("cy", (d) => { return y(d[Object.keys(d)[2]]); })
+      .attr("fill", (d) => { return d[Object.keys(d)[5]] })
       .attr('opacity', 0.7)
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
@@ -247,11 +247,11 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         return tooltip.style("visibility", "hidden");
       })
       .on("click", (d) => {
-         // if(!this.zoominitiated) {
+        // if(!this.zoominitiated) {
         this.bubbleChartClick(d);
         this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
-      // }
+        // }
       });
 
     //label
@@ -293,21 +293,21 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
           return tooltip.style("visibility", "hidden");
         })
         .on("click", (d) => {
-           // if(!this.zoominitiated) {
+          // if(!this.zoominitiated) {
           this.bubbleChartClick(d);
           this.fordrillableClick(this, d, event);
           return tooltip.style("visibility", "hidden");
-        // }
+          // }
         })
     }
 
     //create zoom handler 
-   if(this.zoomflag) {
-     this.zoominitiated = true;
-    let zoom_handler = d3.zoom()
-      .on("zoom", this.zoom_actions.bind(this));
-    zoom_handler(this.svg);
-  }
+    if (this.zoomflag) {
+      this.zoominitiated = true;
+      let zoom_handler = d3.zoom()
+        .on("zoom", this.zoom_actions.bind(this));
+      zoom_handler(this.svg);
+    }
   }
 
   togglebtnflag() {
@@ -320,7 +320,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
       this.nodelabel.attr("transform", d3.event.transform);
     }
     this.resizebtnflag = true;
-    this.zoominitiated= false;
+    this.zoominitiated = false;
   }
 
   resizesvg() {
@@ -448,7 +448,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
 
     });
 
-    let data = buubledata.sort((a, b)=> { return b - a });
+    let data = buubledata.sort((a, b) => { return b - a });
 
     for (let j = 0; j <= data.length; j++) {
       this.colordata.forEach(element => {

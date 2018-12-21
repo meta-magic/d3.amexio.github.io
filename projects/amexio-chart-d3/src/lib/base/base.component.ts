@@ -2,8 +2,6 @@ import { Input, Output, EventEmitter } from "@angular/core";
 
 export class AmexioD3BaseChartComponent{
 
-   
-
     @Output() onLegendClick: any = new EventEmitter<any>();
 
     @Output() onChartClick: any = new EventEmitter<any>();

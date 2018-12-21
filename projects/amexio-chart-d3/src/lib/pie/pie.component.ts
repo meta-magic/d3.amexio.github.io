@@ -1,12 +1,12 @@
-import {Component, OnInit, Input, Output, EventEmitter,ViewChild, ElementRef} from '@angular/core';
-import { HttpClient,HttpClientModule } from '@angular/common/http';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import * as d3 from 'd3';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 @Component({
   selector: 'amexio-d3-chart-pie',
   templateUrl: './pie.component.html'
 })
-export class AmexioD3PieChartComponent implements  OnInit {
+export class AmexioD3PieChartComponent implements OnInit {
 
   @Input('data') data: any;
 
@@ -18,7 +18,7 @@ export class AmexioD3PieChartComponent implements  OnInit {
 
   @ViewChild('id') donutref: any;
 
-  @Input() legend: boolean = true ;
+  @Input() legend: boolean = true;
 
   @Input('color') colors: any = [];
 
@@ -28,55 +28,52 @@ export class AmexioD3PieChartComponent implements  OnInit {
 
   @Input() title: any = "";
 
-   @Input('http-url') httpurl: any;
-    
-   @Input('http-method') httpmethod: any;
+  @Input('http-url') httpurl: any;
 
-   @Input('data-reader') datareader: string;
+  @Input('http-method') httpmethod: any;
 
-   @Input('level') level = 0 ;
+  @Input('data-reader') datareader: string;
 
-   @Input('target') target:number;
+  @Input('level') level = 0;
 
-   @Input('drillable-data') drillabledatakey:any
+  @Input('target') target: number;
 
-   @Input('label-color') labelcolor: string = "black";
+  @Input('drillable-data') drillabledatakey: any
 
-   @Input('label') labelflag: boolean = false;
-   
-   drillableFlag:boolean = true;
+  @Input('label-color') labelcolor: string = "black";
 
-   drillData: any;
-  
-  
-  ngOnInit(){
-  
+  @Input('label') labelflag: boolean = false;
+
+  drillableFlag: boolean = true;
+
+  drillData: any;
+
+
+  ngOnInit() {
+
   }
-  
-  legendClick(node:any){
+
+  legendClick(node: any) {
     this.onLegendClick.emit(node);
   }
 
-  chartClick(node:any){
-       this.onChartClick.emit(node);
+  chartClick(node: any) {
+    this.onChartClick.emit(node);
   }
 
 
-  fordrillableClick(ref:any)
-  {
-     this.drillableEvent.emit(ref,);
+  fordrillableClick(ref: any) {
+    this.drillableEvent.emit(ref);
   }
 
- fetchData(data:any)
-   {
-          this.drillData = data;   
-   }
+  fetchData(data: any) {
+    this.drillData = data;
+  }
 
-  drawChart()
-  {
-    
-          this.donutref.drillableFlag=true;
-          this.donutref.drawChart();
+  drawChart() {
+
+    this.donutref.drillableFlag = true;
+    this.donutref.drawChart();
 
   }
 }
