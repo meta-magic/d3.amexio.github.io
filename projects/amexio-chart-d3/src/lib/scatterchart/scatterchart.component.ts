@@ -11,13 +11,14 @@ import * as d3 from 'd3';
   styleUrls: ['./scatterchart.component.css']
 })
 export class ScatterchartComponent extends AmexioD3BaseChartComponent implements OnInit {
+  
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @Input('color') color: any = "blue";
- 
+  @Input('zoom-enable') zoomflag: boolean = false;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
- 
+  zoominitiated:boolean = false;
   svg: any;
   keyArray: any[] = [];
   transformeddata: any[] = [];
@@ -28,6 +29,9 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   legendarray: any[] = [];
   legendData: any;
   httpresponse: any;
+  node: any;
+  nodelabel: any;
+  resizebtnflag = false;
   constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
     super('scatter');
   }
@@ -224,7 +228,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     if (this.dataFormatted[0].length == 2) {
       this.plotLine(this.svg, x, y, height, width);
 
-      this.svg.selectAll(".dot")
+      this.node=this.svg.selectAll(".dot")
         .data(this.data)
         .enter().append("circle")
         .attr("class", "dot")
@@ -255,7 +259,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         });
       // ------------------------------------------------------------------------------
       if (this.labelflag) {
-        this.svg.selectAll("labels")
+   this.nodelabel=this.svg.selectAll("labels")
           .data(this.data)
           .enter().append("text")
           .style("font-weight", "bold")
@@ -283,7 +287,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     } else {
       this.plotLine(this.svg, x, y, height, width);
 
-      this.svg.selectAll(".dot")
+  this.node=this.svg.selectAll(".dot")
         .data(this.transformeddata)
         .enter().append("circle")
         .attr("class", "dot")
@@ -315,7 +319,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         })
 
         if (this.labelflag) {
-          this.svg.selectAll("labels")
+    this.nodelabel=this.svg.selectAll("labels")
             .data(this.data)
             .enter().append("text")
             .style("font-weight", "bold")
@@ -342,6 +346,36 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
 
     }
 
+       //create zoom handler 
+   if(this.zoomflag) {
+    this.zoominitiated = true;
+   let zoom_handler = d3.zoom()
+     .on("zoom", this.zoom_actions.bind(this));
+   zoom_handler(this.svg);
+ }
+
+  }
+
+
+
+  togglebtnflag() {
+    this.resizebtnflag = true;
+  }
+
+  zoom_actions() {
+    this.node.attr("transform", d3.event.transform);
+    if (this.labelflag) {
+      this.nodelabel.attr("transform", d3.event.transform);
+    }
+    this.resizebtnflag = true;
+    this.zoominitiated= false;
+  }
+
+  resizesvg() {
+    // this.svg = null;
+    this.svg.selectAll("*").remove();
+    this.plotScatterChart();
+    this.resizebtnflag = false;
   }
 
   // Method to form tooltip data
@@ -460,6 +494,4 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       this.legendData.push(legendobject);
     });
   }
-
-
 }
