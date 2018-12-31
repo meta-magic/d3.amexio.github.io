@@ -1,7 +1,7 @@
 # Contributing to d3-charts
  
 Welcome to d3.amexio.github.io
-If you are interested in contributing to the Amexio and help make it even better than it is
+If you are interested in contributing to the d3-charts and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
 
  - [Code of Conduct](#coc)
@@ -68,8 +68,6 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 
 1. Create your patch, **including appropriate test cases**.
 1. Follow our [Coding Rules](#rules).
-1. Run the full https://github.com/meta-magic/amexio.github.io test suite, as described in the [developer documentation][dev-doc],
-  and ensure that all tests pass.
 1. Commit your changes using a descriptive commit message that follows our
   [commit message conventions](#commit). Adherence to these conventions
   is necessary because release notes are automatically generated from these messages.
