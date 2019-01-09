@@ -6,7 +6,6 @@ import{DeviceQueryService} from '../services/device.query.service';
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 {
     svgwidth : any;
-    svgheight=300;
     private _data      : any;
     private xaxisdata  : any[];
     private yaxisdata  : any[];
@@ -16,7 +15,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     protected multiseriesdata : any[];
     svg:any;
 
-  
+    @Input('height')svgheight=300;
+
     @Input('data') 
 
     @Input('http-url') httpurl: any;
