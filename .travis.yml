@@ -36,7 +36,7 @@ script:
   - git clone https://github.com/meta-magic/d3-charts-tar.git
   - ls -la
   - cd /home/travis/build/meta-magic/d3-charts-tar
-  - cp -rf ../d3clone/amexio-chart-d3.tgz .
+  - cp -rf ../d3.amexio.github.io/amexio-chart-d3.tgz .
   - ls -la
   - git add amexio-chart-d3.tgz
   - git commit -m "date"
