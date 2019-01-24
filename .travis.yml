@@ -30,12 +30,12 @@ before_script:
   - npm pack dist/amexio-chart-d3/
   - mv amexio-chart-d3-*.tgz amexio-chart-d3.tgz   
 script: 
-  - git clone https://github.com/meta-magic/amexio-ios.git -b v5.5
-  - cd amexio-ios
+  - git clone https://github.com/deepali-arvind/d3char-tar.git
+  - cd d3char-tar/
   - cp -rf ../amexio-chart-d3.tgz .
   - git add amexio-chart-d3.tgz
   - git commit -m "date"
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then  git push --force --quiet "https://deepali-arvind:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" HEAD:v5.5; fi
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then  git push --force --quiet "https://deepali-arvind:${REPOD3CHART}@github.com/${REPO}.git" HEAD:master; fi
 after_success: 
   - codecov
 cache:
