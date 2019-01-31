@@ -4,7 +4,7 @@ import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
 import * as d3 from 'd3';
 import { Key } from 'selenium-webdriver';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 
 @Component({
   selector: 'amexio-d3-chart-multiarea',
@@ -14,12 +14,12 @@ import{DeviceQueryService} from '../services/device.query.service';
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 350;
-   
+
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
   @Output() onTooltipClick: any = new EventEmitter<any>();
-  httpresponse:any;
+  httpresponse: any;
   togglelabel: boolean = false;
   svg: any;
   x: any;
@@ -38,94 +38,92 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   data1: any[] = [];
   legendArray: any[] = [];
   tooltip: any;
-  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
+  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
 
     super("areachart");
   }
 
   ngOnInit() {
     this.togglelabel = false;
-     let res;
-     if(this.level<=1){
-    if (this.httpmethod && this.httpurl) {
-      this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
-        this.httpresponse=response;
-        this.data = this.getResponseData(response);
-      }, (error) => {
-      }, () => {
+    let res;
+    if (this.level <= 1) {
+      if (this.httpmethod && this.httpurl) {
+        this.myservice.fetchUrlData(this.httpurl, this.httpmethod).subscribe((response) => {
+          this.httpresponse = response;
+          this.data = this.getResponseData(response);
+        }, (error) => {
+        }, () => {
+          setTimeout(() => {
+            this.transformData(this.data);
+            this.initAreaChart();
+            this.plotD3Chart();
+          }, 0);
+        });
+      } else if (this.data1) {
+
         setTimeout(() => {
           this.transformData(this.data);
           this.initAreaChart();
           this.plotD3Chart();
         }, 0);
-      });
-    } else if (this.data1) {
+      }
 
-      setTimeout(() => {
-        this.transformData(this.data);
-        this.initAreaChart();
-        this.plotD3Chart();
-      }, 0);
     }
-
-  }
   }
 
 
   fetchData(data: any) {
-   
+
     let requestJson;
-    let key=this.drillabledatakey;
+    let key = this.drillabledatakey;
     let resp: any;
-    if(this.drillabledatakey.length)
-    {
-         let drillabledata= this.getMultipleDrillbleKeyData(data,key);
-         requestJson=drillabledata;
+    if (this.drillabledatakey.length) {
+      let drillabledata = this.getMultipleDrillbleKeyData(data, key);
+      requestJson = drillabledata;
     }
-    else{
-            requestJson=data;  
-        }
-  
-    
- if (this.httpmethod && this.httpurl) {
- this.myservice.postfetchData(this.httpurl,this.httpmethod, requestJson).subscribe((response) => {
-            resp = response;
-            this.httpresponse=response;
-        }, (error) => {
-        }, () => {
-            setTimeout(() => {
-                //this.data = this.getResponseData(resp);
-                this.drawChart();
-                  }, 0);
-              });
-           }
-}
+    else {
+      requestJson = data;
+    }
 
-drawChart() {
-  setTimeout(() => { 
-    this.data = this.getResponseData(this.httpresponse);
-          this.transformData(this.data);
-          this.initAreaChart();
-          this.plotD3Chart();      
 
-  }, 0);
-} 
+    if (this.httpmethod && this.httpurl) {
+      this.myservice.postfetchData(this.httpurl, this.httpmethod, requestJson).subscribe((response) => {
+        resp = response;
+        this.httpresponse = response;
+      }, (error) => {
+      }, () => {
+        setTimeout(() => {
+          //this.data = this.getResponseData(resp);
+          this.drawChart();
+        }, 0);
+      });
+    }
+  }
+
+  drawChart() {
+    setTimeout(() => {
+      this.data = this.getResponseData(this.httpresponse);
+      this.transformData(this.data);
+      this.initAreaChart();
+      this.plotD3Chart();
+
+    }, 0);
+  }
 
   initAreaChart() {
     this.tooltip = this.toolTip(d3);
-    if(this.resizeflag==false)
-    {
+    if (this.resizeflag == false) {
 
-    
-    if(this.chartId){
-      this.svgwidth = this.chartId.nativeElement.offsetWidth;
-    } else{
-    
-           this.svgwidth = this.svgwidth;
+
+      if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else {
+
+        this.svgwidth = this.svgwidth;
       }
     }
 
-      this.margin = { top: 30, right: 44, bottom: 50, left: 30 },
+    this.margin = { top: 30, right: 44, bottom: 50, left: 30 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
       this.height = this.svgheight - this.margin.top - this.margin.bottom;
     //find max and initialize max
@@ -133,13 +131,13 @@ drawChart() {
 
     this.x = d3.scalePoint()
       .range([0, this.width])
-      // .padding(0.1);
+    // .padding(0.1);
 
     this.y = d3.scaleLinear()
       .rangeRound([this.height, 0]);
-    this.areaArray=[];
+    this.areaArray = [];
     //set x y domain
-    this.areaArray = this.data.map( (d)=> { return d[Object.keys(d)[0]]; });
+    this.areaArray = this.data.map((d) => { return d[Object.keys(d)[0]]; });
     this.x.domain(this.areaArray);
     this.y.domain([0, this.maximumValue]);
     //initialize svg
@@ -155,30 +153,28 @@ drawChart() {
     let counter: number;
     let g = this.svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     // add the X 
-    if(this.device.IsDesktop()==true)
-    {
+    if (this.device.IsDesktop() == true) {
       g.append("g")
-          .attr("transform", "translate(0," + this.height + ")")
-          .call(d3.axisBottom(this.x))
+        .attr("transform", "translate(0," + this.height + ")")
+        .call(d3.axisBottom(this.x))
     }
-  else
-   {
-    g.append("g")
-          .attr("transform", "translate(0," + this.height + ")")
-          .call(d3.axisBottom(this.x)).
-           selectAll("text")
-           .attr("y", 0)
-           .attr("x", 9)
-           .attr("dy", ".35em")
-           .attr("transform", "rotate(60)")
-           .style("text-anchor", "start");
+    else {
+      g.append("g")
+        .attr("transform", "translate(0," + this.height + ")")
+        .call(d3.axisBottom(this.x)).
+        selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
 
-  }
+    }
     // add the Y Axis
     g.append("g")
       .call(d3.axisLeft(this.y));
 
-      this.plotLine(g, this.x, this.y, this.height, this.width);
+    this.plotLine(g, this.x, this.y, this.height, this.width);
 
     for (counter = 1; counter < this.keyArray.length; counter++) {
       let innerGroup = this.svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
@@ -197,8 +193,8 @@ drawChart() {
   PlotLineDot(g: any, i: number, thisa: this) {
     let flag = this.togglelabel;
     const line = d3.line()
-      .x( (d)=> { return thisa.x(d[Object.keys(d)[0]]); })
-      .y( (d)=> { return thisa.y(d[Object.keys(d)[i]]); });
+      .x((d) => { return thisa.x(d[Object.keys(d)[0]]); })
+      .y((d) => { return thisa.y(d[Object.keys(d)[i]]); });
     g.append("path")
       .data([thisa.data])
       .attr("fill", "none")
@@ -208,7 +204,7 @@ drawChart() {
       .attr("opacity", 0.2)
       .attr("transform",
         // "translate(" + this.margin.left + "," + 0 + ")");
-        "translate(" +  0 + "," + 0 + ")");
+        "translate(" + 0 + "," + 0 + ")");
     //----------
 
     g.selectAll('dot')
@@ -246,63 +242,62 @@ drawChart() {
       })
       .attr("transform",
         // "translate(" + this.margin.left + "," + 0 + ")");
-        "translate(" +  0 + "," + 0 + ")");
+        "translate(" + 0 + "," + 0 + ")");
 
     // -----------------------------------------------------------------
-    if(this.labelflag) {
-    g.selectAll('labels')
-    .data(thisa.data)
-    .enter()
-    .append('text')
-    .style("font-weight","bold")
-    .attr("text-anchor", "middle")
-    .attr("fill", (d)=>{
-      if(this.labelcolor && this.labelcolor.length>0){
-        return this.labelcolor;
-      } else {
-        return "black";
-      }
-    })
-    .attr("x",(d)=> {
-      // let length = String(d[Object.keys(d)[i]]).length
-        return thisa.x(d[Object.keys(d)[0]]) + 20;
-     })
-    .attr("y",(d)=> {
-      let key: any = [Object.keys(d)[i]];
-        if(flag)
-      {
-        return thisa.y(d[key]) - 5;// fr up
-      } 
-      else {
-        return thisa.y(d[key]) + 15;
-           }
-      // return thisa.y(d[Object.keys(d)[i]]);
-        //  return y(d[Object.keys(d)[1]])+yTextPadding;
-    })
-    .text((d)=>{
+    if (this.labelflag) {
+      g.selectAll('labels')
+        .data(thisa.data)
+        .enter()
+        .append('text')
+        .style("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .attr("fill", (d) => {
+          if (this.labelcolor && this.labelcolor.length > 0) {
+            return this.labelcolor;
+          } else {
+            return "black";
+          }
+        })
+        .attr("x", (d) => {
+          // let length = String(d[Object.keys(d)[i]]).length
+          return thisa.x(d[Object.keys(d)[0]]) + 20;
+        })
+        .attr("y", (d) => {
+          let key: any = [Object.keys(d)[i]];
+          if (flag) {
+            return thisa.y(d[key]) - 5;// fr up
+          }
+          else {
+            return thisa.y(d[key]) + 15;
+          }
+          // return thisa.y(d[Object.keys(d)[i]]);
+          //  return y(d[Object.keys(d)[1]])+yTextPadding;
+        })
+        .text((d) => {
           return d[Object.keys(d)[i]];
-    })
-    .attr("transform",
-       "translate(" +  0 + "," + 0 + ")");
+        })
+        .attr("transform",
+          "translate(" + 0 + "," + 0 + ")");
 
-}
-     if(this.togglelabel) {
+    }
+    if (this.togglelabel) {
       this.togglelabel = false;
-     }
-     else {
+    }
+    else {
       this.togglelabel = true;
-     }  
+    }
   }
 
   plotAreaChart(g: any, i: number, thisa: this) {
     // calculate area and valueline
     // define the line
     const valueline = d3.line()
-      .x( (d)=> {
+      .x((d) => {
         let key: any = [Object.keys(d)[0]];
         return thisa.x(d[key]);
       })
-      .y((d)=> {
+      .y((d) => {
         let key: any = [Object.keys(d)[i]];
         return thisa.y(d[key]);
       });
@@ -322,12 +317,12 @@ drawChart() {
 
     // define the area
     let area = d3.area()
-      .x( (d)=> {
+      .x((d) => {
         let key: any = [Object.keys(d)[0]];
         return thisa.x(d[key]);
       })
       .y0(this.height)
-      .y1( (d)=> {
+      .y1((d) => {
         let key: any = [Object.keys(d)[i]];
         return thisa.y(d[key]);
       });
@@ -385,7 +380,7 @@ drawChart() {
 
   //covert data
   transformData(data: any) {
-    this.transformeddata=[];
+    this.transformeddata = [];
     this.keyArray = data[0];
     data.forEach((element, index) => {
       if (index > 0) {
@@ -419,7 +414,7 @@ drawChart() {
     obj["label"] = legendData.label;
     let data = [];
     this.data.forEach(element => {
-      for (let [key, value] of Object.entries(this.data[0])) {
+      for (let [key, value] of Object.entries(element)) {
         if (key == legendData.label) {
           let object = {};
           object[key] = value;

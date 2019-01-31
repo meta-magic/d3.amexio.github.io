@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, 
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 import * as d3 from 'd3';
 @Component({
   selector: 'amexio-d3-chart-waterfall',
@@ -13,7 +13,7 @@ import * as d3 from 'd3';
 export class CandlestickComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
-   @Input() data: any[];
+  @Input() data: any[];
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -29,7 +29,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   tooltip: any;
   legendArray: any[] = [];
   httpresponse: any;
-  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
+  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
     super("candlestickwaterfallchart");
   }
 
@@ -120,7 +120,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
     // scale the range of the data
     let candlestickArray = this.data.map((d) => {
       return d[Object.keys(d)[0]];
-     });
+    });
     this.x.domain(candlestickArray);
     let max = d3.max(this.data, (d) => { return d.end; });
     this.y.domain([0, max]);
@@ -135,25 +135,23 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
 
     // add the X Axis
 
-    if(this.device.IsDesktop()==true)
-    {
+    if (this.device.IsDesktop() == true) {
       this.svg.append("g")
-          .attr("transform", "translate(0," + this.height + ")")
-          .call(d3.axisBottom(this.x))
+        .attr("transform", "translate(0," + this.height + ")")
+        .call(d3.axisBottom(this.x))
     }
-  else
-   {
-     this.svg.append("g")
-          .attr("transform", "translate(0," + this.height + ")")
-          .call(d3.axisBottom(this.x)).
-           selectAll("text")
-           .attr("y", 0)
-           .attr("x", 9)
-           .attr("dy", ".35em")
-           .attr("transform", "rotate(60)")
-           .style("text-anchor", "start");
+    else {
+      this.svg.append("g")
+        .attr("transform", "translate(0," + this.height + ")")
+        .call(d3.axisBottom(this.x)).
+        selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
 
-  }
+    }
 
     // this.svg.append("g")
     //   .attr("transform", "translate(0," + this.height + ")")
@@ -174,7 +172,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
       .attr("transform", (d) => {
         return "translate(" + this.x(
           d[Object.keys(d)[0]]
-         ) + ",0)";
+        ) + ",0)";
       });
 
     bar.append("rect")
@@ -205,29 +203,29 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
         this.fordrillableClick(this, d, event);
         return this.tooltip.style("visibility", "hidden");
       })
-    
-    if(this.labelflag) {
-    bar.append("text")
-      .style("font-weight", "bold")
-      .style("font-size", "1vw")
-      .attr("text-anchor", "middle")
-      .attr("fill", (d) => {
-        if (this.labelcolor && this.labelcolor.length > 0) {
-          return this.labelcolor;
-        } else {
-          return "black";
-        }
-      })
-      .attr("x", (d) => {
-        return (this.x.bandwidth()) / 2;
-      })
-      .attr("y", (d, index) => {
-        return this.y(Math.max(d.start, d.end)) + 20;
-       })
-      .text((d)=> {
-         return d[Object.keys(d)[1]]
-       });
-      }
+
+    if (this.labelflag) {
+      bar.append("text")
+        .style("font-weight", "bold")
+        .style("font-size", "1vw")
+        .attr("text-anchor", "middle")
+        .attr("fill", (d) => {
+          if (this.labelcolor && this.labelcolor.length > 0) {
+            return this.labelcolor;
+          } else {
+            return "black";
+          }
+        })
+        .attr("x", (d) => {
+          return (this.x.bandwidth()) / 2;
+        })
+        .attr("y", (d, index) => {
+          return this.y(Math.max(d.start, d.end)) + 20;
+        })
+        .text((d) => {
+          return d[Object.keys(d)[1]]
+        });
+    }
   }
 
   plotLine(svg, x, y, height, width) {
@@ -313,7 +311,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
     this.data.forEach(element => {
       for (let [key, value] of Object.entries(element)) {
         if (value == chartData.label) {
-          object[chartData.label] = element.value;
+          object[chartData.label] = element[Object.keys(element)[1]];
         }
       }
     });
