@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 
 import * as d3 from 'd3';
 
@@ -11,14 +11,14 @@ import * as d3 from 'd3';
   styleUrls: ['./scatterchart.component.css']
 })
 export class ScatterchartComponent extends AmexioD3BaseChartComponent implements OnInit {
-  
+
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
   @Input('color') color: any = "blue";
   @Input('zoom-enable') zoomflag: boolean = false;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
-  zoominitiated:boolean = false;
+  zoominitiated: boolean = false;
   svg: any;
   keyArray: any[] = [];
   transformeddata: any[] = [];
@@ -177,8 +177,8 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    x.domain([0, d3.max(this.data,(d)=> { return d[Object.keys(d)[0]] })]);
-    y.domain([0, d3.max(this.data,(d)=> { return d[Object.keys(d)[1]] })]);
+    x.domain([0, d3.max(this.data, (d) => { return d[Object.keys(d)[0]] })]);
+    y.domain([0, d3.max(this.data, (d) => { return d[Object.keys(d)[1]] })]);
 
     if (this.device.IsDesktop() == true) {
       this.svg.append("g")
@@ -228,21 +228,21 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     if (this.dataFormatted[0].length == 2) {
       this.plotLine(this.svg, x, y, height, width);
 
-      this.node=this.svg.selectAll(".dot")
+      this.node = this.svg.selectAll(".dot")
         .data(this.data)
         .enter().append("circle")
         .attr("class", "dot")
         .attr("fill", this.color)
         .attr("r", 4.5)
         .attr("cursor", "pointer")
-        .attr("cx",(d) => {
-           return x(d[Object.keys(d)[0]]);
+        .attr("cx", (d) => {
+          return x(d[Object.keys(d)[0]]);
         })
-        .attr("cy",(d) => { return y(d[Object.keys(d)[1]]); })
+        .attr("cy", (d) => { return y(d[Object.keys(d)[1]]); })
         .on("mouseover", (d) => {
           return tooltip.style("visibility", "visible");
         })
-        .on("mousemove",(d) => {
+        .on("mousemove", (d) => {
           return tooltip.html(
             this.formTooltipData(d)
           )
@@ -259,7 +259,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         });
       // ------------------------------------------------------------------------------
       if (this.labelflag) {
-   this.nodelabel=this.svg.selectAll("labels")
+        this.nodelabel = this.svg.selectAll("labels")
           .data(this.data)
           .enter().append("text")
           .style("font-weight", "bold")
@@ -281,23 +281,43 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
           })
           .text((d) => {
             return d[Object.keys(d)[1]];
+          })
+          //label click logic
+          .attr("cursor", "pointer")
+          .on("mouseover", (d) => {
+            return tooltip.style("visibility", "visible");
+          })
+          .on("mousemove", (d) => {
+            return tooltip.html(
+              this.formTooltipData(d)
+            )
+              .style("top", (d3.event.pageY - 10) + "px")
+              .style("left", (d3.event.pageX + 10) + "px");
+          })
+          .on("mouseout", (d) => {
+            return tooltip.style("visibility", "hidden");
+          })
+          .on("click", (d) => {
+            this.scatterChartClick(d);
+            this.fordrillableClick(this, d, event);
+            return tooltip.style("visibility", "hidden");
           });
       }
 
     } else {
       this.plotLine(this.svg, x, y, height, width);
 
-  this.node=this.svg.selectAll(".dot")
+      this.node = this.svg.selectAll(".dot")
         .data(this.transformeddata)
         .enter().append("circle")
         .attr("class", "dot")
         .attr("r", 4.5)
         .attr("cursor", "pointer")
-        .attr("cx",(d)=> {
+        .attr("cx", (d) => {
           return x(d[Object.keys(d)[0]]);
         })
-        .attr("cy",(d)=> { return y(d[Object.keys(d)[1]]); })
-        .attr("fill",(d)=> { return d[Object.keys(d)[4]] })
+        .attr("cy", (d) => { return y(d[Object.keys(d)[1]]); })
+        .attr("fill", (d) => { return d[Object.keys(d)[4]] })
 
         .on("mouseover", (d) => {
           return tooltip.style("visibility", "visible");
@@ -318,45 +338,62 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
           return tooltip.style("visibility", "hidden");
         })
 
-        if (this.labelflag) {
-    this.nodelabel=this.svg.selectAll("labels")
-            .data(this.data)
-            .enter().append("text")
-            .style("font-weight", "bold")
-            .attr("text-anchor", "middle")
-            .attr("vertical-align", "middle")
-            .attr("margin-top", margin.top)
-            .attr("fill", (d) => {
-              if (this.labelcolor.length > 0) {
-                return this.labelcolor;
-              } else {
-                return "black";
-              }
-            })
-            .attr("x", (d, i) => {
-              return x(d[Object.keys(d)[0]]) + 11;
-            })
-            .attr("y", (d, i) => {
-              return y(d[Object.keys(d)[1]])
-            })
-            .text((d) => {
-              return d[Object.keys(d)[1]];
-            });
-        }
+      if (this.labelflag) {
+        this.nodelabel = this.svg.selectAll("labels")
+          .data(this.data)
+          .enter().append("text")
+          .style("font-weight", "bold")
+          .attr("text-anchor", "middle")
+          .attr("vertical-align", "middle")
+          .attr("margin-top", margin.top)
+          .attr("fill", (d) => {
+            if (this.labelcolor.length > 0) {
+              return this.labelcolor;
+            } else {
+              return "black";
+            }
+          })
+          .attr("x", (d, i) => {
+            return x(d[Object.keys(d)[0]]) + 11;
+          })
+          .attr("y", (d, i) => {
+            return y(d[Object.keys(d)[1]])
+          })
+          .text((d) => {
+            return d[Object.keys(d)[1]];
+          })
+          //write label click logic here
+          .attr("cursor", "pointer")
+          .on("mouseover", (d) => {
+            return tooltip.style("visibility", "visible");
+          })
+          .on("mousemove", (d) => {
+            return tooltip.html(
+              this.formTooltipData(d)
+            )
+              .style("top", (d3.event.pageY - 10) + "px")
+              .style("left", (d3.event.pageX + 10) + "px");
+          })
+          .on("mouseout", (d) => {
+            return tooltip.style("visibility", "hidden");
+          })
+          .on("click", (d) => {
+            this.scatterChartClick(d);
+            this.fordrillableClick(this, d, event);
+            return tooltip.style("visibility", "hidden");
+          })
+      }
 
     }
 
-       //create zoom handler 
-   if(this.zoomflag) {
-    this.zoominitiated = true;
-   let zoom_handler = d3.zoom()
-     .on("zoom", this.zoom_actions.bind(this));
-   zoom_handler(this.svg);
- }
-
+    //create zoom handler 
+    if (this.zoomflag) {
+      this.zoominitiated = true;
+      let zoom_handler = d3.zoom()
+        .on("zoom", this.zoom_actions.bind(this));
+      zoom_handler(this.svg);
+    }
   }
-
-
 
   togglebtnflag() {
     this.resizebtnflag = true;
@@ -368,7 +405,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       this.nodelabel.attr("transform", d3.event.transform);
     }
     this.resizebtnflag = true;
-    this.zoominitiated= false;
+    this.zoominitiated = false;
   }
 
   resizesvg() {
@@ -393,7 +430,9 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   scatterChartClick(event: any) {
     let object = {};
     for (let [key, value] of Object.entries(event)) {
-      object[key] = value;
+      if (key !== 'color') {
+        object[key] = value;
+      }
     }
     this.chartClick(object);
   }
@@ -427,7 +466,18 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     } else {
       this.legendarray.forEach(element => {
         if (legendevent.label == element.label) {
-          this.legendClick(element.value);
+          let arr = element.value;
+          let temparr = [];
+          arr.forEach(element => {
+            let obj = {};
+            for (let [key, value] of Object.entries(element)) {
+              if (key !== 'color') {
+                obj[key] = value;
+              }
+            }//for end
+            temparr.push(obj);
+          });//for each ends
+          this.legendClick(temparr);
         }
       });
     }
@@ -441,8 +491,6 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     this.resizeflag = true;
     this.svgwidth = this.divid.nativeElement.offsetWidth;
     this.plotScatterChart();
-
-
   }
 
   plotLine(g, x, y, height, width) {

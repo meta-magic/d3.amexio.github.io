@@ -344,7 +344,9 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   bubbleChartClick(event: any) {
     let object = {};
     for (let [key, value] of Object.entries(event)) {
-      object[key] = value;
+      if (key !== 'color') {
+        object[key] = value;
+      }
     }
     this.chartClick(object);
   }
@@ -415,8 +417,19 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
 
   onBubbleLegendClick(legendevent: any) {
     this.legendarray.forEach(element => {
+      let obj = {};
+      let temparr = [];
       if (legendevent.label == element.label) {
-        this.legendClick(element.value);
+        let arr = element.value;
+        arr.forEach(element => {
+          for (let [key, value] of Object.entries(element)) {
+            if (key !== 'color') {
+              obj[key] = value;
+            }
+          }// for ends
+          temparr.push(obj);
+        });// for each ends
+        this.legendClick(temparr)
       }
     });
 
