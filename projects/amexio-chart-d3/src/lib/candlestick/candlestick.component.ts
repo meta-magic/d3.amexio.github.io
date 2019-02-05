@@ -224,7 +224,29 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
         })
         .text((d) => {
           return d[Object.keys(d)[1]]
-        });
+        })
+        .attr("cursor", "pointer")
+        .on("mouseover", (d) => {
+          this.formTooltipData(d);
+          return this.tooltip.style("visibility", "visible");
+
+        })
+        .on("mousemove", (d) => {
+          return this.tooltip.html(
+            this.formTooltipData(d)
+          )
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", (d) => {
+          return this.tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+          this.onCandlestickClick(d);
+          this.fordrillableClick(this, d, event);
+          return this.tooltip.style("visibility", "hidden");
+        })
+
     }
   }
 
