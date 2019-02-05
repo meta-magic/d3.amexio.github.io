@@ -269,6 +269,28 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     })
                     .text((d) => {
                         return d[Object.keys(d)[1]];
+                    })
+                    .attr("cursor", "pointer")
+                    .on("mouseover", (d) => {
+                        return tooltip.style("visibility", "visible");
+                    })
+                    .on("mousemove", (d) => {
+                        return tooltip.html(
+                            this.formTooltipData(d)
+                            //  this.toolTipForBar(d)
+                            // this.toolTipContent(d)
+                        )
+                            .style("top", (d3.event.pageY - 10) + "px")
+                            .style("left", (d3.event.pageX + 10) + "px");
+                    })
+                    .on("mouseout", (d) => {
+                        return tooltip.style("visibility", "hidden");
+                    })
+                    .on("click", (d) => {
+                        this.barChartClick(d);
+                        this.fordrillableClick(this, d, event);
+                        return tooltip.style("visibility", "hidden");
+                        //this.chartClick(d);
                     });
             }//if ends fr 
         }
@@ -376,13 +398,32 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     })
                     .text((d) => {
                         return d[Object.keys(d)[1]];
+                    })
+                    .attr("cursor", "pointer")
+                    .on("mouseover", (d) => {
+                        return tooltip.style("visibility", "visible");
+                    })
+                    .on("mousemove", (d) => {
+                        return tooltip.html(
+                            this.formTooltipData(d)
+                            // this.formLegendData(d)
+                            // this.toolTipContent(d)
+                        )
+                            .style("top", (d3.event.pageY - 10) + "px")
+                            .style("left", (d3.event.pageX + 10) + "px");
+                    })
+                    .on("mouseout", (d) => {
+                        return tooltip.style("visibility", "hidden");
+                    })
+                    .on("click", (d) => {
+                        this.barChartClick(d);
+                        this.fordrillableClick(this, d, event);
+                        return tooltip.style("visibility", "hidden");
+                        //this.chartClick(d);
                     });
             }
 
-
         }//else ends(horizontal bar logic ends)
-
-
 
     }
 
@@ -444,7 +485,6 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         this.legendClick(obj);
     }
 
-
     barChartClick(event: any) {
         let object = {};
         for (let [key, value] of Object.entries(event)) {
@@ -466,9 +506,5 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         this.plotD3Chart();
 
     }
-
-
-
-
 
 }
