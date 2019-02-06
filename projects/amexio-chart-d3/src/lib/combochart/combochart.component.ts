@@ -473,6 +473,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
       .attr("opacity",
         (d) => {
           let visibility: boolean = false;
+
           if (this.barInput.length > 0) {
             this.barInput.forEach((barname: any) => {
               if ((barname.column == d.label) && (barname.label == true)) {
@@ -515,7 +516,26 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
       })
       .text((d) => {
         return d.value;
-      });
+      })
+      //bar label click logic
+      .attr("cursor", "pointer")
+      .on("mouseover", (d) => {
+        return tooltip.style("visibility", "visible");
+      })
+      .on("mousemove", (d) => {
+        return tooltip.html(
+          this.setKey(d)
+        )
+          .style("top", (d3.event.pageY - 10) + "px")
+          .style("left", (d3.event.pageX + 10) + "px");
+      }).on("mouseout", (d) => {
+        return tooltip.style("visibility", "hidden");
+      })
+      .on("click", (d) => {
+        this.groupbarClick(d);
+        this.fordrillableClick(this, d, event);
+        return tooltip.style("visibility", "hidden");
+      })
     // }
     slice.selectAll("rect")
       .attr("y", (d) => {
@@ -735,9 +755,29 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
               })
               .attr("transform", "translate( " +
                 // margin.left
-                x1.bandwidth() / 2
+              x1.bandwidth() / 2
                 // shift
                 + ", 19 )")
+                //line label click logic starts here
+                .attr("cursor", "pointer")
+                .on("mouseover", (d) => {
+                  return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", (d) => {
+                  return tooltip.html(
+                    this.formTooltipLineData(d, lineName1, false))
+                    .style("top", (d3.event.pageY - 10) + "px")
+                    .style("left", (d3.event.pageX + 10) + "px");
+                })
+                .on("mouseout", (d) => {
+                  return tooltip.style("visibility", "hidden");
+                })
+                .on("click", (d) => {
+                  this.onComboLineClick(d, lineName1, false);
+                  this.fordrillableClick(this, d, event);
+                  return tooltip.style("visibility", "hidden");
+                });
+      
           }
         }
 
@@ -780,7 +820,25 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
           x1.bandwidth() / 2
           // shift
           + ", 19 )")
-
+          .attr("cursor", "pointer")
+         // line label click logic
+         .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", (d) => {
+          return tooltip.html(
+            this.formTooltipLineData(d, null, true))
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+          this.onComboLineClick(d, null, true);
+          this.fordrillableClick(this, d, event);
+          return tooltip.style("visibility", "hidden");
+        })
 
     }
 

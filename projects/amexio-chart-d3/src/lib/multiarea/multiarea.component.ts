@@ -278,8 +278,30 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
           return d[Object.keys(d)[i]];
         })
         .attr("transform",
-          "translate(" + 0 + "," + 0 + ")");
+          "translate(" + 0 + "," + 0 + ")")
+        //label click logic
+        .attr("cursor", "pointer")
+      .on("mouseover", (d) => {
+        this.formTooltipData(d, i);
+        return this.tooltip.style("visibility", "visible");
 
+      })
+      .on("mousemove", (d) => {
+        return this.tooltip.html(
+          this.formTooltipData(d, i)
+        )
+          .style("top", (d3.event.pageY - 10) + "px")
+          .style("left", (d3.event.pageX + 10) + "px");
+      })
+      .on("mouseout", (d) => {
+        return this.tooltip.style("visibility", "hidden");
+      })
+      .on("click", (d) => {
+        this.onAreaTooltipClick(d, i);
+        this.fordrillableClick(this, d, event);
+        return this.tooltip.style("visibility", "hidden");
+        //this.chartClick(d);
+      })
     }
     if (this.togglelabel) {
       this.togglelabel = false;

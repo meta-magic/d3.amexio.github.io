@@ -263,7 +263,27 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .text((d)=>{
           return d.value;
-         });
+         })
+         .attr("cursor", "pointer")
+         .on("mouseover", (d) => {
+           return tooltip.style("visibility", "visible");
+         })
+         .on("mousemove", (d) => {
+           return tooltip.html(
+             this.setKey(d)
+             //  this.toolTipContent(d)
+           )
+             .style("top", (d3.event.pageY - 10) + "px")
+             .style("left", (d3.event.pageX + 10) + "px");
+         }).on("mouseout", (d) => {
+           return tooltip.style("visibility", "hidden");
+         })
+         .on("click", (d) => {
+           this.groupbarClick(d);
+           this.fordrillableClick(this, d, event);
+           return tooltip.style("visibility", "hidden");
+           // this.chartClick(d);
+         }) 
 }
     slice.selectAll("rect")
       .attr("y",(d)=> { 

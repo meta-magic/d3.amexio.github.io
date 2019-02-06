@@ -324,6 +324,24 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
         .text((d) => {
           return d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
         })
+        .attr("cursor", "pointer")
+        .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", (d: any) => {
+          return tooltip.html(this.setKey(d))
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })
+        .on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+          this.setBarClickText(d);
+          this.fordrillableClick(this, d, event);
+          return tooltip.style("visibility", "hidden");
+          // this.chartClick(d);
+        });
     }
   }
 

@@ -158,12 +158,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             })
             .on("mousemove", (d) => {
                 return tooltip.html(
-                    this.callTooltip(d)
-                    //  this.toolTipForLine(d)
-
-                    //  this.toolTipWithLegendandAxis(d.legend,d.label,d.value)
-
-                )
+                    this.callTooltip(d))
                     .style("top", (d3.event.pageY - 10) + "px")
                     .style("left", (d3.event.pageX + 10) + "px");
             })
@@ -200,6 +195,24 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
           .text((d)=> {
             return d.value;
           })
+          .attr("cursor", "pointer")
+            .on("mouseover", (d) => {
+                return tooltip.style("visibility", "visible");
+            })
+            .on("mousemove", (d) => {
+                return tooltip.html(
+                    this.callTooltip(d))
+                    .style("top", (d3.event.pageY - 10) + "px")
+                    .style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", (d) => {
+                return tooltip.style("visibility", "hidden");
+            })
+            .on("click", (d) => {
+                 this.lineChartClick(d);
+                 this.fordrillableClick(this,d,event);
+                 return tooltip.style("visibility", "hidden");
+            });
       }
 
     }

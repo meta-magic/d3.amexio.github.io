@@ -363,7 +363,28 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       .attr("transform",(d, i)=> {
         let translate = [((barWidth * i) + barWidth / 2), (Math.abs(y(d[0]) - y(d[1] - horizontalpadding)))];
         return "translate(" + translate + ")";
-      });
+      })
+      //label click logic
+      .on("mouseover", (d) => {
+        return tooltip.style("visibility", "visible");
+      }).on("mousemove",
+        (d: any) => {
+          let data = d[2];
+          return tooltip.html(this.setKey(data[0]))
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+
+        }).on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+      .on("click", (d) => {
+        let clickdata = d[2];
+        this.histogramClick(clickdata[0]);
+        this.fordrillableClick(this, d, event);
+        return tooltip.style("visibility", "hidden");
+      })
+      .attr("cursor", "pointer")
+
     }
   }
 
