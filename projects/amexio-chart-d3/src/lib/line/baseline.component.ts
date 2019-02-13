@@ -94,15 +94,16 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         const margin    = { top: 40, right: 20, bottom: 30, left: 40 };
         const width     = +this.svgwidth - margin.left - margin.right;
         const height    = +this.svgheight - margin.top - margin.bottom;
-        const g         = this.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        const g         = this.svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        const x = d3.scaleBand()
+        const x = d3.scalePoint()
                     .rangeRound([0, width])
                     .padding(0.1);                    
     
         const y = d3.scaleLinear()
                      .rangeRound([height, 0]);
-
+       
         x.domain(this.xaxisdata.map( (d) => { return d.label;}));
         y.domain([0, d3.max(this.yaxisdata,  (d) => { return d.value; })]);
 

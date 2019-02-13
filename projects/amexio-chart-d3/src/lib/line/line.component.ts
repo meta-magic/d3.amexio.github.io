@@ -12,7 +12,7 @@ import { DeviceQueryService } from "../services/device.query.service";
     templateUrl: "./line.component.html"
 })
 export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart {
-
+    @Input('color')linecolor = [];
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid:any;
@@ -137,14 +137,23 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         const line = d3.line()
             .x((d)=> { return x(d.label); })
             .y((d)=> { return y(d.value); });
-
+        const tempcolor = "black";
         g.append("path")
             .datum(data)
             .attr("fill", "none")
-            .attr("stroke", this.predefinedcolors[i])
+            .attr("stroke", (d)=> {
+                debugger;
+                if(this.linecolor.length > 0) {
+                    return this.linecolor[i-1];
+                }
+                else if(this.linecolor.length < 1){
+                    debugger;
+                    return tempcolor;
+                }
+            })
             .attr("stroke-width", 1.5)
             .attr("d", line)
-            .attr("transform", "translate(" + 37 + "," + 0 + ")")
+            // .attr("transform", "translate(" + 37 + "," + 0 + ")")
             ;
 
         g.selectAll('dot')
@@ -154,8 +163,18 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             .attr("cx", (d) => { return x(d.label); })
             .attr("cy", (d) => { return y(d.value); })
             .attr('r', 2)
+            .attr("fill", (d)=> {
+                debugger;
+                if(this.linecolor.length > 0) {
+                    return this.linecolor[i-1];
+                }
+                else if(this.linecolor.length < 1){
+                    debugger;
+                    return tempcolor;
+                }
+            })
             .attr("cursor", "pointer")
-            .attr("transform", "translate(" + 37 + "," + 0 + ")")
+            // .attr("transform", "translate(" + 37 + "," + 0 + ")")
             .on("mouseover", (d) => {
                 return tooltip.style("visibility", "visible");
             })
@@ -198,7 +217,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
           .text((d)=> {
             return d.value;
           })
-          .attr("transform", "translate(" + 37 + "," + 0 + ")")
+        //   .attr("transform", "translate(" + 37 + "," + 0 + ")")
           .attr("cursor", "pointer")
             .on("mouseover", (d) => {
                 return tooltip.style("visibility", "visible");
