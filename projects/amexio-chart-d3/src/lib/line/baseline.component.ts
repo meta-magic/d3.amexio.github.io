@@ -23,6 +23,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
     
     @Input('http-method') httpmethod: any;
 
+    @Input('yaxis-interval') tickscount: number;
+
     constructor(public deviceQueryService: DeviceQueryService) {
         super('line');
     }
@@ -128,7 +130,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
      
         g.append("g")
             .attr("color", "grey")
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).ticks(this.tickscount))
+            // tickSize(0,10));
 
 
         return{
@@ -151,7 +154,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         if(this.hScale){
             g.append('g')
                 .attr("color", "lightgrey")
-                .call(d3.axisLeft(y)
+                .call(d3.axisLeft(y).ticks(this.tickscount)
                 . tickSize(-width).tickFormat(''));     
         }
     }
