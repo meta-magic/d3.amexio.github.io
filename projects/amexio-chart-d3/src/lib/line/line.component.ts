@@ -142,13 +142,11 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             .datum(data)
             .attr("fill", "none")
             .attr("stroke", (d)=> {
-                debugger;
-                if(this.linecolor.length > 0) {
+                 if(this.linecolor.length > 0) {
                     return this.linecolor[i-1];
                 }
                 else if(this.linecolor.length < 1){
-                    debugger;
-                    return tempcolor;
+                     return tempcolor;
                 }
             })
             .attr("stroke-width", 1.5)
@@ -164,13 +162,11 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             .attr("cy", (d) => { return y(d.value); })
             .attr('r', 2)
             .attr("fill", (d)=> {
-                debugger;
-                if(this.linecolor.length > 0) {
+                 if(this.linecolor.length > 0) {
                     return this.linecolor[i-1];
                 }
                 else if(this.linecolor.length < 1){
-                    debugger;
-                    return tempcolor;
+                     return tempcolor;
                 }
             })
             .attr("cursor", "pointer")
