@@ -25,6 +25,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('target') target: number;
     @Input('drillable-data') drillabledatakey: any[] = [];
     @Input('horizontal-scale') hScale: boolean = true;
+    @Input('yaxis-interval') tickscount: number;
+
     resizeflag: boolean = false;
     checkmob: boolean;
     resizeg: any;
@@ -197,7 +199,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             //add y axis to svg
             g.append("g")
                 .call(d3.axisLeft(y)
-                    .ticks(10))
+                    .ticks(this.tickscount))
 
             this.plotLine(g, x, y, height, width);
 
@@ -325,7 +327,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
 
             //add y axis to svg
             g.append("g")
-                .call(d3.axisLeft(y))
+                .call(d3.axisLeft(y).ticks(this.tickscount))
 
             this.plotLine(g, x, y, height, width);
             //add bar chart
@@ -432,7 +434,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         if (this.hScale) {
             g.append('g')
                 .attr("color", "lightgrey")
-                .call(d3.axisLeft(y)
+                .call(d3.axisLeft(y).ticks(this.tickscount)
                     .tickSize(-width).tickFormat(''));
         }
     }

@@ -1,8 +1,10 @@
 <div *ngIf="drillableFlag" #divid (window:resize)="resize()">
     <table style="width: 100%;" #chartId (window:resize)="resize()">
+            <ng-container *ngIf = "title.length > 0">
         <tr>
             <td style="font-size: 18px; font-weight: bold; "> {{title}} </td>
         </tr>
+            </ng-container>
         <tr>
             <td>
                 <svg [attr.height]="svgheight" [attr.width]="svgwidth" [attr.id]="componentId">

@@ -143,7 +143,9 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             .attr("fill", "none")
             .attr("stroke", this.predefinedcolors[i])
             .attr("stroke-width", 1.5)
-            .attr("d", line);
+            .attr("d", line)
+            .attr("transform", "translate(" + 37 + "," + 0 + ")")
+            ;
 
         g.selectAll('dot')
             .data(data)
@@ -153,6 +155,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             .attr("cy", (d) => { return y(d.value); })
             .attr('r', 2)
             .attr("cursor", "pointer")
+            .attr("transform", "translate(" + 37 + "," + 0 + ")")
             .on("mouseover", (d) => {
                 return tooltip.style("visibility", "visible");
             })
@@ -195,6 +198,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
           .text((d)=> {
             return d.value;
           })
+          .attr("transform", "translate(" + 37 + "," + 0 + ")")
           .attr("cursor", "pointer")
             .on("mouseover", (d) => {
                 return tooltip.style("visibility", "visible");

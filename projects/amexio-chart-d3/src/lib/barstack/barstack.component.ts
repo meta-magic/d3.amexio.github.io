@@ -26,6 +26,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   @Input() color: string[] = [];
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 300;
+  @Input('yaxis-interval') tickscount: number;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
@@ -244,7 +245,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
 
     this.svg.append("g")
       .attr("transform", "translate(" + margin.left + ",0)")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).ticks(this.tickscount));
 
     this.plotLine(this.svg, x, y, height, width, margin.left)
 
@@ -362,7 +363,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       svg.append('g')
         .attr("transform", "translate(" + m + ",0)")
         .attr("color", "lightgrey")
-        .call(d3.axisLeft(y)
+        .call(d3.axisLeft(y).ticks(this.tickscount)
           .tickSize(-width).tickFormat(''));
     }
   }
