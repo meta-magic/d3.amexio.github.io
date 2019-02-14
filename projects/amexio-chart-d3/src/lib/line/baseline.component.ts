@@ -112,14 +112,14 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         {
           g.append("g")
               .attr("transform", "translate(0," + height + ")")
-              .attr("color", "grey")
+            //   .attr("color", "grey")
               .call(d3.axisBottom(x))
         }
       else
        {
         g.append("g")
               .attr("transform", "translate(0," + height + ")")
-              .attr("color", "grey")
+            //   .attr("color", "grey")
               .call(d3.axisBottom(x)).
                selectAll("text")
                .attr("y", 0)
@@ -130,7 +130,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
       }
      
         g.append("g")
-            .attr("color", "grey")
+            // .attr("color", "grey")
             .call(d3.axisLeft(y).ticks(this.tickscount))
             // tickSize(0,10));
 
