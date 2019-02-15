@@ -25,10 +25,11 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
 
     @Input('yaxis-interval') tickscount: number;
 
+    @Input('color')linecolor = [];
+
     constructor(public deviceQueryService: DeviceQueryService) {
         super('line');
     }
-
 
     set data(v:any){
         this._data = v;
@@ -39,9 +40,8 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         return this._data;
     }
 
-
     protected createXYAxisData() : void {
-
+        this.labelcolor
         this.xaxisdata = [];
         this.yaxisdata = [];
         this.multiseriesdata = [];
@@ -49,14 +49,36 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent
         this.legends = [];
         this.xaxisname = this.data[0][0].label;
          const msdarray : any [] =[];
+         let count = 0 
          for (let index = 0; index < this._data[0].length; index++) {
             const legend = this._data[0][index];
             msdarray[index]=[];
-            this.legenddata.push({'label':legend.label,'color':this.predefinedcolors[index+1]});
-            if(index > 0)
-                this.legends.push({'label':legend.label,'color':this.predefinedcolors[index]});
-        }
+            let obj = {};
+            obj['label'] = legend.label;
+            if((this.linecolor.length > 0) && this.linecolor[index]) {
+                obj['color'] = this.linecolor[index];
+            }
+            else {
+                obj['color'] = this.predefinedcolors[index];
+            }
+            this.legenddata.push(obj);
 
+            // this.legenddata.push({'label':legend.label,'color':this.predefinedcolors[index+1]});
+             if(index > 0)
+            { 
+                let obj = {};
+                obj['label'] = legend.label;
+                if((this.linecolor.length > 0) && this.linecolor[count]) {
+                obj['color'] = this.linecolor[count];
+                } else {
+                    obj['color'] = this.predefinedcolors[count];
+                }
+                this.legends.push(obj);
+                count++;
+                // this.legends.push({'label':legend.label,'color':this.predefinedcolors[index]});
+            }
+        }
+         this.legends
         let i = 0;
         this._data.forEach(object => {
             if(i>0){
