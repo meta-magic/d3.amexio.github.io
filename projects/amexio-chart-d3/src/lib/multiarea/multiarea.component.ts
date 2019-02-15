@@ -14,7 +14,7 @@ import { DeviceQueryService } from '../services/device.query.service';
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number = 300;
   @Input('height') svgheight: number = 350;
-
+  @Input('color') colorarray = [];
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -198,7 +198,22 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     g.append("path")
       .data([thisa.data])
       .attr("fill", "none")
-      .attr("stroke", thisa.predefinedcolors[i])
+      .attr("stroke", 
+      (d)=>{
+        if(this.colorarray.length > 0) {
+          if(this.colorarray[i-1]) {
+            return this.colorarray[i-1];
+          }
+          else {
+        return thisa.predefinedcolors[i];            
+          }
+        }
+        else {
+        return thisa.predefinedcolors[i];
+        }
+      }
+      // thisa.predefinedcolors[i]
+    )
       .attr("stroke-width", 1.5)
       .attr("d", line)
       .attr("opacity", 0.2)
@@ -212,7 +227,21 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
       .enter()
       .append('circle')
       .attr('opacity', 0)
-      .attr("fill", thisa.predefinedcolors[i])
+      .attr("fill", 
+      (d)=>{
+        if(this.colorarray.length > 0) {
+          if(this.colorarray[i-1]) {
+            return this.colorarray[i-1];
+          }
+          else {
+        return thisa.predefinedcolors[i];            
+          }        }
+        else {
+        return thisa.predefinedcolors[i];
+        }
+      }
+      // thisa.predefinedcolors[i]
+    )
       .attr("cx", (d) => { return thisa.x(d[Object.keys(d)[0]]); })
       .attr("cy", (d) => { return thisa.y(d[Object.keys(d)[i]]); })
       .attr('r', 4)
@@ -328,7 +357,21 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     g.append("path")
       .data([this.data])
       .style("stroke",
-        this.predefinedColors[i]
+      (d)=>{
+        if(this.colorarray.length > 0) {
+        //  return this.colorarray[i-1];
+        if(this.colorarray[i-1]) {
+          return this.colorarray[i-1];
+        }
+        else {
+      return this.predefinedcolors[i];            
+        }
+        }
+        else {
+        return this.predefinedColors[i];
+        }
+      }
+        // this.predefinedColors[i]
       )
       .attr("fill", "none")
       .style("stroke-width", "2px")
@@ -356,7 +399,20 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
         // "translate(" + this.margin.left + "," + 0 + ")")
         "translate(" + 0 + "," + 0 + ")")
       .style("stroke", "none")
-      .attr("fill", this.predefinedColors[i]
+      .attr("fill", 
+      (d)=>{
+        if(this.colorarray.length > 0) {
+          if(this.colorarray[i-1]) {
+            return this.colorarray[i-1];
+          }
+          else {
+        return this.predefinedcolors[i];            
+          }        }
+        else {
+        return this.predefinedColors[i];
+        }
+      }
+      // this.predefinedColors[i]
       )
       .style("opacity", 0.5)
   }
@@ -420,19 +476,27 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   }
 
   formLegendData() {
-    this.legendArray = [];
+     this.legendArray = [];
+    let counter = 0
     this.keyArray.forEach((element, index) => {
       if (index > 0) {
         let legendobject = {};
         legendobject['label'] = element;
-        legendobject['color'] = this.predefinedColors[index + 1];
+        if((this.colorarray.length > 0) && (this.colorarray[counter])) {
+          legendobject['color'] = this.colorarray[counter];
+        }
+        else {
+          legendobject['color'] = this.predefinedColors[counter + 1];
+         }
         this.legendArray.push(legendobject);
+        counter++;
+
       }
     });
   }
 
   onAreaLegendClick(legendData: any) {
-    let obj = {};
+     let obj = {};
     obj["label"] = legendData.label;
     let data = [];
     this.data.forEach(element => {
