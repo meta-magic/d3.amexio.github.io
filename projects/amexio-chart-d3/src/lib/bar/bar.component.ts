@@ -25,6 +25,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     @Input('target') target: number;
     @Input('drillable-data') drillabledatakey: any[] = [];
     @Input('horizontal-scale') hScale: boolean = true;
+    //  To add user defined ticks for y axis
     @Input('yaxis-interval') tickscount: number;
 
     resizeflag: boolean = false;
