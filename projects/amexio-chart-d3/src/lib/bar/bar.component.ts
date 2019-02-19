@@ -258,7 +258,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                     .style("font-size", "1vw")
                     .attr("text-anchor", "middle")
                     .attr("fill", (d) => {
-                        if (this.labelcolor.length) {
+                        if (this.labelcolor.length  > 0 && d[Object.keys(d)[1]] > 0) {
                             return this.labelcolor;
                         } else {
                             return "black";
@@ -271,9 +271,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
                         return y(d[Object.keys(d)[1]]) + yTextPadding;
                     })
                     .text((d) => {
-                        // if(d[Object.keys(d)[1]] > 0) {
+                        if(d[Object.keys(d)[1]] > 0) {
                         return d[Object.keys(d)[1]];
-                        // }
+                        }
                     })
                     .attr("cursor", "pointer")
                     .on("mouseover", (d) => {
