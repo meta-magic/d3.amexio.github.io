@@ -8,10 +8,10 @@ import * as d3 from 'd3';
 
 
 @Component({
-    selector: 'amexio-d3-chart-bar1',
+    selector: 'amexio-d3-chart-bar',
     templateUrl: './bar.component.html'
 })
-export class AmexioD3BarChartComponent1 extends AmexioD3BaseChartComponent implements PlotCart {
+export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart {
     @Input('width') svgwidth: number;
     @Input('height') svgheight: number = 300;
     @Input() horizontal: boolean = false;
@@ -258,7 +258,7 @@ export class AmexioD3BarChartComponent1 extends AmexioD3BaseChartComponent imple
                     .style("font-size", "1vw")
                     .attr("text-anchor", "middle")
                     .attr("fill", (d) => {
-                        if (this.labelcolor.length > 0 && d[Object.keys(d)[1]] > 0) {
+                        if (this.labelcolor.length) {
                             return this.labelcolor;
                         } else {
                             return "black";
@@ -271,9 +271,9 @@ export class AmexioD3BarChartComponent1 extends AmexioD3BaseChartComponent imple
                         return y(d[Object.keys(d)[1]]) + yTextPadding;
                     })
                     .text((d) => {
-                        if(d[Object.keys(d)[1]] > 0) {
+                        // if(d[Object.keys(d)[1]] > 0) {
                         return d[Object.keys(d)[1]];
-                        }
+                        // }
                     })
                     .attr("cursor", "pointer")
                     .on("mouseover", (d) => {
