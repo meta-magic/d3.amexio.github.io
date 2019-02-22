@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, ChangeDetectorRef, } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
@@ -11,9 +11,10 @@ import * as d3 from 'd3';
 })
 
 export class CandlestickComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
   @Input() data: any[];
+  @Input('yaxis-interval') tickscount: number;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -29,11 +30,13 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   tooltip: any;
   legendArray: any[] = [];
   httpresponse: any;
-  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
+  wt: number;
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super("candlestickwaterfallchart");
   }
 
   ngOnInit() {
+    this.wt = this.svgwidth;
     this.predefinedColor = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
     if (this.level <= 1) {
       let res;
@@ -101,11 +104,15 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   initializeData() {
     this.tooltip = this.toolTip(d3);
     if (this.resizeflag == false) {
-      if (this.chartId) {
+      //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
+
+      } else if (this.chartId) {
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
-        this.svgwidth = this.svgwidth;
+
       }
+      //RESIZE STEP 1 ENDS HERE 
     }
     this.margin = { top: 20, right: 30, bottom: 50, left: 60 },
       this.width = this.svgwidth - this.margin.left - this.margin.right,
@@ -125,9 +132,12 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
     let max = d3.max(this.data, (d) => { return d.end; });
     this.y.domain([0, max]);
 
+    // this.svg = d3.select("#" + this.componentId)
+    //RESIZE STEP 2 START
     this.svg = d3.select("#" + this.componentId)
-      // d3.select("body").append("svg")
-      .attr("width", this.width + this.margin.left + this.margin.right)
+      .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
+    //RESIZE STEP 2 ENDS HERE
+       .attr("width", this.width + this.margin.left + this.margin.right)
       .attr("height", this.height + this.margin.top + this.margin.bottom)
       .append("g")
       .attr("transform",
@@ -136,9 +146,23 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
     // add the X Axis
 
     if (this.device.IsDesktop() == true) {
-      this.svg.append("g")
+      if (this.svgwidth <= 400) {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + this.height + ")")
+          .call(d3.axisBottom(this.x)).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      } 
+      else {
+        this.svg.append("g")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(this.x))
+      }
+
     }
     else {
       this.svg.append("g")
@@ -159,7 +183,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
 
     // add the Y Axis
     this.svg.append("g")
-      .call(d3.axisLeft(this.y));
+      .call(d3.axisLeft(this.y).ticks(this.tickscount));
     this.plotLine(this.svg, this.x, this.y, this.height, this.width);
   }
 
@@ -255,7 +279,7 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
       svg.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 
@@ -340,11 +364,31 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
     this.onLegendClick.emit(object);
   }
 
+
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      // debugger;
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
+
   resize() {
-    this.svgwidth = 0;
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      // this.resizewt = this.chartId.nativeElement.offsetWidth;
+      // console.log("", new Date().getTime(), " ", this.resizewt);
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges();
     this.initializeData();
     this.plotXYAxis();
     this.plotD3Chart();

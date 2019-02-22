@@ -22,6 +22,7 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
     @Input('drillable-data') drillabledatakey: any[] = [];
     @Input('label-color') labelcolor: string = "black";
     @Input('label') labelflag: boolean = false;
+ 
     lanes: any[] = [];
     timelinechartData: any[] = [];
     mindate: any;
@@ -32,11 +33,13 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
     svg: any;
     urldata: any;
     monthlist = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-    constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
+    wt: number;
+    constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
         super('timeline');
     }
 
     ngOnInit() {
+        this.wt = this.svgwidth;
         if (this.level <= 1) {
             let resp: any;
             if (this.httpmethod && this.httpurl) {
@@ -117,14 +120,15 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
         const tooltip = this.toolTip(d3);
 
         if (this.resizeflag == false) {
-            if (this.chartId) {
+              //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
 
-                this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      } else if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
-            } else {
-
-                this.svgwidth = this.svgwidth;
-            }
+      }
+      //RESIZE STEP 1 ENDS HERE 
         }
 
         let m = [20, 25, 15, 120], //top right bottom left
@@ -162,14 +166,28 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
 
 
         this.svg = d3.select("#" + this.componentId)
+        .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
             .attr("width", width + m[1] + m[3])
             .attr("height", height + m[0] + m[2])
 
 
         if (this.device.IsDesktop() == true) {
-            this.svg.append("g")
+            if (this.svgwidth <= 400) {
+                this.svg.append("g")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(d3.axisBottom(x1)).
+                  selectAll("text")
+                  .attr("y", 0)
+                  .attr("x", 9)
+                  .attr("dy", ".35em")
+                  .attr("transform", "rotate(60)")
+                  .style("text-anchor", "start");
+              }
+              else {
+                this.svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x1));
+              }
         }
         else {
             this.svg.append("g")
@@ -386,10 +404,31 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
         object["Duration"] = date;
         this.chartClick(object);
     }
+
+    //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      // debugger;
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
+
     resize() {
         this.svg.selectAll("*").remove();
         this.resizeflag = true;
-        this.svgwidth = this.divid.nativeElement.offsetWidth;
+        if (this.wt) {
+          this.svgwidth = this.wt;
+        } else if (this.chartId) {
+          // this.resizewt = this.chartId.nativeElement.offsetWidth;
+          // console.log("", new Date().getTime(), " ", this.resizewt);
+          this.svgwidth = this.chartId.nativeElement.offsetWidth;
+        }
+        this.cdf.detectChanges(); 
         this.plotChart();
 
     }

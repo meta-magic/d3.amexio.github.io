@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, ChangeDetectorRef, } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
@@ -12,9 +12,10 @@ import { DeviceQueryService } from '../services/device.query.service';
   styleUrls: ['./multiarea.component.css']
 })
 export class MultiareaComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 350;
   @Input('color') colorarray = [];
+  @Input('yaxis-interval') tickscount: number;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -38,12 +39,13 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   data1: any[] = [];
   legendArray: any[] = [];
   tooltip: any;
-  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
-
+  wt: number;
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super("areachart");
   }
 
   ngOnInit() {
+    this.wt = this.svgwidth;
     this.togglelabel = false;
     let res;
     if (this.level <= 1) {
@@ -71,9 +73,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     }
   }
 
-
   fetchData(data: any) {
-
     let requestJson;
     let key = this.drillabledatakey;
     let resp: any;
@@ -113,14 +113,15 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   initAreaChart() {
     this.tooltip = this.toolTip(d3);
     if (this.resizeflag == false) {
+     //RESIZE STEP 1
+     if (this.wt) {
+      this.svgwidth = this.wt;
 
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
-      if (this.chartId) {
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
-
-        this.svgwidth = this.svgwidth;
-      }
+    }
+    //RESIZE STEP 1 ENDS HERE 
     }
 
     this.margin = { top: 30, right: 44, bottom: 50, left: 30 },
@@ -142,7 +143,8 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     this.y.domain([0, this.maximumValue]);
     //initialize svg
     this.svg =
-      d3.select("#" + this.componentId)
+      d3.select("#" + this.componentId) 
+      .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
         .attr("width", this.width + this.margin.left + this.margin.right)
         .attr("height", this.height + this.margin.top + this.margin.bottom)
     this.predefinedColors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
@@ -154,9 +156,22 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     let g = this.svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     // add the X 
     if (this.device.IsDesktop() == true) {
-      g.append("g")
+      if (this.svgwidth <= 400) {
+        g.append("g")
+          .attr("transform", "translate(0," + this.height + ")")
+          .call(d3.axisBottom(this.x)).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      }
+      else {
+        g.append("g")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(this.x))
+      }
     }
     else {
       g.append("g")
@@ -172,7 +187,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
     }
     // add the Y Axis
     g.append("g")
-      .call(d3.axisLeft(this.y));
+      .call(d3.axisLeft(this.y).ticks(this.tickscount));
 
     this.plotLine(g, this.x, this.y, this.height, this.width);
 
@@ -189,6 +204,19 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
       this.PlotLineDot(innerGroup, increment, this);
     }//increment for ends
   }
+
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      // debugger;
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
 
   PlotLineDot(g: any, i: number, thisa: this) {
     let flag = this.togglelabel;
@@ -526,10 +554,16 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   }
 
   resize() {
-    this.svgwidth = 0;
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      // this.resizewt = this.chartId.nativeElement.offsetWidth;
+      // console.log("", new Date().getTime(), " ", this.resizewt);
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges();
     this.initAreaChart();
     this.plotD3Chart();
   }
@@ -546,7 +580,7 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
       g.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 }

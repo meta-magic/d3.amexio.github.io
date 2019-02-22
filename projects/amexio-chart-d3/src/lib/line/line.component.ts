@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input } from "@angular/core";
+import { Component, ViewChild, ElementRef, Input, ChangeDetectorRef } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseLineComponent } from "./baseline.component";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
@@ -16,13 +16,13 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid: any;
-
-    constructor(public deviceQueryService: DeviceQueryService, public myservice: CommanDataService) {
+    wt: number;
+    constructor(public deviceQueryService: DeviceQueryService,  private cdf: ChangeDetectorRef, public myservice: CommanDataService) {
         super(deviceQueryService);
     }
 
     ngOnInit() {
-
+      this.wt = this.svgwidth;
         if (this.level <= 1) {
             let resp: any
             if (this.httpmethod && this.httpurl) {
@@ -78,16 +78,20 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         }, 0);
     }
 
-    resize() {
-
-        this.svgwidth = 0;
-        this.svg.selectAll("*").remove();
-
-        this.resizeflag = true;
-        this.svgwidth = this.divid.nativeElement.offsetWidth;
-        this.plotD3Chart();
+   //RESIZE STEP 5 STARTS
+  resize() {
+    this.svg.selectAll("*").remove();
+    this.resizeflag = true;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      // this.resizewt = this.chartId.nativeElement.offsetWidth;
+      // console.log("", new Date().getTime(), " ", this.resizewt);
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
     }
-
+    this.cdf.detectChanges();
+    this.plotD3Chart();
+  }
     getResponseData(httpResponse: any) {
         let responsedata = httpResponse;
         if (this.datareader != null) {
@@ -102,19 +106,20 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     }
 
     plotD3Chart(): void {
-
-
         if (this.resizeflag == false) {
-            if (this.chartId) {
-                this.svgwidth = this.chartId.nativeElement.offsetWidth;
-            } else {
-                this.svgwidth = this.svgwidth;
-            }
+             //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
+
+      } else if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+      }
+      //RESIZE STEP 1 ENDS HERE 
         }
         const tooltip = this.toolTip(d3);
 
         const linechart = this.initChart();
-
+         // this.svgwidth = linechart.width;
         this.plotScale(linechart.g, linechart.x, linechart.y, linechart.height, linechart.width);
 
         this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
@@ -127,6 +132,19 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
 
 
     }
+
+
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+       if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
 
     private plotLine(g: any, x: any, y: any, height: any, width: any, data: any, tooltip: any, i: number): void {
 
