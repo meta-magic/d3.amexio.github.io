@@ -1,6 +1,6 @@
-<div  *ngIf="drillableFlag" #divid (window:resize)="resize()">
-        <table  style="width: 100%;" #chartId >
-            <tr>
+<div #chartId  *ngIf="drillableFlag" (window:resize)="validateresize()">
+        <table  style="width: 100%;">
+            <tr >
                 <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}}
                  <span *ngIf="resizebtnflag">
                <button  type="reset" class="fa fa-search-minus" style="cursor: pointer; float:right" (click)="resizesvg()">
@@ -14,7 +14,7 @@
                     </svg>
                 </td>
             </tr>
-            <tr>
+            <tr *ngIf="legend">
                 <td style="display: block; padding: 5px;">
                     <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="onScatterLegendClick($event)" [data]="legends" style="height:100%;"></amexio-d3-legend>
                 </td>

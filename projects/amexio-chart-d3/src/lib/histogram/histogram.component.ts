@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, OnInit } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
@@ -10,14 +10,15 @@ import * as d3 from 'd3';
   styleUrls: ['./histogram.component.css']
 })
 export class HistogramComponent extends AmexioD3BaseChartComponent implements OnInit {
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 400;
   @Input('color') color: string = "blue";
   @Input('data') datahisto: any;
- 
+  @Input('yaxis-interval') tickscount: number;
+
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
- 
+  wt: number;
   httpresponse: any;
   svg: any;
   data1: any;
@@ -43,11 +44,12 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   tempp: any;
   tooltipArray: any[] = [];
   index = 0;
-  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('histogram');
   }
 
   ngOnInit() {
+    this.wt = this.svgwidth;
     let res: any
     if (this.level <= 1) {
       if (this.httpmethod && this.httpurl) {
@@ -218,12 +220,15 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       chartdata.push(tempdata[i]);
     }
     if (this.resizeflag == false) {
-      if (this.chartId) {
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
+      //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
 
-        this.svgwidth = this.svgwidth;
+      } else if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+
       }
+      //RESIZE STEP 1 ENDS HERE
     }
     const margin = { top: 20, right: 20, bottom: 50, left: 60 };
     const width = this.svgwidth - margin.left - margin.right;
@@ -234,6 +239,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     let x, y;
 
     this.svg = d3.select("#" + this.componentId)
+      .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -242,7 +248,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     let barWidth = (width / this.chartData.length);
     let inc = barWidth / 2;
     x = d3.scalePoint()
-      .domain(this.xaxisArray,(d)=> { return d; })
+      .domain(this.xaxisArray, (d) => { return d; })
       .rangeRound([0, width]);
 
 
@@ -254,9 +260,22 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     // add x axis to svg
 
     if (this.device.IsDesktop() == true) {
-      this.svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
+      if (this.svgwidth <= 400) {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x)).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      }
+      else {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x))
+      }
     }
     else {
       this.svg.append("g")
@@ -274,11 +293,11 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
     let horizontalpadding = 0.05;
     //add y axis to svg
     this.svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).ticks(this.tickscount));
 
     this.plotLine(this.svg, x, y, height, width);
-   
- let histogramBar = this.svg.append("g")
+
+    let histogramBar = this.svg.append("g")
       .selectAll("g")
       .data(chartdata)
       .enter().append("g")
@@ -310,7 +329,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       .attr("height", (d, index) => {
         return Math.abs(y(d[0]) - y(d[1] - horizontalpadding));
       })
-      .attr("transform",(d, i)=> {
+      .attr("transform", (d, i) => {
         let translate = [barWidth * i, 0];
         return "translate(" + translate + ")";
       })
@@ -332,58 +351,58 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
         this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
       });
-   if(this.labelflag) {
-    histogramBar1.enter()
-      .append("text")
-      .style("font-weight", "bold")
-      .attr("text-anchor", "middle")
-      .attr("fill", (d) => {
-        if(this.labelcolor && this.labelcolor.length>0){
-          return this.labelcolor;
-        } else {
-        return "black";
-        }
-      })
-      .attr("y",(d, i)=> {
-        return y(d[1]);
-      })
-      .text((d)=> {
-       
-        let data: any;
-        let data2: any;
-        data = d[2];
-        data2 = data[0];
-        if (data2) {
-          return data2.value;
-        }
-        else {
-          return null;
-        }
-      })
-      .attr("transform",(d, i)=> {
-        let translate = [((barWidth * i) + barWidth / 2), (Math.abs(y(d[0]) - y(d[1] - horizontalpadding)))];
-        return "translate(" + translate + ")";
-      })
-      //label click logic
-      .on("mouseover", (d) => {
-        return tooltip.style("visibility", "visible");
-      }).on("mousemove",
-        (d: any) => {
-          let data = d[2];
-          return tooltip.html(this.setKey(data[0]))
-            .style("top", (d3.event.pageY - 10) + "px")
-            .style("left", (d3.event.pageX + 10) + "px");
+    if (this.labelflag) {
+      histogramBar1.enter()
+        .append("text")
+        .style("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .attr("fill", (d) => {
+          if (this.labelcolor && this.labelcolor.length > 0) {
+            return this.labelcolor;
+          } else {
+            return "black";
+          }
+        })
+        .attr("y", (d, i) => {
+          return y(d[1]);
+        })
+        .text((d) => {
 
-        }).on("mouseout", (d) => {
+          let data: any;
+          let data2: any;
+          data = d[2];
+          data2 = data[0];
+          if (data2) {
+            return data2.value;
+          }
+          else {
+            return null;
+          }
+        })
+        .attr("transform", (d, i) => {
+          let translate = [((barWidth * i) + barWidth / 2), (Math.abs(y(d[0]) - y(d[1] - horizontalpadding)))];
+          return "translate(" + translate + ")";
+        })
+        //label click logic
+        .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        }).on("mousemove",
+          (d: any) => {
+            let data = d[2];
+            return tooltip.html(this.setKey(data[0]))
+              .style("top", (d3.event.pageY - 10) + "px")
+              .style("left", (d3.event.pageX + 10) + "px");
+
+          }).on("mouseout", (d) => {
+            return tooltip.style("visibility", "hidden");
+          })
+        .on("click", (d) => {
+          let clickdata = d[2];
+          this.histogramClick(clickdata[0]);
+          this.fordrillableClick(this, d, event);
           return tooltip.style("visibility", "hidden");
         })
-      .on("click", (d) => {
-        let clickdata = d[2];
-        this.histogramClick(clickdata[0]);
-        this.fordrillableClick(this, d, event);
-        return tooltip.style("visibility", "hidden");
-      })
-      .attr("cursor", "pointer")
+        .attr("cursor", "pointer")
 
     }
   }
@@ -460,7 +479,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       }
       templength = lengthcount;
       tempvalue = element1;
-       this.lengtharray.push(lengthofArray);
+      this.lengtharray.push(lengthofArray);
     });
 
     let value = Math.ceil(templength);
@@ -486,15 +505,27 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
 
   }
 
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
+
   resize() {
-
-    this.svgwidth = 0;
     this.svg.selectAll("*").remove();
-
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
-
-    this.transformData()
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges(); this.transformData()
     this.plotXaxis();
     this.plotYaxis();
     this.tooltipData();
@@ -607,7 +638,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       g.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 }

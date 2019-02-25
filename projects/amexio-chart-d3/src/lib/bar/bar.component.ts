@@ -7,11 +7,11 @@ import { DeviceQueryService } from '../services/device.query.service';
 import * as d3 from 'd3';
 
 @Component({
-    selector: 'amexio-d3-chart-bar',
-    templateUrl: './bar.component.html'
+  selector: 'amexio-d3-chart-bar',
+  templateUrl: './bar.component.html'
 })
 export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart {
-    
+
   @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
   @Input() horizontal: boolean = false;
@@ -27,7 +27,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   @Input('drillable-data') drillabledatakey: any[] = [];
   @Input('horizontal-scale') hScale: boolean = true;
   @Input('yaxis-interval') tickscount: number;
-
+  @Input('xaxis-interval') xtickscount: number;
   wt: number;
   resizeflag: boolean = false;
   checkmob: boolean;
@@ -126,7 +126,6 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   }
 
   plotD3Chart(): any {
-    // debugger;
     this.formLegendData();
     if (this.resizeflag == false) {
       //RESIZE STEP 1
@@ -153,7 +152,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     let x, y;
     const g = this.svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+    // vertical bar
     if (this.horizontal == false) {
       x = d3.scaleBand()
         .rangeRound([0, width])
@@ -192,7 +191,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             .call(d3.axisBottom(x))
         }
       }
-      
+
       else {
         g.append("g")
           .attr("transform", "translate(0," + height + ")")
@@ -268,9 +267,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
           .attr("text-anchor", "middle")
           .attr("fill", (d) => {
             if (this.labelcolor.length > 0) {
-                if((this.labelcolor.length > 0) && d[Object.keys(d)[1]] > 0) {
-                    return this.labelcolor;
-                }
+              if ((this.labelcolor.length > 0) && d[Object.keys(d)[1]] > 0) {
+                return this.labelcolor;
+              }
             } else {
               return "black";
             }
@@ -282,9 +281,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             return y(d[Object.keys(d)[1]]) + yTextPadding;
           })
           .text((d) => {
-              if(d[Object.keys(d)[1]] > 0) {
-                return d[Object.keys(d)[1]];
-              }
+            if (d[Object.keys(d)[1]] > 0) {
+              return d[Object.keys(d)[1]];
+            }
           })
           .attr("cursor", "pointer")
           .on("mouseover", (d) => {
@@ -310,7 +309,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
           });
       }//if ends fr 
     }
-
+    // horizontal bar
     else if (this.horizontal == true) {
 
       x = d3.scaleLinear()
@@ -337,7 +336,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
       // add x axis to svg
       g.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(10));
+        .call(d3.axisBottom(x).ticks(this.xtickscount));
 
       //add y axis to svg
       g.append("g")
@@ -439,7 +438,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
           });
       }
 
-    }//else ends(horizontal bar logic ends)
+    }
+    //else ends(horizontal bar logic ends)
 
   }
 
@@ -450,6 +450,14 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y).ticks(this.tickscount)
           .tickSize(-width).tickFormat(''));
+    }
+    if (this.vScale) {
+      g.append('g')
+        .attr("color", "lightgrey")
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x).
+          tickSize(-this.width).tickFormat('').ticks(this.xtickscount)
+        );
     }
   }
 
@@ -513,7 +521,6 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   //RESIZE STEP 4 STARTS
   validateresize() {
     setTimeout(() => {
-      // debugger;
       if (this.wt) {
 
       } else {
@@ -530,37 +537,35 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     if (this.wt) {
       this.svgwidth = this.wt;
     } else if (this.chartId) {
-      // this.resizewt = this.chartId.nativeElement.offsetWidth;
-      // console.log("", new Date().getTime(), " ", this.resizewt);
       this.svgwidth = this.chartId.nativeElement.offsetWidth;
     }
     this.cdf.detectChanges();
     this.plotD3Chart();
   }
-// //RESIZE STEP 5 STARTS
-//   initialresize() {
-//     if (this.wt) {
-//       //RESIZE STEP 3 START
-//       // if(this.firstloading)
-//       // this.svg.selectAll("*").remove();
+  // //RESIZE STEP 5 STARTS
+  //   initialresize() {
+  //     if (this.wt) {
+  //       //RESIZE STEP 3 START
+  //       // if(this.firstloading)
+  //       // this.svg.selectAll("*").remove();
 
-//       this.resizeflag = true;
-//       if (this.svgwidth) {
-//         this.svgwidth = this.svgwidth;
+  //       this.resizeflag = true;
+  //       if (this.svgwidth) {
+  //         this.svgwidth = this.svgwidth;
 
-//       } else if (this.chartId) {
-//         this.svgwidth = this.chartId.nativeElement.offsetWidth;
+  //       } else if (this.chartId) {
+  //         this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
-//       }
-//       //RESIZE STEP 3 ENDS
-//       // this.svgwidth = this.divid.nativeElement.offsetWidth;
+  //       }
+  //       //RESIZE STEP 3 ENDS
+  //       // this.svgwidth = this.divid.nativeElement.offsetWidth;
 
-//       this.cdf.detectChanges();
-//       this.plotD3Chart();
+  //       this.cdf.detectChanges();
+  //       this.plotD3Chart();
 
-//     }
-//     this.firstloading = false;
-//   }
-// //RESIZE STEP 5 ENDS
+  //     }
+  //     this.firstloading = false;
+  //   }
+  // //RESIZE STEP 5 ENDS
 
 }

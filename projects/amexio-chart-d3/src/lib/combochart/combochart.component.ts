@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
@@ -11,7 +11,7 @@ import { DeviceQueryService } from '../services/device.query.service';
   styleUrls: ['./combochart.component.css']
 })
 export class CombochartComponent extends AmexioD3BaseChartComponent implements PlotCart {
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
   @Input('line-color') lineColor: string = "black";
   @Input() label: boolean = false;
@@ -20,6 +20,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
   //   @Input('line-data-index') lineInput: any;
   @Input('line-data-index') lineInput: any[] = [];
   @Input('bar-data-index') barInput: any[] = [];
+  @Input('yaxis-interval') tickscount: number;
 
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
@@ -55,13 +56,13 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
   outputData: any = [];
   lineflag: boolean;
   higherdot1colorindex = 0;
-
-  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
+  wt: number;
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('combochart');
   }
 
   ngOnInit() {
-
+    this.wt = this.svgwidth;
     if (this.level <= 1) {
       let resp: any;
       if (this.httpmethod && this.httpurl) {
@@ -356,17 +357,22 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     const tooltip = this.toolTip(d3);
     let colors = this.predefinedcolors;
     if (this.resizeflag == false) {
-      if (this.chartId) {
+      //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
+
+      } else if (this.chartId) {
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
-        this.svgwidth = this.svgwidth;
+
       }
+      //RESIZE STEP 1 ENDS HERE 
     }
     const margin = { top: 20, right: 20, bottom: 50, left: 40 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
 
     this.svg = d3.select("#" + this.componentId)
+      .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -399,9 +405,21 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
 
     // add x axis to svg
     if (this.device.IsDesktop() == true) {
-      this.svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x0))
+      if (this.svgwidth <= 400) {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x0)).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      } else {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x0))
+      }
     }
     else {
       this.svg.append("g")
@@ -418,7 +436,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
     //add y axis to svg
     this.svg.append("g")
       .call(d3.axisLeft(y)
-        .ticks(10))
+        .ticks(this.tickscount))
 
     this.plotLineForMultiSeries(this.svg, y, height, width);
     //adding bars
@@ -755,29 +773,29 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
               })
               .attr("transform", "translate( " +
                 // margin.left
-              x1.bandwidth() / 2
+                x1.bandwidth() / 2
                 // shift
                 + ", 19 )")
-                //line label click logic starts here
-                .attr("cursor", "pointer")
-                .on("mouseover", (d) => {
-                  return tooltip.style("visibility", "visible");
-                })
-                .on("mousemove", (d) => {
-                  return tooltip.html(
-                    this.formTooltipLineData(d, lineName1, false))
-                    .style("top", (d3.event.pageY - 10) + "px")
-                    .style("left", (d3.event.pageX + 10) + "px");
-                })
-                .on("mouseout", (d) => {
-                  return tooltip.style("visibility", "hidden");
-                })
-                .on("click", (d) => {
-                  this.onComboLineClick(d, lineName1, false);
-                  this.fordrillableClick(this, d, event);
-                  return tooltip.style("visibility", "hidden");
-                });
-      
+              //line label click logic starts here
+              .attr("cursor", "pointer")
+              .on("mouseover", (d) => {
+                return tooltip.style("visibility", "visible");
+              })
+              .on("mousemove", (d) => {
+                return tooltip.html(
+                  this.formTooltipLineData(d, lineName1, false))
+                  .style("top", (d3.event.pageY - 10) + "px")
+                  .style("left", (d3.event.pageX + 10) + "px");
+              })
+              .on("mouseout", (d) => {
+                return tooltip.style("visibility", "hidden");
+              })
+              .on("click", (d) => {
+                this.onComboLineClick(d, lineName1, false);
+                this.fordrillableClick(this, d, event);
+                return tooltip.style("visibility", "hidden");
+              });
+
           }
         }
 
@@ -820,9 +838,9 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
           x1.bandwidth() / 2
           // shift
           + ", 19 )")
-          .attr("cursor", "pointer")
-         // line label click logic
-         .on("mouseover", (d) => {
+        .attr("cursor", "pointer")
+        // line label click logic
+        .on("mouseover", (d) => {
           return tooltip.style("visibility", "visible");
         })
         .on("mousemove", (d) => {
@@ -850,7 +868,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
       g.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 
@@ -895,15 +913,31 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
       g.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
+
   resize() {
-    this.svgwidth = 0;
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges();
     this.plotD3Chart();
   }
 

@@ -1,6 +1,6 @@
-<div   *ngIf="drillableFlag" #divid (window:resize)="resize($event)"> 
-<table style="width: 100%;" #chartId>
-    <tr>
+<div  #chartId *ngIf="drillableFlag" (window:resize)="validateresize()"> 
+<table style="width: 100%;">
+    <tr *ngIf = "title.length > 0" >
         <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td>
     </tr>
     <tr>
@@ -9,7 +9,7 @@
             </svg>
         </td>
     </tr>
-    <tr>
+    <tr *ngIf="legend">
         <td style="display: block; padding: 5px;">
             <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="legendClick($event)" [data]="legends" style="height:100%;"></amexio-d3-legend>
         </td>

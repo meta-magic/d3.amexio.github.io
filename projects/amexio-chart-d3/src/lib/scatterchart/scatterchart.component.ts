@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { CommanDataService } from '../services/comman.data.service';
 import { DeviceQueryService } from '../services/device.query.service';
@@ -12,12 +12,14 @@ import * as d3 from 'd3';
 })
 export class ScatterchartComponent extends AmexioD3BaseChartComponent implements OnInit {
 
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
   @Input('color') color: any = "blue";
   @Input('zoom-enable') zoomflag: boolean = false;
+  @Input('yaxis-interval') tickscount: number;
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
+  wt: any;
   zoominitiated: boolean = false;
   svg: any;
   keyArray: any[] = [];
@@ -32,11 +34,12 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   node: any;
   nodelabel: any;
   resizebtnflag = false;
-  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('scatter');
   }
 
   ngOnInit() {
+    this.wt = this.svgwidth;
     this.dataFormatted = [];
     if (this.level <= 1) {
       let resp: any;
@@ -147,12 +150,14 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
   // Method to plot d3 chart
   plotScatterChart() {
     if (this.resizeflag == false) {
-      if (this.chartId) {
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
+     //RESIZE STEP 1
+     if (this.wt) {
+      this.svgwidth = this.wt;
 
-        this.svgwidth = this.svgwidth;
-      }
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    //RESIZE STEP 1 ENDS HERE 
     }
     const tooltip = this.toolTip(d3);
     const margin = { top: 20, right: 20, bottom: 30, left: 60 };
@@ -169,9 +174,10 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
 
     let xAxis = d3.axisBottom(x);
 
-    let yAxis = d3.axisLeft(y);
+    let yAxis = d3.axisLeft(y).ticks(this.tickscount);
 
     this.svg = d3.select("#" + this.componentId)
+    .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -181,7 +187,19 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     y.domain([0, d3.max(this.data, (d) => { return d[Object.keys(d)[1]] })]);
 
     if (this.device.IsDesktop() == true) {
-      this.svg.append("g")
+      if (this.svgwidth <= 400) {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      }
+      else {
+        this.svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
         .append("text")
@@ -189,6 +207,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
         .attr("x", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "start");
+      }
     }
     else {
       this.svg.append("g")
@@ -483,13 +502,28 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
     }
   }
 
+//RESIZE STEP 4 STARTS
+validateresize() {
+  setTimeout(() => {
+     if (this.wt) {
+
+    } else {
+      this.resize();
+    }
+  }, 2000)
+}
+//RESIZE STEP 4 ENDS
+
   // Method for responsiveness
   resize() {
-    this.svgwidth = 0;
     this.svg.selectAll("*").remove();
-
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges();
     this.plotScatterChart();
   }
 
@@ -506,7 +540,7 @@ export class ScatterchartComponent extends AmexioD3BaseChartComponent implements
       g.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 

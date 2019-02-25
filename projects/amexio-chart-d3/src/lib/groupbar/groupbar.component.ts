@@ -1,8 +1,8 @@
 
-import { Component, OnInit,Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { AmexioD3BaseChartComponent } from "../base/base.component";
-import {CommanDataService} from '../services/comman.data.service'
-import{DeviceQueryService} from '../services/device.query.service';
+import { CommanDataService } from '../services/comman.data.service'
+import { DeviceQueryService } from '../services/device.query.service';
 import * as d3 from 'd3';
 @Component({
   selector: 'amexio-d3-chart-multiseries',
@@ -10,16 +10,17 @@ import * as d3 from 'd3';
   styleUrls: ['./groupbar.component.css']
 })
 export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnInit {
-  
+
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
-   @Input('data') data: any
+  @Input('data') data: any
   @Input() legend: boolean = true;
   @Input() barwidth: number = 0;
   @Output() onLegendClick: any = new EventEmitter<any>();
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
+  @Input('yaxis-interval') tickscount: number;
 
   groupbarchartArray: any[] = [];
   legendArray: any;
@@ -29,12 +30,15 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   years: any;
   urllegendArray = [];
   svg: any;
-  constructor(private myservice: CommanDataService,private device:DeviceQueryService) {
+  wt: any;
+  defualtColors: any = [];
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('multibar');
     this.predefinedcolors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
   }
 
   ngOnInit() {
+    this.wt = this.svgwidth;
     if (this.level <= 1) {
       let res: any;
       if (this.httpmethod && this.httpurl) {
@@ -122,21 +126,25 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
   private plotGroupBarChart(): void {
     const tooltip = this.toolTip(d3);
-    let colors = this.predefinedcolors;
+    this.defualtColors = this.predefinedcolors;
     // this.svgwidth = this.chartId.nativeElement.offsetWidth;
     if (this.resizeflag == false) {
-      if (this.chartId) {
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
+      //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
 
-        this.svgwidth = this.svgwidth;
+      } else if (this.chartId) {
+        this.svgwidth = this.chartId.nativeElement.offsetWidth;
+
       }
+      //RESIZE STEP 1 ENDS HERE 
     }
     const margin = { top: 20, right: 20, bottom: 50, left: 40 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
 
     this.svg = d3.select("#" + this.componentId)
+      .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -153,12 +161,12 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .rangeRound([height, 0]);
 
     //setting x and y domains
-    this.years = this.groupbarchartArray.map((d)=> { return d.labels; });
-    let label = this.groupbarchartArray[0].values.map((d)=> { return d.label; });
+    this.years = this.groupbarchartArray.map((d) => { return d.labels; });
+    let label = this.groupbarchartArray[0].values.map((d) => { return d.label; });
 
     x0.domain(this.years);
     x1.domain(label).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(this.groupbarchartArray,(labels)=> { return d3.max(labels.values,(d)=> { return d.value; }); })]);
+    y.domain([0, d3.max(this.groupbarchartArray, (labels) => { return d3.max(labels.values, (d) => { return d.value; }); })]);
 
     //dynamic barwidth
     if (this.barwidth > 0) {
@@ -172,53 +180,76 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
 
 
-    if(this.device.IsDesktop()==true)
-            {
-              this.svg.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x0))
-            }
-          else
-           {
-            this.svg.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x0)).
-                   selectAll("text")
-                   .attr("y", 0)
-                   .attr("x", 9)
-                   .attr("dy", ".35em")
-                   .attr("transform", "rotate(60)")
-                   .style("text-anchor", "start");
-     
-          }
+    if (this.device.IsDesktop() == true) {
+      if (this.svgwidth <= 400) {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x0)).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      } else {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x0))
+      }
+    }
+    else {
+      this.svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x0)).
+        selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
 
-  
+    }
+
+
 
     //add y axis to svg
     this.svg.append("g")
       .call(d3.axisLeft(y)
-        .ticks(10))
+        .ticks(10).ticks(this.tickscount))
 
     this.plotLine(this.svg, y, height, width);
 
     // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
-     //adding bars
+    //adding bars
     let slice = this.svg.selectAll(".slice")
       .data(this.groupbarchartArray)
       .enter().append("g")
       .attr("class", "g")
-      .attr("transform",(d)=> { return "translate(" + x0(d.labels) + ",0)"; });
-    
-      slice.selectAll("rect")
-      .data((d)=> { return d.values; })
+      .attr("transform", (d) => { return "translate(" + x0(d.labels) + ",0)"; });
+
+    slice.selectAll("rect")
+      .data((d) => { return d.values; })
       .enter().append("rect")
       .attr("width", x1.bandwidth)
-      .attr("x",(d)=> {
+      .attr("x", (d) => {
         return x1(d.label)
       })
-      .style("fill",(d, index)=> { return colors[index] })
-      .attr("y",(d)=> { return y(0); })
-      .attr("height",(d)=> { return height - y(0); })
+      .style("fill", (d, index) => {
+        if (this.colors.length > 0) {
+          if (this.colors[index]) {
+            return this.colors[index];
+          }
+          else {
+            return this.defualtColors[index];
+          }
+        }
+        else {
+          return this.defualtColors[index];
+        }
+        // return colors[index] 
+      })
+      .attr("y", (d) => { return y(0); })
+      .attr("height", (d) => { return height - y(0); })
       .attr("cursor", "pointer")
       .on("mouseover", (d) => {
         return tooltip.style("visibility", "visible");
@@ -240,55 +271,56 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         // this.chartClick(d);
       })
 
-      // -------------------------------------------------------
-      if(this.labelflag) {
+    // -------------------------------------------------------
+    if (this.labelflag) {
       slice.selectAll("text")
-      .data((d)=> { return d.values; })
-      .enter().append("text")
-      .attr("width", x1.bandwidth)
-      .attr("x",(d)=> {
-        return x1(d.label) + x1.bandwidth()/2
-      })
-       .attr("y",(d)=> { return y(d.value); })
-      .attr("height",(d)=> { return height - y(0); })
-      .style("font-weight","bold")
-      .style("font-size","1vw")
-      .attr("text-anchor", "middle")
-      .attr("fill", (d)=>{
-        if(this.labelcolor && this.labelcolor.length>0){
-          return this.labelcolor;
-        } else {
-          return "black";
-        }
-      })
-      .text((d)=>{
+        .data((d) => { return d.values; })
+        .enter().append("text")
+        .attr("width", x1.bandwidth)
+        .attr("x", (d) => {
+          return x1(d.label) + x1.bandwidth() / 2
+        })
+        .attr("y", (d) => { return y(d.value); })
+        .attr("height", (d) => { return height - y(0); })
+        .style("font-weight", "bold")
+        .style("font-size", "1vw")
+        .attr("text-anchor", "middle")
+        .attr("fill", (d) => {
+          if (this.labelcolor && this.labelcolor.length > 0) {
+            return this.labelcolor;
+          } else {
+            return "black";
+          }
+        })
+        .text((d) => {
           return d.value;
-         })
-         .attr("cursor", "pointer")
-         .on("mouseover", (d) => {
-           return tooltip.style("visibility", "visible");
-         })
-         .on("mousemove", (d) => {
-           return tooltip.html(
-             this.setKey(d)
-             //  this.toolTipContent(d)
-           )
-             .style("top", (d3.event.pageY - 10) + "px")
-             .style("left", (d3.event.pageX + 10) + "px");
-         }).on("mouseout", (d) => {
-           return tooltip.style("visibility", "hidden");
-         })
-         .on("click", (d) => {
-           this.groupbarClick(d);
-           this.fordrillableClick(this, d, event);
-           return tooltip.style("visibility", "hidden");
-           // this.chartClick(d);
-         }) 
-}
+        })
+        .attr("cursor", "pointer")
+        .on("mouseover", (d) => {
+          return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", (d) => {
+          return tooltip.html(
+            this.setKey(d)
+            //  this.toolTipContent(d)
+          )
+            .style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        }).on("mouseout", (d) => {
+          return tooltip.style("visibility", "hidden");
+        })
+        .on("click", (d) => {
+          this.groupbarClick(d);
+          this.fordrillableClick(this, d, event);
+          return tooltip.style("visibility", "hidden");
+          // this.chartClick(d);
+        })
+    }
     slice.selectAll("rect")
-      .attr("y",(d)=> { 
-         return y(d.value); })
-      .attr("height",(d)=> { return height - y(d.value); });
+      .attr("y", (d) => {
+        return y(d.value);
+      })
+      .attr("height", (d) => { return height - y(d.value); });
   }
 
   groupbarClick(d: any) {
@@ -298,18 +330,31 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     this.chartClick(object);
   }
 
-  resize(event: any) {
-    this.svgwidth = 0;
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 2000)
+  }
+  //RESIZE STEP 4 ENDS
+
+  resize() {
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges();
     this.plotGroupBarChart();
   }
 
   legendClick(event: any) {
-    // const legendNode = JSON.parse(JSON.stringify(event));
-    // delete legendNode.color;
-
     let obj = {};
     obj["label"] = event.label;
     let data = [];
@@ -434,7 +479,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       g.append('g')
         .attr("color", "lightgrey")
         .call(d3.axisLeft(y)
-          .tickSize(-width).tickFormat(''));
+          .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
 
