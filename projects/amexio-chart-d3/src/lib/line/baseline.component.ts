@@ -32,7 +32,10 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
 
     set data(v: any) {
         this._data = v;
+        if(this._data && (this._data.length > 0) ) {
         this.createXYAxisData();
+        }
+    
     }
 
     get data() {
