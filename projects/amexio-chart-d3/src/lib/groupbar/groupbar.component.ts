@@ -221,13 +221,14 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
     // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
     //adding bars
+ 
     let slice = this.svg.selectAll(".slice")
       .data(this.groupbarchartArray)
       .enter().append("g")
       .attr("class", "g")
-      .attr("transform", (d) => { return "translate(" + x0(d.labels) + ",0)"; });
-
-    slice.selectAll("rect")
+      .attr("transform", (d) => { 
+        return "translate(" + x0(d.labels) + ",0)"; });
+     slice.selectAll("rect")
       .data((d) => { return d.values; })
       .enter().append("rect")
       .attr("width", x1.bandwidth)
@@ -293,7 +294,9 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
           }
         })
         .text((d) => {
+          if(d.value > 0) {
           return d.value;
+          }
         })
         .attr("cursor", "pointer")
         .on("mouseover", (d) => {
@@ -364,9 +367,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       data.push(object);
     });
     obj["data"] = data;
-    this.onLegendClick.emit(obj);
-
-    // this.onLegendClick.emit(legendNode);
+    this.onLegendClick.emit(obj); 
   }
 
   //2d array to json conversion
