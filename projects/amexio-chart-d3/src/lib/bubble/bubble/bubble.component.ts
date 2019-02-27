@@ -147,7 +147,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   }
 
   plotBubbleChart() {
-    let colors = this.predefinedcolors;
+     let colors = this.predefinedcolors;
     if (this.resizeflag == false) {
        //RESIZE STEP 1
        if (this.wt) {
@@ -194,14 +194,14 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     if (this.device.IsDesktop() == true) {
       if (this.svgwidth <= 400) {
         this.svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(xAxis)).
-          selectAll("text")
-          .attr("y", 0)
-          .attr("x", 9)
-          .attr("dy", ".35em")
-          .attr("transform", "rotate(60)")
-          .style("text-anchor", "start");
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(60)")
+        .style("text-anchor", "start");
       } else {
         this.svg.append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -376,7 +376,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 
