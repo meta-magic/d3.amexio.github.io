@@ -208,13 +208,12 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
   //RESIZE STEP 4 STARTS
   validateresize() {
     setTimeout(() => {
-      // debugger;
-      if (this.wt) {
+       if (this.wt) {
 
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 

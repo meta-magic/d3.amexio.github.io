@@ -15,6 +15,8 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   @Input('height') svgheight: number = 300;
   @Input() data: any[];
   @Input('yaxis-interval') tickscount: number;
+  @Input('show-zero-values') showzeroflag: boolean = true;
+
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @Output() onLegendClick: any = new EventEmitter<any>();
@@ -247,7 +249,15 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
           return this.y(Math.max(d.start, d.end)) + 20;
         })
         .text((d) => {
-          return d[Object.keys(d)[1]]
+          // return d[Object.keys(d)[1]]
+          if(this.showzeroflag) {
+            return d[Object.keys(d)[1]];
+          }
+          else if(!this.showzeroflag) {
+            if(d[Object.keys(d)[1]] > 0) {
+              return d[Object.keys(d)[1]];
+            }
+          }
         })
         .attr("cursor", "pointer")
         .on("mouseover", (d) => {
@@ -368,13 +378,12 @@ export class CandlestickComponent extends AmexioD3BaseChartComponent implements 
   //RESIZE STEP 4 STARTS
   validateresize() {
     setTimeout(() => {
-      // debugger;
-      if (this.wt) {
+       if (this.wt) {
 
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 

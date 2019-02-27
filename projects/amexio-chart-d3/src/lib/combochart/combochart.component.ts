@@ -21,6 +21,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
   @Input('line-data-index') lineInput: any[] = [];
   @Input('bar-data-index') barInput: any[] = [];
   @Input('yaxis-interval') tickscount: number;
+  @Input('show-zero-values') showzeroflag: boolean = true;
 
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
@@ -531,9 +532,17 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
         } else {
           return "black";
         }
-      })
+      })//bar label
       .text((d) => {
-        return d.value;
+        if(this.showzeroflag) {
+          return d.value;
+        }
+        else if(!this.showzeroflag) {
+          if(d.value > 0) {
+            return d.value;
+          }
+        }
+        // return d.value;
       })
       //bar label click logic
       .attr("cursor", "pointer")
@@ -925,7 +934,7 @@ export class CombochartComponent extends AmexioD3BaseChartComponent implements P
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 

@@ -15,7 +15,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('color') color: string = "blue";
   @Input('data') datahisto: any;
   @Input('yaxis-interval') tickscount: number;
-
+ 
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   wt: number;
@@ -513,7 +513,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 

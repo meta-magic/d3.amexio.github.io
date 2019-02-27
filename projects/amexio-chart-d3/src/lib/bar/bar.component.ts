@@ -5,6 +5,7 @@ import { CommanDataService } from '../services/comman.data.service';
 import { DeviceQueryService } from '../services/device.query.service';
 
 import * as d3 from 'd3';
+import { debug } from "util";
 
 @Component({
   selector: 'amexio-d3-chart-bar',
@@ -28,6 +29,8 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   @Input('horizontal-scale') hScale: boolean = true;
   @Input('yaxis-interval') tickscount: number;
   @Input('xaxis-interval') xtickscount: number;
+  @Input('show-zero-values') showzeroflag: boolean = true;
+
   wt: number;
   resizeflag: boolean = false;
   checkmob: boolean;
@@ -281,8 +284,16 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             return y(d[Object.keys(d)[1]]) + yTextPadding;
           })
           .text((d) => {
-            if (d[Object.keys(d)[1]] > 0) {
+            // if (d[Object.keys(d)[1]] > 0) {
+            //   return d[Object.keys(d)[1]];
+            // }.
+             if(this.showzeroflag) {
               return d[Object.keys(d)[1]];
+            }
+            else if(!this.showzeroflag) {
+              if(d[Object.keys(d)[1]] > 0) {
+                return d[Object.keys(d)[1]];
+              }
             }
           })
           .attr("cursor", "pointer")
@@ -412,7 +423,15 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
               + margin.top + y.bandwidth() / 2;
           })
           .text((d) => {
-            return d[Object.keys(d)[1]];
+            // return d[Object.keys(d)[1]];
+            if(this.showzeroflag) {
+              return d[Object.keys(d)[1]];
+            }
+            else if(!this.showzeroflag) {
+              if(d[Object.keys(d)[1]] > 0) {
+                return d[Object.keys(d)[1]];
+              }
+            }
           })
           .attr("cursor", "pointer")
           .on("mouseover", (d) => {
@@ -526,10 +545,10 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
-  resizewt: number;
+ 
   //RESIZE STEP 5 STARTS
   resize() {
     this.svg.selectAll("*").remove();

@@ -21,7 +21,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
   @Input('yaxis-interval') tickscount: number;
-
+  @Input('show-zero-values') showzeroflag: boolean = true;
   groupbarchartArray: any[] = [];
   legendArray: any;
   xaxisData: any;
@@ -227,11 +227,21 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       .enter().append("g")
       .attr("class", "g")
       .attr("transform", (d) => { 
+         let flag = false;
+        (d.values).forEach((element,index) => {
+          //splice 0 
+          if(element.value && (element.value < 1)) {
+          d.values.splice(0,index);
+          } 
+        });
         return "translate(" + x0(d.labels) + ",0)"; });
+
      slice.selectAll("rect")
       .data((d) => { return d.values; })
-      .enter().append("rect")
-      .attr("width", x1.bandwidth)
+      .enter().
+      append("rect")
+      .attr("width", x1.bandwidth
+    )
       .attr("x", (d) => {
         return x1(d.label)
       })
@@ -247,8 +257,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         else {
           return this.defualtColors[index];
         }
-        // return colors[index] 
-      })
+       })
       .attr("y", (d) => { return y(0); })
       .attr("height", (d) => { return height - y(0); })
       .attr("cursor", "pointer")
@@ -257,9 +266,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       })
       .on("mousemove", (d) => {
         return tooltip.html(
-          this.setKey(d)
-          //  this.toolTipContent(d)
-        )
+          this.setKey(d))
           .style("top", (d3.event.pageY - 10) + "px")
           .style("left", (d3.event.pageX + 10) + "px");
       }).on("mouseout", (d) => {
@@ -269,8 +276,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         this.groupbarClick(d);
         this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
-        // this.chartClick(d);
-      })
+       })
 
     // -------------------------------------------------------
     if (this.labelflag) {
@@ -294,8 +300,16 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
           }
         })
         .text((d) => {
-          if(d.value > 0) {
+          // if((d.value > 0) ) {
+          // return d.value;
+          // }
+          if(this.showzeroflag) {
           return d.value;
+          }
+          else if(!this.showzeroflag) {
+            if(d.value > 0) {
+              return d.value;
+            }
           }
         })
         .attr("cursor", "pointer")
@@ -341,7 +355,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 

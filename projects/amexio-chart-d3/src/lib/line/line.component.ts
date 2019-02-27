@@ -142,7 +142,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
       } else {
         this.resize();
       }
-    }, 2000)
+    }, 0)
   }
   //RESIZE STEP 4 ENDS
 

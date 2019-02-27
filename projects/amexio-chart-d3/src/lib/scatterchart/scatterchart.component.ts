@@ -510,7 +510,7 @@ validateresize() {
     } else {
       this.resize();
     }
-  }, 2000)
+  }, 0)
 }
 //RESIZE STEP 4 ENDS
 
