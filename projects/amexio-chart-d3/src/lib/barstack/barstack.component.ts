@@ -19,14 +19,16 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   data: any[];
   datareaderdata: any[];
   xaxis: any;
+  wt: number;
   @Input('data') data1: any
   @Input() barwidth: number = 0;
   @Input() title: String = "";
   @Input() legend: boolean = true;
   @Input() color: string[] = [];
-  @Input('width') svgwidth: number = 300;
+  @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
   @Input('yaxis-interval') tickscount: number;
+ 
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
@@ -34,11 +36,12 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   httpresponse: any;
   svg: any;
   offsetheight: any;
-  constructor(private myservice: CommanDataService, private device: DeviceQueryService) {
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('barstack');
   }
 
   ngOnInit() {
+    this.wt = this.svgwidth;
     if (this.level <= 1) {
       let res;
       if (this.httpmethod && this.httpurl) {
@@ -177,11 +180,15 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     let margin = { top: 20, right: 30, bottom: 90, left: 60 };
     let colors = this.predefinedcolors;
     if (this.device.IsDesktop()) {
-      if (this.chartId) {
+      //RESIZE STEP 1
+      if (this.wt) {
+        this.svgwidth = this.wt;
+
+      } else if (this.chartId) {
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      } else {
-        this.svgwidth = this.svgwidth;
+
       }
+      //RESIZE STEP 1 ENDS HERE 
     }
     //this.svgwidth = this.chartId.nativeElement.offsetWidth;
     let data;
@@ -194,19 +201,22 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       this.keyArray = keysetarray;
       this.keyArray.splice(0, 1);
     }
-
+ 
 
     let series = d3.stack().keys(this.keyArray)
       .offset(d3.stackOffsetDiverging)
       (this.data);
-    series
-    this.svg = d3.select("#" + this.componentId);
 
-    let width = this.svgwidth - margin.left - margin.right;
-    let height;
+     let width = this.svgwidth - margin.left - margin.right;
+    let height
+    //  = this.svgheight - margin.bottom - margin.top;
+    this.svg = d3.select("#" + this.componentId)
+                 .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight)
+                
     if (this.device.IsDesktop()) {
 
-      this.offsetheight = this.chartId.nativeElement.offsetHeight;
+      this.offsetheight = this.chartId.nativeElement.offsetHeight
+      //  - margin.bottom -margin.top;
       height = this.offsetheight;
     }
     else {
@@ -217,7 +227,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       .domain(data.map((d) => {
         return d[Object.keys(d)[0]];
       }))
-      .rangeRound([margin.left, width - margin.right])
+      .rangeRound([margin.left, this.svgwidth-margin.right])
       .padding(0.35);
 
     let y = d3.scaleLinear()
@@ -227,9 +237,22 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
       ])
       .rangeRound([height - margin.bottom, margin.top]);
     if (this.device.IsDesktop() == true) {
-      this.svg.append("g")
+      if (this.svgwidth <= 400) {
+        this.svg.append("g")
+          .attr("transform", "translate(0," + y(0) + ")")
+          .call(d3.axisBottom(x)).
+          selectAll("text")
+          .attr("y", 0)
+          .attr("x", 9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(60)")
+          .style("text-anchor", "start");
+      } else {
+        this.svg.append("g")
         .attr("transform", "translate(0," + y(0) + ")")
         .call(d3.axisBottom(x));
+      }
+
     }
     else {
       this.svg.append("g")
@@ -323,7 +346,9 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
           return y(d[1]) + 20;
         })
         .text((d) => {
+          if((d[Object.keys(d)[1]] - d[Object.keys(d)[0]]) > 0) {
           return d[Object.keys(d)[1]] - d[Object.keys(d)[0]];
+          }
         })
         .attr("cursor", "pointer")
         .on("mouseover", (d) => {
@@ -350,11 +375,27 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
     return d3.min(serie, (d) => { return d[0]; });
   }
 
+  //RESIZE STEP 4 STARTS
+  validateresize() {
+    setTimeout(() => {
+      if (this.wt) {
+
+      } else {
+        this.resize();
+      }
+    }, 0)
+  }
+  //RESIZE STEP 4 ENDS
+
   resize() {
-    this.svgwidth = 0;
     this.svg.selectAll("*").remove();
     this.resizeflag = true;
-    this.svgwidth = this.divid.nativeElement.offsetWidth;
+    if (this.wt) {
+      this.svgwidth = this.wt;
+    } else if (this.chartId) {
+      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    }
+    this.cdf.detectChanges();
     this.plotChart();
   }
 
@@ -367,7 +408,6 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
           .tickSize(-width).tickFormat(''));
     }
   }
-
 
   legendClick(event: any) {
     let obj = {};
