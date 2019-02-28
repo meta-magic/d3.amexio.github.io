@@ -477,7 +477,12 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     this.legends = [];
     this.keyArray.forEach((element, index) => {
       const legenddata = this.legendArray[element];
-      let object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
+      let object;
+      if (this.colors.length > 0) {
+        object = { 'label': element, 'color': this.colors[index], 'data': legenddata.data };
+       } else {
+         object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
+       }
       this.legends.push(object);
     });
   }
