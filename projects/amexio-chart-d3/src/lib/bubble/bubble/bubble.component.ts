@@ -14,6 +14,8 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
   @Input('color') color: any = "blue";
   @Input('zoom-enable') zoomflag: boolean = false;
   @Input('yaxis-interval') tickscount: number;
+  @Input('xaxis-interval') xtickscount: number;
+
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   wt:number;
@@ -172,7 +174,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
     y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
-    let xAxis = d3.axisBottom(x);
+    let xAxis = d3.axisBottom(x).ticks(this.xtickscount);
 
     let yAxis = d3.axisLeft(y).ticks(this.tickscount);
 
@@ -474,7 +476,7 @@ export class BubbleComponent extends AmexioD3BaseChartComponent implements OnIni
         .attr("color", "lightgrey")
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x).
-          tickSize(-this.width).tickFormat('')
+          tickSize(-this.width).tickFormat('').ticks(this.xtickscount)
         );
     }
     if (this.hScale) {

@@ -22,7 +22,8 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
     @Input('drillable-data') drillabledatakey: any[] = [];
     @Input('label-color') labelcolor: string = "black";
     @Input('label') labelflag: boolean = false;
- 
+    @Input('xaxis-interval') xtickscount: number;
+
     lanes: any[] = [];
     timelinechartData: any[] = [];
     mindate: any;
@@ -175,7 +176,7 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
             if (this.svgwidth <= 400) {
                 this.svg.append("g")
                   .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x1)).
+                  .call(d3.axisBottom(x1).ticks(this.xtickscount)).
                   selectAll("text")
                   .attr("y", 0)
                   .attr("x", 9)
@@ -186,13 +187,13 @@ export class AmexioD3TimelineChartComponent extends AmexioD3BaseChartComponent {
               else {
                 this.svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x1));
+                .call(d3.axisBottom(x1).ticks(this.xtickscount));
               }
         }
         else {
             this.svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x1)).
+                .call(d3.axisBottom(x1).ticks(this.xtickscount)).
                 selectAll("text")
                 .attr("y", 0)
                 .attr("x", 9)
