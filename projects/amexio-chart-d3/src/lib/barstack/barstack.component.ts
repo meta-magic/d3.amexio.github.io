@@ -177,7 +177,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
 
   plotChart() {
     const tooltip = this.toolTip(d3);
-    let margin = { top: 20, right: 30, bottom: 90, left: 60 };
+    let margin = { top: 30, right: 30, bottom: 90, left: 60 };
     let colors = this.predefinedcolors;
     if (this.device.IsDesktop()) {
       //RESIZE STEP 1
