@@ -144,6 +144,7 @@ export class AmexioD3BaseChartComponent{
                       .attr('class','amexiod3tooltip')
                       .style("position", "absolute")
                       .style("z-index", "10")
+                      .style("fill","black")
                       .style("visibility", "hidden");
     }
 
