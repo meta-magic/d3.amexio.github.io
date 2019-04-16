@@ -4,6 +4,8 @@ import {FormsModule} from '@angular/forms';
 import {  CommonModule } from '@angular/common';
 import{DeviceQueryService} from './services/device.query.service'
 
+export * from './services/device.query.service';
+
 @NgModule({
   imports: [
     FormsModule,
