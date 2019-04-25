@@ -4,7 +4,7 @@ import { AmexioD3BaseChartComponent } from '../base/base.component';
 import { PlotCart } from '../base/chart.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommanDataService } from '../services/comman.data.service';
-import{DeviceQueryService} from '../services/device.query.service';
+import { DeviceQueryService } from '../services/device.query.service';
 
 @Component({
   selector: 'amexio-d3-chart-donut',
@@ -19,15 +19,15 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
-  desktoplegend:boolean=false;
-  mobilelegend:boolean=false;
+  desktoplegend: boolean = false;
+  mobilelegend: boolean = false;
   @Input() drillData: any;
   keyArray: any[] = [];
   transformeddata: any[] = [];
   legendArray: any[] = [];
   response: any;
   svg: any;
-  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef,private device:DeviceQueryService) {
+  constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('DONUTCHART');
   }
 
@@ -42,12 +42,11 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
         }, () => {
 
           setTimeout(() => {
-
             this.data = this.getResponseData(resp);
             this.drawChart();
 
-            this.data = this.getResponseData(resp);
-            //this.transformData(this.data);
+            // this.data = this.getResponseData(resp);
+            this.transformData(this.data);
             this.initializeData();
             this.plotD3Chart();
           }, 0);
@@ -154,23 +153,22 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       .selectAll('path')
       .data(pie(this.data))
       .enter();
-      
-   if(this.device.IsDesktop()==true)
-      {
-                 this.desktoplegend=true;
-                 this.mobilelegend=false;
-      }
-      // else{
-      //        if(this.device.IsPhone()==true && this.device.IsTablet()==true)
-      //        {
-      //             this.desktoplegend=false;
-      //             this.mobilelegend=true;
-      //        }
-      // }
+
+    if (this.device.IsDesktop() == true) {
+      this.desktoplegend = true;
+      this.mobilelegend = false;
+    }
+    // else{
+    //        if(this.device.IsPhone()==true && this.device.IsTablet()==true)
+    //        {
+    //             this.desktoplegend=false;
+    //             this.mobilelegend=true;
+    //        }
+    // }
 
     const path = this.svg.append('path')
       .attr('d', arc)
-      .attr('fill',(d, i)=> {
+      .attr('fill', (d, i) => {
         if (d.data.color) {
           return d.data.color;
         }
@@ -206,18 +204,18 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
       const text = this.svg.append("text")
         .transition()
         .duration(200)
-        .attr("transform",(d)=> {
+        .attr("transform", (d) => {
           return "translate(" + arc.centroid(d) + ")";
         })
         .attr("text-anchor", "middle")
-        .text((d)=> {
+        .text((d) => {
 
           return d.data[Object.keys(d.data)[1]]
 
           //return d.data.value;
         })
-        .style('fill',(d)=> {
-          if(this.labelcolor && this.labelcolor.length>0){
+        .style('fill', (d) => {
+          if (this.labelcolor && this.labelcolor.length > 0) {
             return this.labelcolor;
           } else {
             return "black";
@@ -286,10 +284,10 @@ export class AmexioD3DounutChartComponent extends AmexioD3BaseChartComponent imp
 
   resize(data: any) {
 
-     this.desktoplegend=false;
-     this.mobilelegend=true;
-     this.plotD3Chart();
+    this.desktoplegend = false;
+    this.mobilelegend = true;
+    this.plotD3Chart();
 
-}
+  }
 
 }
