@@ -14,7 +14,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @ViewChild('chartId') chartId: ElementRef;
   @ViewChild('divid') divid: ElementRef;
   @ViewChild('drillid') drillid: any;
-  @Input('data') data: any
+  @Input('data') data: any = [];
   @Input() legend: boolean = true;
   @Input() barwidth: number = 0;
   @Output() onLegendClick: any = new EventEmitter<any>();

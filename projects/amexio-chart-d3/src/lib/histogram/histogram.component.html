@@ -1,6 +1,6 @@
-<div #chartId  *ngIf="drillableFlag" (window:resize)="validateresize()" >
-<table style="width: 100%;">
-        <tr *ngIf = "title.length > 0">
+<div #chartId *ngIf="drillableFlag" (window:resize)="validateresize()">
+    <table *ngIf="datahisto.length > 0" style="width: 100%;">
+        <tr *ngIf="title.length > 0">
             <td colspan="2" style="font-size: 18px; font-weight: bold; "> {{title}} </td>
         </tr>
         <tr>
@@ -15,4 +15,6 @@
             </td>
         </tr>
     </table>
+    <div *ngIf="datahisto.length < 1" class="lmask" style="padding-top:50%">
+        </div>
 </div>

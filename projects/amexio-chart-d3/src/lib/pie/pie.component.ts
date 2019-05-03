@@ -8,7 +8,7 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
 })
 export class AmexioD3PieChartComponent implements OnInit {
 
-  @Input('data') data: any;
+  @Input('data') data: any = [];
 
   @Output() onLegendClick: any = new EventEmitter<any>();
 

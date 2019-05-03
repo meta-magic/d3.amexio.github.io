@@ -16,7 +16,7 @@ export class BarstackComponent extends AmexioD3BaseChartComponent implements OnI
   predefinedcolors: any[];
   legends: any[];
   charttype: string;
-  data: any[];
+  data: any = [];
   datareaderdata: any[];
   xaxis: any;
   wt: number;

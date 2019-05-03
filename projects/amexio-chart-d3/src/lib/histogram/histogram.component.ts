@@ -13,7 +13,7 @@ export class HistogramComponent extends AmexioD3BaseChartComponent implements On
   @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 400;
   @Input('color') color: string = "blue";
-  @Input('data') datahisto: any;
+  @Input('data') datahisto: any = [];
   @Input('yaxis-interval') tickscount: number;
  
   @ViewChild('chartId') chartId: ElementRef;

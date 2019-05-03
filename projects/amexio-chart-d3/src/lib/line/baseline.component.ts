@@ -5,7 +5,7 @@ import { DeviceQueryService } from '../services/device.query.service';
 
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
     @Input('width')svgwidth: number;
-    private _data: any;
+    private _data: any = [];
     private xaxisdata: any[];
     private yaxisdata: any[];
     private legenddata: any[];
@@ -23,7 +23,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
     @Input('http-method') httpmethod: any;
 
     @Input('yaxis-interval') tickscount: number;
-
+    @Input('xaxis-interval') xtickscount: number = 3;
     @Input('color') linecolor = [];
 
     constructor(public deviceQueryService: DeviceQueryService) {
@@ -128,8 +128,10 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
 
         const y = d3.scaleLinear()
             .rangeRound([height, 0]);
-
-        x.domain(this.xaxisdata.map((d) => { return d.label; }));
+        this.xaxisdata;
+        x.domain( this.xaxisdata.map((d) => {  
+            debugger;
+            return parseInt(d.label) }));
         y.domain([0, d3.max(this.yaxisdata, (d) => { return d.value; })]);
 
         //add axis 
@@ -137,7 +139,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
             if (this.svgwidth <= 400) {
                 g.append("g")
                   .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x)).
+                  .call(d3.axisBottom(x).ticks(this.xtickscount)).
                   selectAll("text")
                   .attr("y", 0)
                   .attr("x", 9)
@@ -149,14 +151,14 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
                 g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 //   .attr("color", "grey")
-                .call(d3.axisBottom(x))
+                .call(d3.axisBottom(x).ticks(this.xtickscount))
               }
         }
         else {
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 //   .attr("color", "grey")
-                .call(d3.axisBottom(x)).
+                .call(d3.axisBottom(x).ticks(this.xtickscount)).
                 selectAll("text")
                 .attr("y", 0)
                 .attr("x", 9)
@@ -181,7 +183,7 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
                 .attr("color", "lightgrey")
                 .attr('transform', 'translate(0,' + height + ')')
                 .call(d3.axisBottom(x).
-                    tickSize(-this.width).tickFormat('')
+                    tickSize(-this.width).tickFormat('').ticks(this.xtickscount)
                 );
         }
         if (this.hScale) {

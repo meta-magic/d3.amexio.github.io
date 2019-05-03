@@ -13,7 +13,7 @@ import * as d3 from 'd3';
 export class CandlestickComponent extends AmexioD3BaseChartComponent implements PlotCart, OnInit {
   @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
-  @Input() data: any[];
+  @Input() data: any[] [];
   @Input('yaxis-interval') tickscount: number;
   @Input('show-zero-values') showzeroflag: boolean = true;
 

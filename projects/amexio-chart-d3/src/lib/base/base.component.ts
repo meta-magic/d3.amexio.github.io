@@ -10,7 +10,7 @@ export class AmexioD3BaseChartComponent{
    
     @Output() drillableEvent = new EventEmitter();
     
-    @Input('data') data: any;
+    @Input('data') data: any = [];
 
     @Input('http-url') httpurl: any;
     
