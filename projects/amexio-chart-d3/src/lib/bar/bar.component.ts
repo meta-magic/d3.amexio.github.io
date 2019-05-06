@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, OnChanges, } from "@angular/core";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { PlotCart } from "../base/chart.component";
 import { CommanDataService } from '../services/comman.data.service';
@@ -11,7 +11,7 @@ import { debug } from "util";
   selector: 'amexio-d3-chart-bar',
   templateUrl: './bar.component.html'
 })
-export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart {
+export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart, OnChanges {
 
   @Input('width') svgwidth: number;
   @Input('height') svgheight: number = 300;
@@ -46,6 +46,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   object: any;
   legendArray: any[] = [];
   firstloading = false;
+  inc = 0
   constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('bar');
   }
@@ -115,6 +116,24 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
 
   }
 
+  ngOnChanges() {
+
+    if (this.inc > 1) {
+      if (this.data) {
+
+        setTimeout(() => {
+          this.data = this.getResponseData(this.data);
+          this.transformData(this.data)
+          this.initializeData();
+          this.plotD3Chart();
+        }, 0);
+      }
+
+      this.formLegendData();
+    } this.inc++
+
+  }
+
   getResponseData(httpResponse: any) {
     let responsedata = httpResponse;
     if (this.datareader != null) {
@@ -149,20 +168,23 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
     //RESIZE STEP 2 START
+    // this.svg.selectAll("*").remove();
     this.svg = d3.select("#" + this.componentId)
       .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight);
+    this.svg.selectAll("*").remove();
+    // this.svg.exit().remove();//remove unneeded circles
     //RESIZE STEP 2 ENDS HERE
     let x, y;
     const g = this.svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     // vertical bar
     if (this.horizontal == false) {
+      // this.svg.selectAll("*").remove();
       x = d3.scaleBand()
         .rangeRound([0, width])
         .padding(0.1);
       y = d3.scaleLinear()
         .rangeRound([height, 0]);
-
       //setting content for x and y axis
       x.domain(this.data.map((d) => {
 
@@ -287,11 +309,11 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             // if (d[Object.keys(d)[1]] > 0) {
             //   return d[Object.keys(d)[1]];
             // }.
-             if(this.showzeroflag) {
+            if (this.showzeroflag) {
               return d[Object.keys(d)[1]];
             }
-            else if(!this.showzeroflag) {
-              if(d[Object.keys(d)[1]] > 0) {
+            else if (!this.showzeroflag) {
+              if (d[Object.keys(d)[1]] > 0) {
                 return d[Object.keys(d)[1]];
               }
             }
@@ -424,11 +446,11 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
           })
           .text((d) => {
             // return d[Object.keys(d)[1]];
-            if(this.showzeroflag) {
+            if (this.showzeroflag) {
               return d[Object.keys(d)[1]];
             }
-            else if(!this.showzeroflag) {
-              if(d[Object.keys(d)[1]] > 0) {
+            else if (!this.showzeroflag) {
+              if (d[Object.keys(d)[1]] > 0) {
                 return d[Object.keys(d)[1]];
               }
             }
@@ -491,18 +513,21 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   }
 
   transformData(data: any) {
-
-    this.keyArray = data[0];
-    data.forEach((element, index) => {
-      if (index > 0) {
-        let DummyObject = {};
-        element.forEach((individualvalue, keyindex) => {
-          DummyObject[this.keyArray[keyindex]] = individualvalue;
-        });//inner for loop ends
-        this.transformeddata.push(DummyObject);
-      }//if ends
-    });//outer for loop ends
-    this.data = this.transformeddata;
+    if (data) {
+      this.transformeddata = [];
+      this.keyArray = data[0];
+      //  if(data) {
+      data.forEach((element, index) => {
+        if (index > 0) {
+          let DummyObject = {};
+          element.forEach((individualvalue, keyindex) => {
+            DummyObject[this.keyArray[keyindex]] = individualvalue;
+          });//inner for loop ends
+          this.transformeddata.push(DummyObject);
+        }//if ends
+      });//outer for loop ends
+      this.data = this.transformeddata;
+    }//
   }
 
   formLegendData() {
@@ -514,6 +539,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
       legendobject['color'] = element.color;
       this.legendArray.push(legendobject);
     });
+    this.legendArray;
   }
 
   onBarLegendClick(legendevent: any) {
@@ -548,7 +574,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     }, 0)
   }
   //RESIZE STEP 4 ENDS
- 
+
   //RESIZE STEP 5 STARTS
   resize() {
     this.svg.selectAll("*").remove();
