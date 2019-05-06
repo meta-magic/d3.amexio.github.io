@@ -4,7 +4,7 @@ import { AmexioD3BaseChartComponent } from "../base/base.component";
 import { DeviceQueryService } from '../services/device.query.service';
 
 export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
-    @Input('width')svgwidth: number;
+    @Input('width') svgwidth: number;
     private _data: any = [];
     private xaxisdata: any[];
     private yaxisdata: any[];
@@ -32,10 +32,10 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
 
     set data(v: any) {
         this._data = v;
-        if(this._data && (this._data.length > 0) ) {
-        this.createXYAxisData();
+        if (this._data && (this._data.length > 0)) {
+            this.createXYAxisData();
         }
-    
+
     }
 
     get data() {
@@ -114,7 +114,9 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
     protected initChart(): any {
         //RESIZE STEP 2 START
         this.svg = d3.select("#" + this.componentId)
-                     .attr('viewBox','0 0 ' + this.svgwidth + ' ' + this.svgheight);
+            .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight);
+        this.svg.selectAll("*").remove();
+
         const margin = { top: 40, right: 20, bottom: 30, left: 40 };
         //RESIZE STEP 2 ENDS HERE
         const width = +this.svgwidth - margin.left - margin.right;
@@ -129,30 +131,30 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
         const y = d3.scaleLinear()
             .rangeRound([height, 0]);
         this.xaxisdata;
-        x.domain( this.xaxisdata.map((d) => {  
-            debugger;
-            return parseInt(d.label) }));
+        x.domain(this.xaxisdata.map((d) => {
+            return parseInt(d.label)
+        }));
         y.domain([0, d3.max(this.yaxisdata, (d) => { return d.value; })]);
 
         //add axis 
         if (this.deviceQueryService.IsDesktop() == true) {
             if (this.svgwidth <= 400) {
                 g.append("g")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(d3.axisBottom(x).ticks(this.xtickscount)).
-                  selectAll("text")
-                  .attr("y", 0)
-                  .attr("x", 9)
-                  .attr("dy", ".35em")
-                  .attr("transform", "rotate(60)")
-                  .style("text-anchor", "start");
-              }
-              else {
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x).ticks(this.xtickscount)).
+                    selectAll("text")
+                    .attr("y", 0)
+                    .attr("x", 9)
+                    .attr("dy", ".35em")
+                    .attr("transform", "rotate(60)")
+                    .style("text-anchor", "start");
+            }
+            else {
                 g.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                //   .attr("color", "grey")
-                .call(d3.axisBottom(x).ticks(this.xtickscount))
-              }
+                    .attr("transform", "translate(0," + height + ")")
+                    //   .attr("color", "grey")
+                    .call(d3.axisBottom(x).ticks(this.xtickscount))
+            }
         }
         else {
             g.append("g")

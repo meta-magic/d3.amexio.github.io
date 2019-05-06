@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input, ChangeDetectorRef } from "@angular/core";
+import { Component, ViewChild, ElementRef, Input, ChangeDetectorRef, OnChanges } from "@angular/core";
 import * as d3 from 'd3';
 import { AmexioD3BaseLineComponent } from "./baseline.component";
 import { AmexioD3BaseChartComponent } from "../base/base.component";
@@ -11,18 +11,18 @@ import { DeviceQueryService } from "../services/device.query.service";
     selector: 'amexio-d3-chart-line',
     templateUrl: "./line.component.html"
 })
-export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart {
-    @Input('label-color')labelcolor = '';
+export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements PlotCart, OnChanges {
+    @Input('label-color') labelcolor = '';
     @ViewChild('chartId') chartId: ElementRef;
     @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid: any;
     wt: number;
-    constructor(public deviceQueryService: DeviceQueryService,  private cdf: ChangeDetectorRef, public myservice: CommanDataService) {
+    constructor(public deviceQueryService: DeviceQueryService, private cdf: ChangeDetectorRef, public myservice: CommanDataService) {
         super(deviceQueryService);
     }
 
     ngOnInit() {
-      this.wt = this.svgwidth;
+        this.wt = this.svgwidth;
         if (this.level <= 1) {
             let resp: any
             if (this.httpmethod && this.httpurl) {
@@ -45,6 +45,14 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         }
     }
 
+    ngOnChanges() {
+        if (this.data) {
+            setTimeout(() => {
+                this.data = this.getResponseData(this.data);
+                this.plotD3Chart();
+            }, 0);
+        }
+    }
 
     fetchData(data: any) {
 
@@ -78,20 +86,20 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         }, 0);
     }
 
-   //RESIZE STEP 5 STARTS
-  resize() {
-    this.svg.selectAll("*").remove();
-    this.resizeflag = true;
-    if (this.wt) {
-      this.svgwidth = this.wt;
-    } else if (this.chartId) {
-      // this.resizewt = this.chartId.nativeElement.offsetWidth;
-      // console.log("", new Date().getTime(), " ", this.resizewt);
-      this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    //RESIZE STEP 5 STARTS
+    resize() {
+        this.svg.selectAll("*").remove();
+        this.resizeflag = true;
+        if (this.wt) {
+            this.svgwidth = this.wt;
+        } else if (this.chartId) {
+            // this.resizewt = this.chartId.nativeElement.offsetWidth;
+            // console.log("", new Date().getTime(), " ", this.resizewt);
+            this.svgwidth = this.chartId.nativeElement.offsetWidth;
+        }
+        this.cdf.detectChanges();
+        this.plotD3Chart();
     }
-    this.cdf.detectChanges();
-    this.plotD3Chart();
-  }
     getResponseData(httpResponse: any) {
         let responsedata = httpResponse;
         if (this.datareader != null) {
@@ -107,19 +115,19 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
 
     plotD3Chart(): void {
         if (this.resizeflag == false) {
-             //RESIZE STEP 1
-      if (this.wt) {
-        this.svgwidth = this.wt;
+            //RESIZE STEP 1
+            if (this.wt) {
+                this.svgwidth = this.wt;
 
-      } else if (this.chartId) {
-        this.svgwidth = this.chartId.nativeElement.offsetWidth;
-      }
-      //RESIZE STEP 1 ENDS HERE 
+            } else if (this.chartId) {
+                this.svgwidth = this.chartId.nativeElement.offsetWidth;
+            }
+            //RESIZE STEP 1 ENDS HERE 
         }
         const tooltip = this.toolTip(d3);
 
         const linechart = this.initChart();
-         // this.svgwidth = linechart.width;
+        // this.svgwidth = linechart.width;
         this.plotScale(linechart.g, linechart.x, linechart.y, linechart.height, linechart.width);
 
         this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
@@ -134,17 +142,17 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     }
 
 
-  //RESIZE STEP 4 STARTS
-  validateresize() {
-    setTimeout(() => {
-       if (this.wt) {
+    //RESIZE STEP 4 STARTS
+    validateresize() {
+        setTimeout(() => {
+            if (this.wt) {
 
-      } else {
-        this.resize();
-      }
-    }, 0)
-  }
-  //RESIZE STEP 4 ENDS
+            } else {
+                this.resize();
+            }
+        }, 0)
+    }
+    //RESIZE STEP 4 ENDS
 
     private plotLine(g: any, x: any, y: any, height: any, width: any, data: any, tooltip: any, i: number): void {
 
@@ -231,7 +239,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
                     //   return "black";
                     // }
                     if (this.labelcolor.length > 0) {
-                      return this.labelcolor;
+                        return this.labelcolor;
                     }
                     else if (this.linecolor.length > 0) {
                         if (this.linecolor[i - 1]) {
