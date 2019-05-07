@@ -11,6 +11,7 @@ import { debug } from "util";
   selector: 'amexio-d3-chart-bar',
   templateUrl: './bar.component.html'
 })
+
 export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implements PlotCart, OnChanges {
 
   @Input('width') svgwidth: number;
@@ -79,6 +80,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     }
   }
 
+  // Fetch Data
   fetchData(data: any) {
     let requestJson;
     let key = this.drillabledatakey;
