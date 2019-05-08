@@ -45,12 +45,21 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         }
     }
 
+
     ngOnChanges() {
         if (this.data) {
             setTimeout(() => {
                 this.data = this.getResponseData(this.data);
                 this.plotD3Chart();
             }, 0);
+        }
+    }
+
+    validateData() {
+        if (this.data) {
+
+        } else {
+            return "lmask"
         }
     }
 
@@ -94,7 +103,6 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             this.svgwidth = this.wt;
         } else if (this.chartId) {
             // this.resizewt = this.chartId.nativeElement.offsetWidth;
-            // console.log("", new Date().getTime(), " ", this.resizewt);
             this.svgwidth = this.chartId.nativeElement.offsetWidth;
         }
         this.cdf.detectChanges();
@@ -133,9 +141,11 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
             linechart.width, [], tooltip, (1));
 
-        for (let index = 0; index < this.multiseriesdata.length; index++) {
-            this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
-                linechart.width, this.multiseriesdata[index], tooltip, (index + 1));
+        if (this.multiseriesdata) {
+            for (let index = 0; index < this.multiseriesdata.length; index++) {
+                this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
+                    linechart.width, this.multiseriesdata[index], tooltip, (index + 1));
+            }
         }
 
 

@@ -130,12 +130,14 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
 
         const y = d3.scaleLinear()
             .rangeRound([height, 0]);
-        this.xaxisdata;
-        x.domain(this.xaxisdata.map((d) => {
-            return parseInt(d.label)
-        }));
-        y.domain([0, d3.max(this.yaxisdata, (d) => { return d.value; })]);
-
+        if (this.xaxisdata) {
+            x.domain(this.xaxisdata.map((d) => {
+                return parseInt(d.label)
+            }));
+        }
+        if (this.yaxisdata) {
+            y.domain([0, d3.max(this.yaxisdata, (d) => { return d.value; })]);
+        }
         //add axis 
         if (this.deviceQueryService.IsDesktop() == true) {
             if (this.svgwidth <= 400) {
