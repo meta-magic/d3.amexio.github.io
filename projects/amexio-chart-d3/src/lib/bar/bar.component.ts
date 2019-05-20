@@ -31,13 +31,14 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   @Input('yaxis-interval') tickscount: number;
   @Input('xaxis-interval') xtickscount: number;
   @Input('show-zero-values') showzeroflag: boolean = true;
+  @Input('data') _data: any =[];
 
   wt: number;
   resizeflag: boolean = false;
   checkmob: boolean;
   resizeg: any;
   drillableFlag: boolean = true;
-  data: any;
+  // data: any;
   xaxis: any;
   yaxis: any;
   svg: any;
@@ -48,6 +49,19 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   legendArray: any[] = [];
   firstloading = false;
   inc = 0
+  // private _data: any = [];
+  set data(v: any) {
+    if (v && (v.length > 0)) {
+        // this.createXYAxisData();
+        // debugger;
+        this._data = v;
+    }
+
+}
+
+get data() {
+    return this._data;
+}
   constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('bar');
   }
