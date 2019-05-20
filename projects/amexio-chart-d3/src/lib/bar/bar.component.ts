@@ -31,7 +31,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   @Input('yaxis-interval') tickscount: number;
   @Input('xaxis-interval') xtickscount: number;
   @Input('show-zero-values') showzeroflag: boolean = true;
-  @Input('data') _data: any =[];
+  @Input('data') _data: any = [];
 
   wt: number;
   resizeflag: boolean = false;
@@ -51,36 +51,36 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   inc = 0
   // private _data: any = [];
   set data(v: any) {
-        
+
     if (v && (v.length > 0)) {
-        this._data = v;
-        // if(this.isChartInit){
-        //   this.resize();
-        // }
-        // if (this.data) {
+      this._data = v;
+      // if(this.isChartInit){
+      //   this.resize();
+      // }
+      // if (this.data) {
 
-          // setTimeout(() => {
-          //   this.data = this.getResponseData(this.data);
-          //   this.transformData(this.data)
-          //   this.initializeData();
-          //   this.plotD3Chart();
-          // }, 0);
-        // }
-        // this.cdf.detectChanges();
+      // setTimeout(() => {
+      //   this.data = this.getResponseData(this.data);
+      //   this.transformData(this.data)
+      //   this.initializeData();
+      //   this.plotD3Chart();
+      // }, 0);
+      // }
+      // this.cdf.detectChanges();
 
-        // this.formLegendData();
+      // this.formLegendData();
     }
 
-}
+  }
 
-get data() {
+  get data() {
     return this._data;
-}
+  }
   constructor(private myservice: CommanDataService, private cdf: ChangeDetectorRef, private device: DeviceQueryService) {
     super('bar');
   }
 
-  isChartInit : boolean = false;
+  isChartInit: boolean = false;
 
   ngOnInit() {
     this.wt = this.svgwidth;
@@ -93,7 +93,11 @@ get data() {
         }, () => {
           setTimeout(() => {
             this.data = this.getResponseData(resp);
-            this.drawChart();
+            // this.drawChart();
+            this.transformData(this.data)
+            this.initializeData();
+            this.plotD3Chart();
+
             this.isChartInit = true;
           }, 0);
         });
@@ -150,7 +154,7 @@ get data() {
   }
 
   ngOnChanges() {
-// console.log("repeat");
+    // console.log("repeat");
     if (this.inc > 1) {
       if (this.data) {
 
@@ -215,27 +219,28 @@ get data() {
     if (this.horizontal == false) {
       // this.svg.selectAll("*").remove();
       // -----------------------------
-      if(this.data) {
-      x = d3.scaleBand()
-        .rangeRound([0, width])
-        .padding(0.1);
-    
-      //setting content for x and y axis
-      x.domain(this.data.map((d) => {
+      if (this.data) {
+        x = d3.scaleBand()
+          .rangeRound([0, width])
+          .padding(0.1);
 
-        return d[Object.keys(d)[0]];
-        //    return d.label
-      }));}
+        //setting content for x and y axis
+        x.domain(this.data.map((d) => {
+
+          return d[Object.keys(d)[0]];
+          //    return d.label
+        }));
+      }
       //-----------------------------
-      if(this.data) {
-      y = d3.scaleLinear()
-      .rangeRound([height, 0]);
-      y.domain([0, d3.max(this.data, (d) => {
-        return d[Object.keys(d)[1]];
-        //return d.value;
-      })]);
+      if (this.data) {
+        y = d3.scaleLinear()
+          .rangeRound([height, 0]);
+        y.domain([0, d3.max(this.data, (d) => {
+          return d[Object.keys(d)[1]];
+          //return d.value;
+        })]);
 
-}
+      }
       // add x axis to svg
       if (this.device.IsDesktop() == true) {
         if (this.svgwidth <= 400) {
@@ -383,28 +388,28 @@ get data() {
     }
     // horizontal bar
     else if (this.horizontal == true) {
-if(this.data) {
-      x = d3.scaleLinear()
-        .rangeRound([0, width])
-        ;
-      
+      if (this.data) {
+        x = d3.scaleLinear()
+          .rangeRound([0, width])
+          ;
 
-      //setting content for x and y axis
-      x.domain([0, d3.max(this.data,
-        (d) => {
-          return parseInt(
-            d[Object.keys(d)[1]]
-            // d.value
-          );
-        })]);
-      // d[Object.keys(d)[1]]
-      y = d3.scaleBand()
-      .rangeRound([height, 0]).padding(0.1);
-      y.domain(this.data.map((d) => {
-        return d[Object.keys(d)[0]]
-        //return d.label;
-      }))
-}
+
+        //setting content for x and y axis
+        x.domain([0, d3.max(this.data,
+          (d) => {
+            return parseInt(
+              d[Object.keys(d)[1]]
+              // d.value
+            );
+          })]);
+        // d[Object.keys(d)[1]]
+        y = d3.scaleBand()
+          .rangeRound([height, 0]).padding(0.1);
+        y.domain(this.data.map((d) => {
+          return d[Object.keys(d)[0]]
+          //return d.label;
+        }))
+      }
       // add x axis to svg
       g.append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -555,18 +560,18 @@ if(this.data) {
     if (data && (data.length > 0)) {
       this.transformeddata = [];
       this.keyArray = data[0];
-   if (data && (data.length > 0)) {
+      if (data && (data.length > 0)) {
 
-      data.forEach((element, index) => {
-        if (index > 0) {
-          let DummyObject = {};
-          element.forEach((individualvalue, keyindex) => {
-            DummyObject[this.keyArray[keyindex]] = individualvalue;
-          });//inner for loop ends
-          this.transformeddata.push(DummyObject);
-        }//if ends
-      });//outer for loop ends
-    }
+        data.forEach((element, index) => {
+          if (index > 0) {
+            let DummyObject = {};
+            element.forEach((individualvalue, keyindex) => {
+              DummyObject[this.keyArray[keyindex]] = individualvalue;
+            });//inner for loop ends
+            this.transformeddata.push(DummyObject);
+          }//if ends
+        });//outer for loop ends
+      }
       this.data = this.transformeddata;
     }//
   }
@@ -657,9 +662,9 @@ if(this.data) {
     if (this.data) {
 
     } else {
-        return "lmask"
+      return "lmask"
     }
-}
+  }
 
- 
+
 }
