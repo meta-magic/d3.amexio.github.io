@@ -614,5 +614,13 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   //     this.firstloading = false;
   //   }
   // //RESIZE STEP 5 ENDS
+  validateData() {
+    if (this.data) {
+
+    } else {
+        return "lmask"
+    }
+}
+
 
 }

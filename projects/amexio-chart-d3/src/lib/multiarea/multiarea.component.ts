@@ -582,4 +582,13 @@ export class MultiareaComponent extends AmexioD3BaseChartComponent implements Pl
           .tickSize(-width).tickFormat('').ticks(this.tickscount));
     }
   }
+
+  validateData() {
+    if (this.data) {
+
+    } else {
+        return "lmask"
+    }
+}
+
 }

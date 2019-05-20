@@ -1,10 +1,9 @@
-
-<div  #chartId *ngIf="drillableFlag " #divid (window:resize)="validateresize()">
-    <table *ngIf="data.length > 0" style="width: 100%;" position=" relative">
-        <ng-container *ngIf = "title.length > 0">
-        <tr> 
-            <td style="font-size: 18px; font-weight: bold; "> {{title}} </td>
-        </tr>
+<div #chartId *ngIf="drillableFlag " #divid (window:resize)="validateresize()">
+    <table [ngClass]="validateData()" style="width: 100%;" position=" relative">
+        <ng-container *ngIf="title.length > 0">
+            <tr>
+                <td style="font-size: 18px; font-weight: bold; "> {{title}} </td>
+            </tr>
         </ng-container>
         <tr>
             <td>
@@ -14,16 +13,12 @@
         </tr>
         <tr *ngIf="legend">
             <td style="display: block; padding: 5px;">
-                <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="onBarLegendClick($event)" [data]="legendArray"
-                    style="height:100%;">
+                <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="onBarLegendClick($event)" [data]="legendArray" style="height:100%;">
                 </amexio-d3-legend>
             </td>
         </tr>
     </table>
-    <div *ngIf="data.length < 1" class="lmask" style="padding-top:50%">
-    </div>
-    
-  </div>
+    <!-- <div *ngIf="data.length < 1" class="lmask" style="padding-top:50%">
+    </div> -->
 
-  
-  
+</div>
