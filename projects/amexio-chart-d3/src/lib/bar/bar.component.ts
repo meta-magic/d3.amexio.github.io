@@ -66,9 +66,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
           //   this.plotD3Chart();
           // }, 0);
         // }
-        this.cdf.detectChanges();
+        // this.cdf.detectChanges();
 
-        this.formLegendData();
+        // this.formLegendData();
     }
 
 }
@@ -150,8 +150,8 @@ get data() {
   }
 
   ngOnChanges() {
-
-    // if (this.inc > 1) {
+// console.log("repeat");
+    if (this.inc > 1) {
       if (this.data) {
 
         setTimeout(() => {
@@ -159,11 +159,12 @@ get data() {
           this.transformData(this.data)
           this.initializeData();
           this.plotD3Chart();
-        }, 0);
+        }, 500);
+
       }
 
       this.formLegendData();
-    // } this.inc++
+    } this.inc++
 
   }
 
