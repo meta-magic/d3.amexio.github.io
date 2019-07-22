@@ -132,7 +132,12 @@ export class AmexioD3BaseLineComponent extends AmexioD3BaseChartComponent {
             .rangeRound([height, 0]);
         if (this.xaxisdata) {
             x.domain(this.xaxisdata.map((d) => {
-                return parseInt(d.label)
+                if (typeof (d.label) == 'string') {
+                    return d.label;
+                }
+                else {
+                    return parseInt(d.label)
+                }
             }));
         }
         if (this.yaxisdata) {
