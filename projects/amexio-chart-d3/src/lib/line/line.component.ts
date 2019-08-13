@@ -17,6 +17,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
     @ViewChild('divid') divid: ElementRef;
     @ViewChild('drillid') drillid: any;
     wt: number;
+    rawdata: any;
     constructor(public deviceQueryService: DeviceQueryService, private cdf: ChangeDetectorRef, public myservice: CommanDataService) {
         super(deviceQueryService);
     }
@@ -135,19 +136,21 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         const tooltip = this.toolTip(d3);
 
         const linechart = this.initChart();
+
+        this.rawdata = linechart.rawdata;
         // this.svgwidth = linechart.width;
         this.plotScale(linechart.g, linechart.x, linechart.y, linechart.height, linechart.width);
 
         this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
             linechart.width, [], tooltip, (1));
-
+          
         if (this.multiseriesdata) {
             for (let index = 0; index < this.multiseriesdata.length; index++) {
                 this.plotLine(linechart.g, linechart.x, linechart.y, linechart.height,
                     linechart.width, this.multiseriesdata[index], tooltip, (index + 1));
             }
         }
-
+          
 
     }
 
@@ -192,13 +195,13 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
             .attr("d", line)
             // .attr("transform", "translate(" + 37 + "," + 0 + ")")
             ;
-
+              
         g.selectAll('dot')
             .data(data)
             .enter()
             .append('circle')
-            .attr("cx", (d) => { return x(d.label); })
-            .attr("cy", (d) => { return y(d.value); })
+            .attr("cx", (d) => {  return x(d.label); })
+            .attr("cy", (d) => {  return y(d.value); })
             .attr('r', 2)
             .attr("fill", (d) => {
                 if (this.linecolor.length > 0) {
@@ -309,4 +312,7 @@ export class AmexioD3LineComponent extends AmexioD3BaseLineComponent implements 
         obj[this.xaxisname] = tooltipdata.label;
         return this.toolTipForBar(obj);
     }
+
+
+  
 }

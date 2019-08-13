@@ -1,24 +1,25 @@
 <div  #chartId *ngIf="drillableFlag" #divid (window:resize)="validateresize()"> 
-<table [ngClass]="validateData()"  style="width: 100%;" > 
-        <ng-container *ngIf = "title.length > 0">
-        <tr><td style="font-size: 18px; font-weight: bold; "> {{title}} </td></tr>
-        </ng-container>
-        <tr>
-            <td>
-                <svg [attr.height]="svgheight" [attr.width]="svgwidth" [attr.id]="componentId">
-                </svg>            
-            </td>
-        </tr>
-        <tr  *ngIf="legend">
-            <td style="display: block; padding: 5px;">
-                    <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="legendClick($event)" 
-                                        [data]="legends" style="height:100%;">
-                    </amexio-d3-legend>
-            </td>
-        
-        </tr>
-</table>
-<!-- <div *ngIf="data.length < 1" class="lmask" style="padding-top:50%">
-    </div> -->
-</div>
-     
+    <table [ngClass]="validateData()"  style="width: 100%;" > 
+            <ng-container *ngIf = "title.length > 0">
+            <tr><td style="font-size: 18px; font-weight: bold; "> {{title}} </td></tr>
+            </ng-container>
+            <tr>
+                <td>
+                    <svg [attr.height]="svgheight" [attr.width]="svgwidth" [attr.id]="componentId">
+                    </svg>            
+                </td>
+            </tr>
+            <tr  *ngIf="legend">
+                <td style="display: block; padding: 5px;">
+                        <amexio-d3-legend *ngIf="legend" [horizontal]="true" (onClick)="legendClick($event)" 
+                                            [data]="linelegends" style="height:100%;">
+                        </amexio-d3-legend>
+                </td>
+            
+            </tr>
+    </table>
+    <!-- <div *ngIf="data.length < 1" class="lmask" style="padding-top:50%">
+        </div> -->
+    </div>
+    
+    <!-- {{legends | json}} -->
