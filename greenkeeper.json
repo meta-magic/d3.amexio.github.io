@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "package.json",
+        "projects/amexio-chart-d3/package.json"
+      ]
+    }
+  }
+}
