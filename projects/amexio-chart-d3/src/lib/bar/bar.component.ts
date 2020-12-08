@@ -215,7 +215,7 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
     //RESIZE STEP 2 START
     // this.svg.selectAll("*").remove();
 
-
+  //  view box
     this.svg = d3.select("#" + this.componentId)
       .attr('viewBox', '0 0 ' + this.svgwidth + + ' ' + this.svgheight);
     this.svg.selectAll("*").remove();
