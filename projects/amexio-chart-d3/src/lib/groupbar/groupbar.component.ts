@@ -22,6 +22,11 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
   @Input('height') svgheight: number = 300;
   @Input('yaxis-interval') tickscount: number;
   @Input('show-zero-values') showzeroflag: boolean = true;
+
+  @Input('x-axis-margin') xaxismargin = 50;
+  @Input('y-axis-margin') yaxismargin = 40;
+  @Input('x-axis-label-slant') isxaxislabelslant = false;
+
   groupbarchartArray: any[] = [];
   legendArray: any;
   xaxisData: any;
@@ -128,8 +133,11 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
     const tooltip = this.toolTip(d3);
     this.defualtColors = this.predefinedcolors;
     // this.svgwidth = this.chartId.nativeElement.offsetWidth;
+    const margin = { top: 20, right: 20, bottom: this.xaxismargin, left: this.yaxismargin };
+
     if (this.resizeflag == false) {
       //RESIZE STEP 1
+
       if (this.wt) {
         this.svgwidth = this.wt;
 
@@ -137,9 +145,15 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         this.svgwidth = this.chartId.nativeElement.offsetWidth;
 
       }
+
+      if (this.yaxismargin !== 40) {
+        this.svgwidth = this.svgwidth + this.yaxismargin;
+      }
+      if (this.xaxismargin !== 50) {
+        this.svgheight = this.svgheight + this.xaxismargin;
+      }
       //RESIZE STEP 1 ENDS HERE 
     }
-    const margin = { top: 20, right: 20, bottom: 50, left: 40 };
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
 
@@ -192,9 +206,22 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
           .attr("transform", "rotate(60)")
           .style("text-anchor", "start");
       } else {
-        this.svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x0))
+        if (this.isxaxislabelslant) {
+          this.svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x0)).
+            selectAll("text")
+            .attr("y", 0)
+            .attr("x", 9)
+            .attr("dy", ".35em")
+            .attr("transform", "rotate(60)")
+            .style("text-anchor", "start");
+
+        } else {
+          this.svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x0))
+        }
       }
     }
     else {
@@ -221,27 +248,28 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
 
     // svg.select('.y').transition().duration(500).delay(1300).style('opacity', '1');
     //adding bars
- 
+
     let slice = this.svg.selectAll(".slice")
       .data(this.groupbarchartArray)
       .enter().append("g")
       .attr("class", "g")
-      .attr("transform", (d) => { 
-         let flag = false;
-        (d.values).forEach((element,index) => {
+      .attr("transform", (d) => {
+        let flag = false;
+        (d.values).forEach((element, index) => {
           //splice 0 
-          if(element.value && (element.value < 1)) {
-          d.values.splice(0,index);
-          } 
+          if (element.value && (element.value < 1)) {
+            d.values.splice(0, index);
+          }
         });
-        return "translate(" + x0(d.labels) + ",0)"; });
+        return "translate(" + x0(d.labels) + ",0)";
+      });
 
-     slice.selectAll("rect")
+    slice.selectAll("rect")
       .data((d) => { return d.values; })
       .enter().
       append("rect")
       .attr("width", x1.bandwidth
-    )
+      )
       .attr("x", (d) => {
         return x1(d.label)
       })
@@ -257,7 +285,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         else {
           return this.defualtColors[index];
         }
-       })
+      })
       .attr("y", (d) => { return y(0); })
       .attr("height", (d) => { return height - y(0); })
       .attr("cursor", "pointer")
@@ -276,7 +304,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
         this.groupbarClick(d);
         this.fordrillableClick(this, d, event);
         return tooltip.style("visibility", "hidden");
-       })
+      })
 
     // -------------------------------------------------------
     if (this.labelflag) {
@@ -303,11 +331,11 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
           // if((d.value > 0) ) {
           // return d.value;
           // }
-          if(this.showzeroflag) {
-          return d.value;
+          if (this.showzeroflag) {
+            return d.value;
           }
-          else if(!this.showzeroflag) {
-            if(d.value > 0) {
+          else if (!this.showzeroflag) {
+            if (d.value > 0) {
               return d.value;
             }
           }
@@ -381,7 +409,7 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       data.push(object);
     });
     obj["data"] = data;
-    this.onLegendClick.emit(obj); 
+    this.onLegendClick.emit(obj);
   }
 
   //2d array to json conversion
@@ -480,9 +508,9 @@ export class GroupbarComponent extends AmexioD3BaseChartComponent implements OnI
       let object;
       if (this.colors.length > 0) {
         object = { 'label': element, 'color': this.colors[index], 'data': legenddata.data };
-       } else {
-         object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
-       }
+      } else {
+        object = { 'label': element, 'color': this.predefinedcolors[index], 'data': legenddata.data };
+      }
       this.legends.push(object);
     });
   }

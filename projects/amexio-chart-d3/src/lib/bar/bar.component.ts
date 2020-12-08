@@ -32,6 +32,9 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
   @Input('xaxis-interval') xtickscount: number;
   @Input('show-zero-values') showzeroflag: boolean = true;
   @Input('data') _data: any = [];
+  @Input('x-axis-margin') xaxismargin = 40;
+  @Input('y-axis-margin') yaxismargin = 60;
+  @Input('x-axis-label-slant') isxaxislabelslant = false;
 
   wt: number;
   resizeflag: boolean = false;
@@ -198,17 +201,23 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
       }
       //RESIZE STEP 1 ENDS HERE 
     }
-
+    if (this.yaxismargin !== 60) {
+      this.svgwidth = this.svgwidth + this.yaxismargin;
+    }
+    if (this.svgheight !== 40) {
+      this.svgheight = this.svgheight + this.xaxismargin;
+    }
     const tooltip = this.toolTip(d3);
-
-    const margin = { top: 20, right: 60, bottom: 40, left: 60 };
+    const margin = { top: 20, right: 60, bottom: this.xaxismargin, left: this.yaxismargin };
 
     const width = this.svgwidth - margin.left - margin.right;
     const height = this.svgheight - margin.top - margin.bottom;
     //RESIZE STEP 2 START
     // this.svg.selectAll("*").remove();
+
+
     this.svg = d3.select("#" + this.componentId)
-      .attr('viewBox', '0 0 ' + this.svgwidth + ' ' + this.svgheight);
+      .attr('viewBox', '0 0 ' + this.svgwidth + + ' ' + this.svgheight);
     this.svg.selectAll("*").remove();
     // this.svg.exit().remove();//remove unneeded circles
     //RESIZE STEP 2 ENDS HERE
@@ -226,7 +235,6 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
 
         //setting content for x and y axis
         x.domain(this.data.map((d) => {
-
           return d[Object.keys(d)[0]];
           //    return d.label
         }));
@@ -255,9 +263,22 @@ export class AmexioD3BarChartComponent extends AmexioD3BaseChartComponent implem
             .style("text-anchor", "start");
         }
         else {
-          g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
+          if (this.isxaxislabelslant) {
+
+            g.append("g")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x)).
+              selectAll("text")
+              .attr("y", 0)
+              .attr("x", 9)
+              .attr("dy", ".35em")
+              .attr("transform", "rotate(60)")
+              .style("text-anchor", "start");
+          } else {
+            g.append("g")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x))
+          }
         }
       }
 
