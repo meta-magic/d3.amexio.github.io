@@ -3,12 +3,7 @@ dist: trusty
 
 #install google chrome, using addons
 addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
-
+  google-chrome:latest
 
 env:
   global:
@@ -17,7 +12,6 @@ node_js:
   - "8"
 before_install:
   - composer config --global github-oauth.github.com "$GITHUB_TOKEN"
-  - google-chrome-stable --headless --no-sandbox
   
 before_script:
   - export CHROME_BIN=chromium-browser
